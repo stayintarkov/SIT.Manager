@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="SIT.Manager.Controls.SelectEditionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SIT.Manager.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Select Edition"
+    FullSizeDesired="False"
+    CloseButtonText="Create"
+    Height="150">
+
+    <StackPanel>
+        <TextBlock Text="Choose the Edition for your SIT account:" Margin="5"/>
+        <ComboBox Name="EditionBox" Width="200" HorizontalAlignment="Center" SelectionChanged="EditionBox_SelectionChanged">
+            <ComboBoxItem Content="Standard"/>
+            <ComboBoxItem Content="Left Behind"/>
+            <ComboBoxItem Content="Prepare To Escape"/>
+            <ComboBoxItem Content="Edge Of Darkness"/>
+        </ComboBox>
+    </StackPanel>
+</ContentDialog>

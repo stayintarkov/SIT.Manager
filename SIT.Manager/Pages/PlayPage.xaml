@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SIT.Manager.Pages.PlayPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SIT.Manager.Pages"
+    xmlns:controls="using:SIT.Manager.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    >
+
+    <Page.Background>
+        <ImageBrush ImageSource="ms-appx:///Assets/StayInTarkov.jpg"/>
+    </Page.Background>
+
+    <Grid Margin="10" >
+
+        <Popup x:Name="ParentedPopup" HorizontalOffset="200" VerticalOffset="200" IsOpen="False">
+            <controls:PopupTest/>
+        </Popup>
+
+        <StackPanel>
+            <TextBlock Text="Address" FontWeight="Bold"/>
+            <TextBox Name="AddressBox" Margin="10" Width="300" HorizontalAlignment="Left" Text="{Binding LastServer, Mode=TwoWay}" PlaceholderText="Enter Server Address..." TextChanged="InputBox_TextChanged"/>
+            <TextBlock Text="Username" FontWeight="Bold"/>
+            <TextBox Name="UsernameBox" Margin="10" Width="150" HorizontalAlignment="Left" Text="{Binding Username, Mode=TwoWay}" PlaceholderText="Enter Username..." TextChanged="InputBox_TextChanged"/>
+            <TextBlock Text="Password" FontWeight="Bold"/>
+            <PasswordBox Name="PasswordBox" Margin="10" Width="150" HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" PlaceholderText="Enter Password..." PasswordChanged="PasswordBox_PasswordChanged"/>
+            <CheckBox Name="RememberMeCheck" Content="Remember Me" Margin="10" IsChecked="{Binding RememberLogin, Mode=TwoWay}"/>
+            <Button Name="ConnectButton" Content="Connect" Margin="10" ToolTipService.ToolTip="Connect to the server." Click="ConnectButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Page>

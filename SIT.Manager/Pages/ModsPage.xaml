@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SIT.Manager.Pages.ModsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SIT.Manager.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Margin="10">
+            <TextBlock Text="Mods" FontFamily="{ThemeResource BenderFont}" FontSize="32" FontWeight="Bold" TextDecorations="Underline"/>
+            <ListView
+                Name="ModsList"
+                BorderThickness="1"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                Width="200"
+                Height="200"
+                CornerRadius="4">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <TextBlock Text="{Binding Name}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+        </StackPanel>
+
+        <Grid Grid.Column="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel 
+                Grid.Column="0"
+                Margin="10"
+                DataContext="{Binding SelectedItem, ElementName=ModsList}">
+
+                <TextBlock Text="Mod Info" FontFamily="{ThemeResource BenderFont}" FontSize="32" FontWeight="Bold" TextDecorations="Underline"/>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Name:" Margin="5"/>
+                    <TextBlock Text="{Binding Name}" Margin="5"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Author:" Margin="5"/>
+                    <TextBlock Text="{Binding Author}" Margin="5"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Supported Version:" Margin="5"/>
+                    <TextBlock Text="{Binding SupportedVersion}" Margin="5"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Mod Version:" Margin="5"/>
+                    <TextBlock Text="{Binding ModVersion}" Margin="5"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Mod Page:" Margin="5"/>
+                    <HyperlinkButton Content="Link" NavigateUri="{Binding ModUrl}"/>
+                </StackPanel>
+                
+                <CheckBox Content="Requires Extra Files" IsChecked="{Binding RequiresFiles}" IsHitTestVisible="False" Margin="5"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Description:" Margin="5"/>
+                    <TextBlock Text="{Binding Description}" Margin="5" TextWrapping="Wrap" MaxWidth="250"/>
+                </StackPanel>  
+                
+                <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+                    <Button Margin="10" ToolTipService.ToolTip="Install the mod.">
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="Add" Margin="0,0,5,0"/>
+                            <TextBlock Text="Install"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Margin="10" IsEnabled="False" ToolTipService.ToolTip="Uninstall the mod.">
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="Remove" Margin="0,0,5,0"/>
+                            <TextBlock Text="Uninstall"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                
+            </StackPanel>
+            
+        </Grid>
+
+    </Grid>
+</Page>

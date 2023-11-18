@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SIT.Manager.Pages.ToolsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SIT.Manager.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    >
+
+    <StackPanel Margin="10" VerticalAlignment="Center" Width="215" CornerRadius="8" BorderBrush="Gray" BorderThickness="2">
+        <Button Name="InstallSITButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Downgrade EFT if needed, install SIT and mod support.">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Add" Margin="0,0,10,0"/>
+                <TextBlock Text="Install SIT"/>
+            </StackPanel>
+        </Button>
+        <Button Name="OpenEFTFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the EFT installation folder." Click="OpenEFTFolderButton_ClickAsync">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Folder" Margin="0,0,10,0"/>
+                <TextBlock Text="Open EFT Folder"/>
+            </StackPanel>
+        </Button>
+        <Button Name="OpenBepInExFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the BepInEx Plugins folder." Click="OpenBepInExFolderButton_ClickAsync">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Folder" Margin="0,0,10,0"/>
+                <TextBlock Text="Open Plugins Folder"/>
+            </StackPanel>
+        </Button>
+        <Button Name="OpenSITConfigButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the SIT Config with the default text editor." Click="OpenSITConfigButton_ClickAsync">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Setting" Margin="0,0,10,0"/>
+                <TextBlock Text="Open SIT Config"/>
+            </StackPanel>
+        </Button>
+        <Button Name="OpenEFTLogButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the EFT 'Player.log' with the default text editor." Click="OpenEFTLogButton_ClickAsync">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="OpenFile" Margin="0,0,10,0"/>
+                <TextBlock Text="Open EFT Log"/>
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</Page>

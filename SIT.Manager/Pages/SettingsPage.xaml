@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SIT.Manager.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SIT.Manager.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Margin="10">
+        <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game."/>
+        <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher."/>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Install Path:" Margin="5" VerticalAlignment="Center"/>
+            <TextBox PlaceholderText="EFT Install Path..." Margin="5" MinWidth="425" MaxWidth="425" IsHitTestVisible="False" Text="{Binding InstallPath}"/>
+            <Button Name="ChangeInstallButton" Content="Change" Margin="5" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="EFT Version:" Margin="5" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding TarkovVersion, Mode=TwoWay}" Margin="5" VerticalAlignment="Center"/>
+        </StackPanel>
+    </StackPanel>
+</Page>
