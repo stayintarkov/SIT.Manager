@@ -38,7 +38,7 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Play" Content="Play" Tag="Play" ToolTipService.ToolTip="Connect and play." FontFamily="{StaticResource BenderFont}"/>
                 <NavigationViewItem Icon="AllApps" Content="Tools" Tag="Tools" ToolTipService.ToolTip="Tools to manage SIT and Tarkov." FontFamily="{StaticResource BenderFont}"/>
-                <NavigationViewItem Icon="MapDrive" Content="Server" Tag="Server" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}"/>
+                <NavigationViewItem Icon="MapDrive" Content="Server" Tag="Server" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}" IsEnabled="False"/>
                 <NavigationViewItem Icon="Library" Content="Mods" Tag="Mods" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}"/>
             </NavigationView.MenuItems>
             
@@ -52,9 +52,10 @@
 
         </NavigationView>
 
-        <StackPanel Name="ActionPanel" Grid.Row="2" Orientation="Horizontal" Visibility="Collapsed">
-            <ProgressRing Name="ActionPanelRing" IsIndeterminate="True" Visibility="Visible" Margin="10"/>
-            <ProgressBar Name="ActionPanelBar" IsIndeterminate="True" Margin="10" Width="500" MinWidth="100" MaxWidth="150"/>
+        <StackPanel Name="ActionPanel" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Visibility="Collapsed">            
+            <ProgressBar Name="ActionPanelBar" Margin="10" Width="500" MinWidth="100" MaxWidth="150"/>
+            <TextBlock Name="ActionPanelText" Margin="10"/>
+            <ProgressRing Name="ActionPanelRing" IsIndeterminate="True" Visibility="Collapsed" Margin="10" Height="16" Width="16"/>
         </StackPanel>
         
     </Grid>

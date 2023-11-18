@@ -1,15 +1,9 @@
 ﻿using ComponentAce.Compression.Libs.zlib;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text;
-using System.Threading.Tasks;
-using System.Buffers;
 
 namespace SIT.Manager.Classes
 {

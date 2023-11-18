@@ -1,18 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using SIT.Manager.Classes;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -134,6 +126,17 @@ namespace SIT.Manager.Pages
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
                 return;
             }
+        }
+
+        private async void InstallSITButton_ClickAsync(object sender, RoutedEventArgs e)
+        {
+            // Running it as a task prevents the UI thread from freezing
+            await Task.Run(() => Utils.DownloadFile(
+                "Patcher.exe",
+                App.ManagerConfig.InstallPath,
+                "https://store6.gofile.io/download/direct/21d6f3d0-6b53-4ee2-8d00-a6cf2663c799/Patcher_13.9.1.27050_to_13.5.3.26535.zip",
+                true
+            ));
         }
     }
 }

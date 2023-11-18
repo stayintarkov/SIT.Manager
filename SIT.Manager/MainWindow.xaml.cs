@@ -1,24 +1,11 @@
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using SIT.Manager.Pages;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
-using Windows.UI.ApplicationSettings;
-using Windows.UI.ViewManagement;
-using WinRT;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,6 +19,9 @@ namespace SIT.Manager
     {
         public StackPanel actionPanel;
         public Frame contentFrame;
+        public ProgressBar actionProgressBar;
+        public ProgressRing actionProgressRing;
+        public TextBlock actionTextBlock;
 
         public MainWindow()
         {
@@ -39,7 +29,7 @@ namespace SIT.Manager
 
             // Customize Window
             AppWindow.Resize(new(800, 450));
-            Title = "SIT Launcher";
+            Title = "SIT Manager";
             //ExtendsContentIntoTitleBar = true;
             //SetTitleBar(AppTitleBar);
 
@@ -47,6 +37,24 @@ namespace SIT.Manager
 
             actionPanel = ActionPanel;
             contentFrame = ContentFrame;
+            actionProgressBar = ActionPanelBar;
+            actionProgressRing = ActionPanelRing;
+            actionTextBlock = ActionPanelText;
+        }
+
+        /// <summary>
+        /// Show a simple native toast notification
+        /// </summary>
+        /// <param name="title">The title of the notification</param>
+        /// <param name="content">The content of the notification</param>
+        public void ShowSimpleNotification(string title, string content)
+        {
+            AppNotification simpleNotification = new AppNotificationBuilder()
+                .AddText(title)
+                .AddText(content)
+                .BuildNotification();
+
+            AppNotificationManager.Default.Show(simpleNotification);
         }
 
         /// <summary>
@@ -76,7 +84,7 @@ namespace SIT.Manager
         private void NavView_Loaded(object sender, RoutedEventArgs e)
         {
             var settings = (NavigationViewItem)NavView.SettingsItem;
-            var fontFamily = (FontFamily)App.Current.Resources["BenderFont"];
+            var fontFamily = (FontFamily)Application.Current.Resources["BenderFont"];
 
             settings.FontFamily = fontFamily;
             //if (App.LauncherConfig.InstallPath == null)
