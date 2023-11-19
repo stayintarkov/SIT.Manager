@@ -10,7 +10,7 @@
   <Identity
     Name="705397f2-c5ac-448d-b698-fe931a3cd34c"
     Publisher="CN=Lacyway"
-    Version="1.0.1.0" />
+    Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="705397f2-c5ac-448d-b698-fe931a3cd34c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

@@ -4,6 +4,7 @@ using SIT.Manager.Classes;
 using SIT.Manager.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace SIT.Manager.Pages
 
         private void InputBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
+            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
                 ToolTipService.SetToolTip(ConnectButton, new ToolTip()
                 {
@@ -51,7 +52,7 @@ namespace SIT.Manager.Pages
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
+            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
                 ToolTipService.SetToolTip(ConnectButton, new ToolTip()
                 {
@@ -72,7 +73,7 @@ namespace SIT.Manager.Pages
         /// <summary>
         /// Connect to a server
         /// </summary>
-        private async void Connect()
+        private async Task<string> Connect()
         {
             App.ManagerConfig.Save((bool)RememberMeCheck.IsChecked);
 
@@ -87,21 +88,21 @@ namespace SIT.Manager.Pages
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
-                return;
+                return "error";
             }
 
-            if (!File.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins\SIT.Core.dll"))
+            if (!File.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins\StayInTarkov.dll"))
             {
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
                     Title = "Install Error",
-                    Content = "Unable to find 'SIT.Core.dll'. Install SIT before connecting.",
+                    Content = "Unable to find 'StayInTarkov.dll'. Install SIT before connecting.",
                     CloseButtonText = "Ok"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
-                return;
+                return "error";
             }
 
             if (!File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov.exe"))
@@ -115,7 +116,7 @@ namespace SIT.Manager.Pages
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
-                return;
+                return "error";
             }
 
             if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
@@ -129,7 +130,7 @@ namespace SIT.Manager.Pages
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
-                return;
+                return "error";
             }
 
             if (!AddressBox.Text.Contains(@"http://"))
@@ -142,7 +143,8 @@ namespace SIT.Manager.Pages
                 AddressBox.Text = AddressBox.Text.Remove(AddressBox.Text.Length - 1, 1);
             }
 
-            await LoginToServer();
+            string returnData = await LoginToServer();
+            return returnData;
         }
 
         /// <summary>
@@ -188,6 +190,7 @@ namespace SIT.Manager.Pages
                         };
                         await selectWindow.ShowAsync();
                         string edition = selectWindow.edition;
+
                         if (edition != null)
                             data["edition"] = edition;
                         // Register
@@ -241,9 +244,26 @@ namespace SIT.Manager.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ConnectButton_Click(object sender, RoutedEventArgs e)
+        private async void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
-            Connect();
+            string returnData = await Connect();
+
+            if (returnData == "error")
+            {
+                return;
+            }
+            if (string.IsNullOrEmpty(returnData))
+            {
+                return;
+            }
+
+            string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBox.Text}\",\"Version\":\"live\"}}";
+            Process.Start(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov.exe", arguments);
+
+            if (App.ManagerConfig.CloseAfterLaunch)
+            {
+                // Do nothing yet
+            }
         }
     }
 }

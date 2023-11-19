@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!--<Grid x:Name="AppTitleBar" Grid.Row="0" Height="32" Width="Auto">
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Height="30" Width="Auto">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -25,7 +25,7 @@
             
             <ImageIcon Source="ms-appx:///Assets/Stay-In-Tarkov-512.png" HorizontalAlignment="Left" Width="16" Height="16" Margin="8,0" Grid.Column="0"/>
             <TextBlock x:Name="AppTitleTextBlock" Text="SIT Manager" TextWrapping="NoWrap" VerticalAlignment="Center" Grid.Column="1" FontFamily="{StaticResource BenderFont}"/>
-        </Grid>-->
+        </Grid>
 
         <NavigationView PaneDisplayMode="Left"
                 IsBackButtonVisible="Collapsed"
@@ -39,7 +39,7 @@
                 <NavigationViewItem Icon="Play" Content="Play" Tag="Play" ToolTipService.ToolTip="Connect and play." FontFamily="{StaticResource BenderFont}"/>
                 <NavigationViewItem Icon="AllApps" Content="Tools" Tag="Tools" ToolTipService.ToolTip="Tools to manage SIT and Tarkov." FontFamily="{StaticResource BenderFont}"/>
                 <NavigationViewItem Icon="MapDrive" Content="Server" Tag="Server" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}" IsEnabled="False"/>
-                <NavigationViewItem Icon="Library" Content="Mods" Tag="Mods" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}"/>
+                <NavigationViewItem Icon="Library" Content="Mods" Tag="Mods" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}" IsEnabled="False"/>
             </NavigationView.MenuItems>
             
             <Frame x:Name="ContentFrame" Margin="6" CornerRadius="8">

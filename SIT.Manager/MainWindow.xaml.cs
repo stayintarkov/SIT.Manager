@@ -30,8 +30,8 @@ namespace SIT.Manager
             // Customize Window
             AppWindow.Resize(new(800, 450));
             Title = "SIT Manager";
-            //ExtendsContentIntoTitleBar = true;
-            //SetTitleBar(AppTitleBar);
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(AppTitleBar);
 
             ContentFrame.Navigate(typeof(PlayPage));
 

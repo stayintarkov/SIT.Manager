@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
+using SIT.Manager.Controls;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -130,13 +131,23 @@ namespace SIT.Manager.Pages
 
         private async void InstallSITButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            // Running it as a task prevents the UI thread from freezing
-            await Task.Run(() => Utils.DownloadFile(
-                "Patcher.exe",
-                App.ManagerConfig.InstallPath,
-                "https://store6.gofile.io/download/direct/21d6f3d0-6b53-4ee2-8d00-a6cf2663c799/Patcher_13.9.1.27050_to_13.5.3.26535.zip",
-                true
-            ));
+            GithubRelease? selectedVersion;
+
+            SelectSitVersionDialog selectWindow = new()
+            {
+                XamlRoot = Content.XamlRoot
+            };
+
+            ContentDialogResult result = await selectWindow.ShowAsync();
+
+            selectedVersion = selectWindow.version;
+
+            if (selectedVersion == null || result != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            await Task.Run(() => Utils.InstallSIT(selectedVersion));
         }
     }
 }
