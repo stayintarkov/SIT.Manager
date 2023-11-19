@@ -28,6 +28,8 @@ namespace SIT.Manager.Pages
                 SuggestedStartLocation = PickerLocationId.ComputerFolder
             };
 
+            folderPicker.FileTypeFilter.Add("*");
+
             Window window = new();
             IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);

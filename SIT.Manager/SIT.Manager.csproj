@@ -11,10 +11,12 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>false</EnableMsixTooling>
 	<Nullable>enable</Nullable>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 
 	<WindowsPackageType>None</WindowsPackageType>
 	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	<ApplicationIcon>Stay-In-Tarkov-512.ico</ApplicationIcon>
+	<BaseOutputPath></BaseOutputPath>
 
 
   </PropertyGroup>
@@ -133,6 +135,20 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <DebugType>embedded</DebugType>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebugType>embedded</DebugType>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
 
   <Target Name="RemoveFoldersWithMuiFiles" AfterTargets="Build">
     <ItemGroup>
@@ -141,4 +157,8 @@
     </ItemGroup>
     <RemoveDir Directories="@(RemovingFolders)" />
   </Target>
+
+  <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo OutDir: $(OutDir) $(ProjectDir)&#xD;&#xA;rmdir /S /Q $(ProjectDir)bin\x64\SIT.Manager.Release&#xD;&#xA;ren $(OutDir) SIT.Manager.Release" />
+  </Target>-->
 </Project>
