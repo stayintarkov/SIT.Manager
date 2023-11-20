@@ -89,7 +89,6 @@ namespace SIT.Manager
             await Task.Delay(TimeSpan.FromSeconds(delay));
 
             MainInfoBar.IsOpen = false;
-
         }
 
         /// <summary>

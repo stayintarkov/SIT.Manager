@@ -20,12 +20,9 @@
         </Popup>
 
         <StackPanel>
-            <TextBlock Text="Address" Margin="10,0" FontWeight="Bold" FontFamily="{ThemeResource BenderFont}"/>
-            <TextBox Name="AddressBox" Margin="10" Width="300" HorizontalAlignment="Left" Text="{Binding LastServer, Mode=TwoWay}" PlaceholderText="Enter Server Address..." TextChanged="InputBox_TextChanged"/>
-            <TextBlock Text="Username" Margin="10,0" FontWeight="Bold"  FontFamily="{ThemeResource BenderFont}"/>
-            <TextBox Name="UsernameBox" Margin="10" Width="150" HorizontalAlignment="Left" Text="{Binding Username, Mode=TwoWay}" PlaceholderText="Enter Username..." TextChanged="InputBox_TextChanged"/>
-            <TextBlock Text="Password" Margin="10,0" FontWeight="Bold"  FontFamily="{ThemeResource BenderFont}"/>
-            <PasswordBox Name="PasswordBox" Margin="10" Width="150" HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" PlaceholderText="Enter Password..." PasswordChanged="PasswordBox_PasswordChanged"/>
+            <TextBox Name="AddressBox" Margin="10" Width="300" HorizontalAlignment="Left" Text="{Binding LastServer, Mode=TwoWay}" PlaceholderText="Enter Server Address..." TextChanged="InputBox_TextChanged" Header="Address" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
+            <TextBox Name="UsernameBox" Margin="10" Width="150" HorizontalAlignment="Left" Text="{Binding Username, Mode=TwoWay}" PlaceholderText="Enter Username..." TextChanged="InputBox_TextChanged" Header="Username" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
+            <PasswordBox Name="PasswordBox" Margin="10" Width="150" HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" PlaceholderText="Enter Password..." PasswordChanged="PasswordBox_PasswordChanged" Header="Password" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
             <CheckBox Name="RememberMeCheck" Content="Remember Me" Margin="10" IsChecked="{Binding RememberLogin, Mode=TwoWay}"/>
             <Button Name="ConnectButton" Content="Connect" Margin="10" ToolTipService.ToolTip="Connect to the server." Click="ConnectButton_Click"/>
         </StackPanel>

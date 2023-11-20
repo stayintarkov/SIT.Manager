@@ -611,8 +611,15 @@ namespace SIT.Manager.Classes
                     await CleanUpEFTDirectory();
                 }
 
-                await Task.Run(() => DownloadAndRunPatcher(selectedVersion.body));
-                CheckEFTVersion(App.ManagerConfig.InstallPath);
+                if (File.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip"))
+                    File.Delete(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip");
+
+                
+                if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
+                {
+                    await Task.Run(() => DownloadAndRunPatcher(selectedVersion.body));
+                    CheckEFTVersion(App.ManagerConfig.InstallPath);
+                }                
 
                 if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles"))
                     Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles");
