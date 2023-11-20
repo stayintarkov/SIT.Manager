@@ -1,3 +1,4 @@
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
@@ -257,12 +258,17 @@ namespace SIT.Manager.Pages
                 return;
             }
 
+            var window = (Application.Current as App)?.m_window as MainWindow;
+            DispatcherQueue mainQueue = window.DispatcherQueue;
+
+            window.ShowInfoBar("Connect:", $"Successfully connected to {AddressBox.Text}", InfoBarSeverity.Success);
+
             string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBox.Text}\",\"Version\":\"live\"}}";
             Process.Start(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov.exe", arguments);
 
             if (App.ManagerConfig.CloseAfterLaunch)
             {
-                // Do nothing yet
+                Application.Current.Exit();
             }
         }
     }

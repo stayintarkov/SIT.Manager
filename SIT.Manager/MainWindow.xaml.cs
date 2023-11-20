@@ -2,10 +2,14 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using SIT.Manager.Pages;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
+using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,8 +37,17 @@ namespace SIT.Manager
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
 
-            ContentFrame.Navigate(typeof(PlayPage));
+            WindowManager manager = WindowManager.Get(this);
+            manager.MinHeight = 450;
+            manager.MaxHeight = 600;
+            manager.MinWidth = 800;
+            manager.MaxWidth = 1200;
 
+            // Navigate to Play page by default
+            NavView.SelectedItem = NavView.MenuItems.FirstOrDefault();
+            ContentFrame.Navigate(typeof(PlayPage), null, new SuppressNavigationTransitionInfo());
+
+            // Set up variables to be accessed outside MainWindow
             actionPanel = ActionPanel;
             contentFrame = ContentFrame;
             actionProgressBar = ActionPanelBar;
@@ -58,6 +71,28 @@ namespace SIT.Manager
         }
 
         /// <summary>
+        /// Shows the InfoBar of the main window
+        /// </summary>
+        /// <param name="title">Title of the message</param>
+        /// <param name="message">The message to show</param>
+        /// <param name="severity">The <see cref="InfoBarSeverity"/> to display</param>
+        /// <param name="delay">The delay (in seconds) before removing the InfoBar</param>
+        /// <returns></returns>
+        public async Task ShowInfoBar(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
+        {
+            MainInfoBar.Title = title;
+            MainInfoBar.Message = message;
+            MainInfoBar.Severity = severity;
+
+            MainInfoBar.IsOpen = true;
+
+            await Task.Delay(TimeSpan.FromSeconds(delay));
+
+            MainInfoBar.IsOpen = false;
+
+        }
+
+        /// <summary>
         /// Used to navigate the NavView
         /// </summary>
         /// <param name="sender"></param>
@@ -67,6 +102,12 @@ namespace SIT.Manager
             if (args.IsSettingsInvoked)
             {
                 ContentFrame.Navigate(typeof(SettingsPage));
+
+                NavigationViewItem settings = (NavigationViewItem)NavView.SettingsItem;
+                if (settings.InfoBadge != null)
+                {
+                    settings.InfoBadge = null;
+                }
             }
             else
             {
@@ -83,17 +124,18 @@ namespace SIT.Manager
         /// <param name="e"></param>
         private void NavView_Loaded(object sender, RoutedEventArgs e)
         {
-            var settings = (NavigationViewItem)NavView.SettingsItem;
-            var fontFamily = (FontFamily)Application.Current.Resources["BenderFont"];
+            NavigationViewItem settings = (NavigationViewItem)NavView.SettingsItem;
+            FontFamily fontFamily = (FontFamily)Application.Current.Resources["BenderFont"];
 
             settings.FontFamily = fontFamily;
-            //if (App.LauncherConfig.InstallPath == null)
-            //{
-            //    settings.InfoBadge = new()
-            //    {
-            //        Value = 1
-            //    };
-            //}
+            if (App.ManagerConfig.InstallPath == null)
+            {
+                settings.InfoBadge = new()
+                {
+                    Value = 1
+                };
+                InstallPathTip.IsOpen = true;
+            }
         }
 
         /// <summary>

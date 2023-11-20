@@ -1,3 +1,4 @@
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
@@ -42,6 +43,11 @@ namespace SIT.Manager.Pages
                 Utils.CheckEFTVersion(eftFolder.Path);
 
                 App.ManagerConfig.Save();
+
+                var mainWindow = (Application.Current as App)?.m_window as MainWindow;
+                DispatcherQueue mainQueue = mainWindow.DispatcherQueue;
+
+                mainWindow.ShowInfoBar("Settings:", $"Install path set to {eftFolder.Path}");
             }
         }
     }
