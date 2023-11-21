@@ -23,11 +23,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Assets\StayInTarkov.jpg" />
+    <None Remove="Controls\ColorPickerDialog.xaml" />
     <None Remove="Controls\PopupTest.xaml" />
     <None Remove="Controls\SelectEditionDialog.xaml" />
     <None Remove="Controls\SelectSitVersionDialog.xaml" />
     <None Remove="Pages\ModsPage.xaml" />
     <None Remove="Pages\PlayPage.xaml" />
+    <None Remove="Pages\ServerPage.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
     <None Remove="Pages\ToolsPage.xaml" />
     <None Remove="Resources\Aki.Common.dll" />
@@ -93,7 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="bsg.componentace.compression.libs.zlib">
-      <HintPath>..\..\SIT Mod Ports\References\bsg.componentace.compression.libs.zlib.dll</HintPath>
+      <HintPath>..\..\Tarkov.References\bsg.componentace.compression.libs.zlib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +110,16 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\ColorPickerDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\ServerPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\ModsPage.xaml">

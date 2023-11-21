@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.UI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using Windows.UI;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -40,6 +42,12 @@ namespace SIT.Manager.Classes
             get => _installPath;
             set => SetField(ref _installPath, value);
         }
+        private string? _akiServerPath;
+        public string AkiServerPath
+        {
+            get => _akiServerPath;
+            set => SetField(ref _akiServerPath, value);
+        }
         private bool _rememberLogin = false;
         public bool RememberLogin
         {
@@ -75,6 +83,12 @@ namespace SIT.Manager.Classes
         {
             get => _lookForUpdates;
             set => SetField(ref _lookForUpdates, value);
+        }
+        private Color _consoleFontColor = Colors.LightBlue;
+        public Color ConsoleFontColor
+        {
+            get => _consoleFontColor;
+            set => SetField(ref _consoleFontColor, value);
         }
 
         public static ManagerConfig Load()

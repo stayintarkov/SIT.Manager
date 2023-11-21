@@ -1,9 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
+using SIT.Manager.Controls;
 using System;
+using Windows.UI;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Microsoft.UI.Xaml.Media;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,6 +31,8 @@ namespace SIT.Manager.Pages
                 SuggestedStartLocation = PickerLocationId.ComputerFolder
             };
 
+            folderPicker.FileTypeFilter.Add("*");
+
             Window window = new();
             IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
@@ -41,6 +46,44 @@ namespace SIT.Manager.Pages
 
                 App.ManagerConfig.Save();
             }
+        }
+
+        private async void ChangeAkiServerPath_Click(object sender, RoutedEventArgs e)
+        {
+            FolderPicker folderPicker = new()
+            {
+                SuggestedStartLocation = PickerLocationId.ComputerFolder
+            };
+
+            folderPicker.FileTypeFilter.Add("*");
+
+            Window window = new();
+            IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
+
+            StorageFolder akiServerPath = await folderPicker.PickSingleFolderAsync();
+            if (akiServerPath != null)
+            {
+                App.ManagerConfig.AkiServerPath = akiServerPath.Path;
+
+                App.ManagerConfig.Save();
+            }
+        }
+
+        private async void ColorChangeButton_Click(object sender, RoutedEventArgs e)
+        {
+            ColorPickerDialog colorPickerWindow = new()
+            {
+                XamlRoot = Content.XamlRoot
+            };
+
+            await colorPickerWindow.ShowAsync();
+
+            Color selectedColor = colorPickerWindow.SelectedColor;
+
+            App.ManagerConfig.ConsoleFontColor = selectedColor;
+
+            App.ManagerConfig.Save();
         }
     }
 }

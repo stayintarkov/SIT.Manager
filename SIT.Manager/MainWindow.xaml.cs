@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using SIT.Manager.Classes;
 using SIT.Manager.Pages;
 using System.Linq;
 
@@ -40,6 +41,8 @@ namespace SIT.Manager
             actionProgressBar = ActionPanelBar;
             actionProgressRing = ActionPanelRing;
             actionTextBlock = ActionPanelText;
+
+            Closed += OnClosed;
         }
 
         /// <summary>
@@ -107,6 +110,9 @@ namespace SIT.Manager
                 case "Play":
                     ContentFrame.Navigate(typeof(PlayPage));
                     break;
+                case "Server":
+                    ContentFrame.Navigate(typeof(ServerPage));
+                    break;
                 case "Tools":
                     ContentFrame.Navigate(typeof(ToolsPage));
                     break;
@@ -114,6 +120,12 @@ namespace SIT.Manager
                     ContentFrame.Navigate(typeof(ModsPage));
                     break;
             }
+        }
+
+        public void OnClosed(object sender, WindowEventArgs e)
+        {
+            if(AkiServer.IsRunning)
+                AkiServer.Stop();
         }
     }
 }
