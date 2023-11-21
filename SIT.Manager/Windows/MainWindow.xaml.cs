@@ -5,11 +5,16 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using SIT.Manager.Classes;
 using SIT.Manager.Pages;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using WinUIEx;
+using WinUIEx.Messaging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -53,6 +58,40 @@ namespace SIT.Manager
             actionProgressBar = ActionPanelBar;
             actionProgressRing = ActionPanelRing;
             actionTextBlock = ActionPanelText;
+
+            // Create task to prevent the UI thread from freezing on startup?
+            Task.Run(() =>
+            {
+                LookForUpdate();
+            });
+            
+        }
+
+        /// <summary>
+        /// Look for an update for SIT.Manager
+        /// </summary>
+        public async void LookForUpdate()
+        {
+            string? currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+            string latestVersion = await Utils.utilsHttpClient.GetStringAsync(@"https://raw.githubusercontent.com/stayintarkov/SIT.Manager/master/VERSION");
+            latestVersion = latestVersion.Trim();
+
+            if (currentVersion != latestVersion)
+            {
+                DispatcherQueue.TryEnqueue(async () =>
+                {
+                    UpdateInfoBar.Title = "Update:";
+                    UpdateInfoBar.Message = "There is a new update available for SIT.Manager";
+                    UpdateInfoBar.Severity = InfoBarSeverity.Informational;
+
+                    UpdateInfoBar.IsOpen = true;
+
+                    await Task.Delay(TimeSpan.FromSeconds(30));
+
+                    UpdateInfoBar.IsOpen = false;
+                });
+            }
+
         }
 
         /// <summary>
@@ -154,6 +193,22 @@ namespace SIT.Manager
                 case "Mods":
                     ContentFrame.Navigate(typeof(ModsPage));
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Handles the Update button on the notification when an update is available
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            string dir = AppContext.BaseDirectory;
+
+            if (File.Exists(dir + @"\SIT.Manager.Updater.exe"))
+            {
+                Process.Start(dir + @"\SIT.Manager.Updater.exe");
+                Application.Current.Exit();
             }
         }
     }

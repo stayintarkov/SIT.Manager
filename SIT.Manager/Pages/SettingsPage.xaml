@@ -9,17 +9,27 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel Margin="10">
-        <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game."/>
-        <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher."/>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Install Path:" Margin="5" VerticalAlignment="Center"/>
-            <TextBox PlaceholderText="EFT Install Path..." Margin="5" MinWidth="425" MaxWidth="425" IsHitTestVisible="False" Text="{Binding InstallPath}"/>
-            <Button Name="ChangeInstallButton" Content="Change" Margin="5" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Margin="10" Grid.Row="0">
+            <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game."/>
+            <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher."/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Install Path:" Margin="5" VerticalAlignment="Center"/>
+                <TextBox PlaceholderText="EFT Install Path..." Margin="5" MinWidth="425" MaxWidth="425" IsHitTestVisible="False" Text="{Binding InstallPath}"/>
+                <Button Name="ChangeInstallButton" Content="Change" Margin="5" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="EFT Version:" Margin="5" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding TarkovVersion, Mode=TwoWay}" Margin="5" VerticalAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="EFT Version:" Margin="5" VerticalAlignment="Center"/>
-            <TextBlock Text="{Binding TarkovVersion, Mode=TwoWay}" Margin="5" VerticalAlignment="Center"/>
-        </StackPanel>
-    </StackPanel>
+
+        <TextBlock Name="VersionTextBlock" Grid.Row="1" Margin="10"/>
+
+    </Grid>
 </Page>

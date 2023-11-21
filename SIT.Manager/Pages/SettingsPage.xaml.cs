@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
 using System;
+using System.Reflection;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 
@@ -20,6 +21,8 @@ namespace SIT.Manager.Pages
         {
             this.InitializeComponent();
             DataContext = App.ManagerConfig;
+
+            VersionTextBlock.Text = "Manager Version: " + Assembly.GetExecutingAssembly().GetName().Version?.ToString();
         }
 
         private async void ChangeInstallButton_ClickAsync(object sender, RoutedEventArgs e)
@@ -47,7 +50,7 @@ namespace SIT.Manager.Pages
                 var mainWindow = (Application.Current as App)?.m_window as MainWindow;
                 DispatcherQueue mainQueue = mainWindow.DispatcherQueue;
 
-                mainWindow.ShowInfoBar("Settings:", $"Install path set to {eftFolder.Path}");
+                mainWindow?.ShowInfoBar("Settings:", $"Install path set to {eftFolder.Path}");
             }
         }
     }

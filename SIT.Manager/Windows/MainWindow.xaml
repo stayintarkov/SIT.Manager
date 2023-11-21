@@ -41,8 +41,17 @@
 
         <InfoBar
             Name="MainInfoBar"
-            Grid.Row="1"
-            >
+            Grid.Row="1">
+        </InfoBar>
+
+        <InfoBar
+            Name="UpdateInfoBar"
+            Grid.Row="1">
+
+            <InfoBar.ActionButton>
+                <Button Name="UpdateButton" Content="Update" Click="UpdateButton_Click" HorizontalAlignment="Right"/>
+            </InfoBar.ActionButton>
+
         </InfoBar>
 
         <NavigationView PaneDisplayMode="Left"
