@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using Microsoft.UI.Xaml.Media;
 
 namespace SIT.Manager.Classes
 {

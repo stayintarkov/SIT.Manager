@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using static SIT.Manager.Classes.AkiServerUtils;
 
 namespace SIT.Manager.Classes
@@ -20,7 +17,7 @@ namespace SIT.Manager.Classes
     }
 
     public static class AkiServer
-    {   
+    {
         #region events
         public static event OutputDataReceivedEventHandler? OutputDataReceived;
         public delegate void OutputDataReceivedEventHandler(object sender, DataReceivedEventArgs e);
@@ -61,15 +58,15 @@ namespace SIT.Manager.Classes
         public static bool IsUnhandledInstanceRunning()
         {
             Process[] akiServerProcesses = Process.GetProcessesByName(ExeName.Replace(".exe", ""));
-            
-            if(akiServerProcesses.Length > 0)
+
+            if (akiServerProcesses.Length > 0)
             {
                 if (Process == null || Process.HasExited)
                     return true;
 
-                foreach(Process akiServerProcess in akiServerProcesses)
+                foreach (Process akiServerProcess in akiServerProcesses)
                 {
-                    if(Process.Id != akiServerProcess.Id)
+                    if (Process.Id != akiServerProcess.Id)
                         return true;
                 }
             }
@@ -78,8 +75,8 @@ namespace SIT.Manager.Classes
         }
 
         public static void Start()
-        {            
-            if(_state == RunningState.RUNNING)
+        {
+            if (_state == RunningState.RUNNING)
                 return;
 
             Process = new Process();
@@ -93,7 +90,7 @@ namespace SIT.Manager.Classes
             Process.EnableRaisingEvents = true;
             Process.OutputDataReceived += new DataReceivedEventHandler((sender, e) => OutputDataReceivedEvent(sender, e));
             Process.Exited += new EventHandler((sender, e) => ExitedEvent(sender, e));
-            
+
             Process.Start();
             Process.BeginOutputReadLine();
 
@@ -104,7 +101,7 @@ namespace SIT.Manager.Classes
 
         public static void Stop()
         {
-            if(_state == RunningState.NOT_RUNNING || Process == null || Process.HasExited)
+            if (_state == RunningState.NOT_RUNNING || Process == null || Process.HasExited)
                 return;
 
             stopRequest = true;
@@ -128,7 +125,7 @@ namespace SIT.Manager.Classes
 
         private static void ExitedEvent(object? sender, EventArgs e)
         {
-            if(_state == RunningState.RUNNING && !stopRequest)
+            if (_state == RunningState.RUNNING && !stopRequest)
             {
                 _state = RunningState.STOPPED_UNEXPECTEDLY;
             }

@@ -1,4 +1,3 @@
-using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
@@ -29,7 +28,7 @@ namespace SIT.Manager.Pages
             }
 
             LoadMasterList();
-        }        
+        }
 
         private void LoadMasterList()
         {
@@ -95,7 +94,7 @@ namespace SIT.Manager.Pages
                 DownloadModPackageButton.IsEnabled = true;
                 return;
             }
-        }        
+        }
 
         private async void InstallMod(ModInfo mod)
         {
@@ -229,7 +228,7 @@ namespace SIT.Manager.Pages
                 return;
 
             UninstallMod((ModInfo)ModsList.SelectedItem);
-        } 
+        }
         #endregion
     }
 }

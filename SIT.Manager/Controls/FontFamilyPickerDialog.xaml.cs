@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -10,7 +9,7 @@ namespace SIT.Manager.Controls
     public sealed partial class FontFamilyPickerDialog : ContentDialog
     {
         public string selectedFontFamily;
-        
+
         private string currentFontStyle = App.ManagerConfig.ConsoleFontFamily;
 
         private string[] fontFamilyNames = {

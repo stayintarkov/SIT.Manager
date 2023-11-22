@@ -3,10 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
 using SIT.Manager.Controls;
 using System;
+using System.Reflection;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.ApplicationModel.DataTransfer;
-using System.Reflection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -84,7 +84,7 @@ namespace SIT.Manager.Pages
 
             string pickedColor = colorPickerWindow.SelectedColor;
 
-            if(pickedColor != null)
+            if (pickedColor != null)
             {
                 App.ManagerConfig.ConsoleFontColor = pickedColor;
                 App.ManagerConfig.Save();
@@ -116,7 +116,7 @@ namespace SIT.Manager.Pages
                 RequestedOperation = DataPackageOperation.Copy,
             };
 
-            dataPackage.SetText(VersionHyperlinkButton.Content.ToString());            
+            dataPackage.SetText(VersionHyperlinkButton.Content.ToString());
             Clipboard.SetContent(dataPackage);
         }
     }

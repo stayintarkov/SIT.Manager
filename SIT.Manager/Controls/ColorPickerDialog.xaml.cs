@@ -1,9 +1,5 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.UI;
-using System.Drawing;
-using System;
-using Color = System.Drawing.Color;
 using System.Globalization;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -21,7 +17,7 @@ namespace SIT.Manager.Controls
 
             string color = App.ManagerConfig.ConsoleFontColor;
 
-            if(color != null && color != "")
+            if (color != null && color != "")
             {
                 byte a = byte.Parse(color.Substring(1, 2), NumberStyles.HexNumber);
                 byte r = byte.Parse(color.Substring(3, 2), NumberStyles.HexNumber);
@@ -38,7 +34,7 @@ namespace SIT.Manager.Controls
             Hide();
         }
         private void ColorPickerControlCancelButton(object sender, RoutedEventArgs e)
-        {         
+        {
             Hide();
         }
     }

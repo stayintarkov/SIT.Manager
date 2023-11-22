@@ -17,8 +17,6 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 
 namespace SIT.Manager.Classes
 {
@@ -387,7 +385,7 @@ namespace SIT.Manager.Classes
                     Loggy.LogToFile("DownloadPatcher: link is 'null'");
                     return;
                 }
-                   
+
                 success = await DownloadFile("Patcher.zip", App.ManagerConfig.InstallPath, link, true);
 
                 if (success == false)
@@ -633,12 +631,12 @@ namespace SIT.Manager.Classes
                 if (File.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip"))
                     File.Delete(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip");
 
-                
+
                 if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
                 {
                     await Task.Run(() => DownloadAndRunPatcher(selectedVersion.body));
                     CheckEFTVersion(App.ManagerConfig.InstallPath);
-                }                
+                }
 
                 if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles"))
                     Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles");
@@ -751,7 +749,7 @@ namespace SIT.Manager.Classes
 
             if (simpleNotification?.Id != null)
             {
-                await AppNotificationManager.Default.RemoveByIdAsync(simpleNotification.Id); 
+                await AppNotificationManager.Default.RemoveByIdAsync(simpleNotification.Id);
             }
         }
 

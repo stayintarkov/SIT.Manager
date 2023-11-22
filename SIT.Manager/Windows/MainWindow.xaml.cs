@@ -94,7 +94,7 @@ namespace SIT.Manager
                 });
             }
 
-        }             
+        }
 
         /// <summary>
         /// Used to navigate the NavView
@@ -183,7 +183,7 @@ namespace SIT.Manager
 
         public void OnClosed(object sender, WindowEventArgs e)
         {
-            if(AkiServer.IsRunning())
+            if (AkiServer.IsRunning())
                 AkiServer.Stop();
         }
     }

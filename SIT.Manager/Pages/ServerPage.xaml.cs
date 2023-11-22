@@ -1,4 +1,3 @@
-using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
@@ -42,19 +41,19 @@ namespace SIT.Manager.Pages
                     return;
                 }
 
-                if(AkiServer.FilePath == null || !File.Exists(AkiServer.FilePath))
+                if (AkiServer.FilePath == null || !File.Exists(AkiServer.FilePath))
                 {
                     AddConsole("SPT-AKI not found. Please configure the SPT-AKI path in Settings tab before starting the server.");
                     return;
                 }
 
                 AddConsole("Starting server...");
-                
+
                 try
                 {
                     AkiServer.Start();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     AddConsole(ex.Message);
                 }
@@ -67,7 +66,7 @@ namespace SIT.Manager.Pages
                 {
                     AkiServer.Stop();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     AddConsole(ex.Message);
                 }
@@ -76,7 +75,7 @@ namespace SIT.Manager.Pages
 
         private void AddConsole(string text)
         {
-            if(text == null)
+            if (text == null)
                 return;
 
             Paragraph paragraph = new();
@@ -98,29 +97,29 @@ namespace SIT.Manager.Pages
         {
             window.DispatcherQueue.TryEnqueue(() =>
             {
-                switch(runningState)
+                switch (runningState)
                 {
                     case RunningState.RUNNING:
-                    {
-                        AddConsole("Server started!");
-                        StartServerButtonSymbolIcon.Symbol = Symbol.Stop;
-                        StartServerButtonTextBlock.Text = "Stop Server";
-                    }
-                    break;
+                        {
+                            AddConsole("Server started!");
+                            StartServerButtonSymbolIcon.Symbol = Symbol.Stop;
+                            StartServerButtonTextBlock.Text = "Stop Server";
+                        }
+                        break;
                     case RunningState.NOT_RUNNING:
-                    {
-                        AddConsole("Server stopped!");
-                        StartServerButtonSymbolIcon.Symbol = Symbol.Play;
-                        StartServerButtonTextBlock.Text = "Start Server";
-                    }
-                    break;
+                        {
+                            AddConsole("Server stopped!");
+                            StartServerButtonSymbolIcon.Symbol = Symbol.Play;
+                            StartServerButtonTextBlock.Text = "Start Server";
+                        }
+                        break;
                     case RunningState.STOPPED_UNEXPECTEDLY:
-                    {
-                        AddConsole("Server stopped unexpectedly! Check console for errors.");
-                        StartServerButtonSymbolIcon.Symbol = Symbol.Play;
-                        StartServerButtonTextBlock.Text = "Start Server";
-                    }
-                    break;
+                        {
+                            AddConsole("Server stopped unexpectedly! Check console for errors.");
+                            StartServerButtonSymbolIcon.Symbol = Symbol.Play;
+                            StartServerButtonTextBlock.Text = "Start Server";
+                        }
+                        break;
                 }
             });
         }
