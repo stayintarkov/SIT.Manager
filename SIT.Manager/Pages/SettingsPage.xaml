@@ -9,76 +9,64 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <ScrollViewer>
-        <StackPanel Margin="10">
-            <TextBlock Text="Launcher Settings" Margin="5" VerticalAlignment="Center"/>
-            <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
-                <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game."/>
-                <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher."/>
-            </StackPanel>
-
-        
-            <TextBlock Text="EFT Settings" Margin="5" VerticalAlignment="Center"/>
-            <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10" >
-                <StackPanel Orientation="Horizontal" >
-                    <TextBlock Text="EFT Path:" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                    <TextBox PlaceholderText="EFT Install Path..." Margin="0,0,10,0" MinWidth="425" MaxWidth="425" IsHitTestVisible="False" Text="{Binding InstallPath}"/>
-                    <Button Name="ChangeInstallButton" Content="Change" Margin="0,0,10,0" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="EFT Version:" Margin="0,10,10,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding TarkovVersion, Mode=TwoWay}" Margin="0,10,10,0" VerticalAlignment="Center"/>
-                </StackPanel>
-            </StackPanel>
-
-            <TextBlock Text="SPT-AKI Settings" Margin="5" VerticalAlignment="Center"/>
-
-            <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="SPT-AKI Path:"  VerticalAlignment="Center"/>
-                    <TextBox PlaceholderText="SPT-AKI Install Path..." Margin="5" MinWidth="397" MaxWidth="425" IsHitTestVisible="False" Text="{Binding AkiServerPath}"/>
-                    <Button Name="ChangeAkiServerPath" Content="Change" Margin="5" ToolTipService.ToolTip="Change the SPT-AKI Install Path." Click="ChangeAkiServerPath_Click"/>
-                </StackPanel>
-            </StackPanel>
-
-            <TextBlock Text="Server Console" Margin="5" VerticalAlignment="Center"/>
-            <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Font family:" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                    <TextBlock Name="ConsoleFontFamilyPreview" Margin="0,0,10,0" VerticalAlignment="Center" FontFamily="{Binding ConsoleFontFamily}" Text="{Binding ConsoleFontFamily}"/>
-                    <Button Name="ConsoleFamilyFontChange" Content="Change" Click="ConsoleFamilyFontChange_Click"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Font color:" Margin="0,10,10,0" VerticalAlignment="Center"/>
-                    <Rectangle Name="ConsoleColorPreview" Width="30" Height="15" Margin="0,10,10,0" Fill="{Binding ConsoleFontColor}"/>
-                    <Button Name="ColorChangeButton" Content="Change" Margin="0,10,0,0" Click="ColorChangeButton_Click"/>
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
-    </ScrollViewer>
     <Grid>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <StackPanel Margin="10" Grid.Row="0">
-            <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game." IsChecked="{Binding CloseAfterLaunch, Mode=TwoWay}"/>
-            <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher." IsChecked="{Binding LookForUpdates, Mode=TwoWay}"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Install Path:" Margin="5" VerticalAlignment="Center"/>
-                <TextBox PlaceholderText="EFT Install Path..." Margin="5" MinWidth="425" MaxWidth="425" IsHitTestVisible="False" Text="{Binding InstallPath}"/>
-                <Button Name="ChangeInstallButton" Content="Change" Margin="5" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
+        <ScrollViewer Grid.Row="0">
+            <StackPanel Margin="10">
+                <TextBlock Text="Launcher Settings" Margin="5" VerticalAlignment="Center"/>
+                <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
+                    <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game." IsChecked="{Binding CloseAfterLaunch, Mode=TwoWay}"/>
+                    <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher." IsChecked="{Binding LookForUpdates, Mode=TwoWay}"/>
+                </StackPanel>
+
+
+                <TextBlock Text="EFT Settings" Margin="5" VerticalAlignment="Center"/>
+                <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10" >
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="EFT Path:" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBox PlaceholderText="EFT Install Path..." Margin="0,0,10,0" MinWidth="425" MaxWidth="425" IsHitTestVisible="False" Text="{Binding InstallPath}"/>
+                        <Button Name="ChangeInstallButton" Content="Change" Margin="0,0,10,0" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="EFT Version:" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TarkovVersion, Mode=TwoWay}" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="SIT Version:" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding SitVersion, Mode=TwoWay}" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Text="SPT-AKI Settings" Margin="5" VerticalAlignment="Center"/>
+
+                <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="SPT-AKI Path:"  VerticalAlignment="Center"/>
+                        <TextBox PlaceholderText="SPT-AKI Install Path..." Margin="5" MinWidth="397" MaxWidth="425" IsHitTestVisible="False" Text="{Binding AkiServerPath}"/>
+                        <Button Name="ChangeAkiServerPath" Content="Change" Margin="5" ToolTipService.ToolTip="Change the SPT-AKI Install Path." Click="ChangeAkiServerPath_Click"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Text="Server Console" Margin="5" VerticalAlignment="Center"/>
+                <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Font family:" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Name="ConsoleFontFamilyPreview" Margin="0,0,10,0" VerticalAlignment="Center" FontFamily="{Binding ConsoleFontFamily}" Text="{Binding ConsoleFontFamily}"/>
+                        <Button Name="ConsoleFamilyFontChange" Content="Change" Click="ConsoleFamilyFontChange_Click"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Font Color:" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                        <Rectangle Name="ConsoleColorPreview" Width="30" Height="15" Margin="0,10,10,0" Fill="{Binding ConsoleFontColor}"/>
+                        <Button Name="ColorChangeButton" Content="Change" Margin="0,10,0,0" Click="ColorChangeButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="EFT Version:" Margin="5" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding TarkovVersion, Mode=TwoWay}" Margin="5" VerticalAlignment="Center"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="SIT Version:" Margin="5" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding SitVersion, Mode=TwoWay}" Margin="5" VerticalAlignment="Center"/>
-            </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
 
         <StackPanel Margin="0,5" Orientation="Horizontal" Grid.Row="1">
             <TextBlock Margin="10" Text="Manager Version: "/>

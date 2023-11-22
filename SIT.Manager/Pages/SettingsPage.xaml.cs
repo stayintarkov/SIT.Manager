@@ -3,11 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
 using SIT.Manager.Controls;
 using System;
-using Windows.UI;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI;
+using Windows.ApplicationModel.DataTransfer;
+using System.Reflection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -107,8 +106,6 @@ namespace SIT.Manager.Pages
             {
                 App.ManagerConfig.ConsoleFontFamily = pickedFontFamily;
                 App.ManagerConfig.Save();
-
-                Utils.ShowInfoBar("Settings:", $"Install path set to {eftFolder.Path}");
             }
         }
 

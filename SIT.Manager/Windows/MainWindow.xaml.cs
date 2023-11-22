@@ -3,8 +3,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.Windows.AppNotifications;
-using Microsoft.Windows.AppNotifications.Builder;
 using SIT.Manager.Classes;
 using SIT.Manager.Pages;
 using System;
@@ -66,8 +64,7 @@ namespace SIT.Manager
                 {
                     LookForUpdate();
                 });
-            }            
-        }
+            }
 
             Closed += OnClosed;
         }
