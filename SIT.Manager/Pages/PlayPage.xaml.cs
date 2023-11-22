@@ -257,12 +257,14 @@ namespace SIT.Manager.Pages
                 return;
             }
 
+            Utils.ShowInfoBar("Connect:", $"Successfully connected to {AddressBox.Text}", InfoBarSeverity.Success);
+
             string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBox.Text}\",\"Version\":\"live\"}}";
             Process.Start(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov.exe", arguments);
 
             if (App.ManagerConfig.CloseAfterLaunch)
             {
-                // Do nothing yet
+                Application.Current.Exit();
             }
         }
     }

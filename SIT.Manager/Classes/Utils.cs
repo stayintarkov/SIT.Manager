@@ -2,10 +2,11 @@
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
-using SIT.Manager.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,10 +14,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -27,7 +26,7 @@ namespace SIT.Manager.Classes
     {
         public static HttpClient utilsHttpClient = new()
         {
-            Timeout = Timeout.InfiniteTimeSpan,
+            Timeout = TimeSpan.FromSeconds(15),
             DefaultRequestHeaders = {
             { "X-GitHub-Api-Version", "2022-11-28" },
             { "User-Agent", "request" }
@@ -40,18 +39,38 @@ namespace SIT.Manager.Classes
         /// <param name="path">The path to check.</param>
         public static void CheckEFTVersion(string path)
         {
-            path = path + @"\EscapeFromTarkov.exe";
-            Debug.WriteLine(path);
+            path += @"\EscapeFromTarkov.exe";
             if (File.Exists(path))
             {
                 string fileVersion = FileVersionInfo.GetVersionInfo(path).ProductVersion;
                 fileVersion = Regex.Match(fileVersion, @"[0]{1,}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\-[0-9]{1,5}").Value.Replace("-", ".");
                 App.ManagerConfig.TarkovVersion = fileVersion;
+
                 Loggy.LogToFile("EFT Version is now: " + fileVersion);
             }
             else
             {
                 Loggy.LogToFile("CheckEFTVersion: File did not exist at " + path);
+            }
+        }
+
+        /// <summary>
+        /// Checks the installed SIT version
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        public static void CheckSITVersion(string path)
+        {
+            path += @"\BepInEx\plugins\StayInTarkov.dll";
+            if (File.Exists(path))
+            {
+                string fileVersion = FileVersionInfo.GetVersionInfo(path).ProductVersion;
+                fileVersion = Regex.Match(fileVersion, @"[1]{1,}\.[0-9]{1,2}\.[0-9]{1,5}\.[0-9]{1,5}").Value.ToString();
+                App.ManagerConfig.SitVersion = fileVersion;
+                Loggy.LogToFile("SIT Version is now: " + fileVersion);
+            }
+            else
+            {
+                Loggy.LogToFile("CheckSITVersion: File did not exist at " + path);
             }
         }
 
@@ -240,7 +259,7 @@ namespace SIT.Manager.Classes
             }
 
             string releasesString = await utilsHttpClient.GetStringAsync(@"https://dev.sp-tarkov.com/api/v1/repos/SPT-AKI/Downgrade-Patches/releases");
-            List<GiteaRelease>? giteaReleases = JsonSerializer.Deserialize<List<GiteaRelease>>(releasesString);
+            List<GiteaRelease> giteaReleases = JsonSerializer.Deserialize<List<GiteaRelease>>(releasesString);
 
             // todo: proper error message
             if (giteaReleases == null)
@@ -339,8 +358,8 @@ namespace SIT.Manager.Classes
             {
                 string mirrorsUrl = patcher.assets.Find(q => q.name == "mirrors.json").browser_download_url;
                 string mirrorsString = await utilsHttpClient.GetStringAsync(mirrorsUrl);
-                List<Mirrors>? mirrors = JsonSerializer.Deserialize<List<Mirrors>>(mirrorsString);
-                string? link = null;
+                List<Mirrors> mirrors = JsonSerializer.Deserialize<List<Mirrors>>(mirrorsString);
+                string link = null;
 
                 foreach (Mirrors mirror in mirrors)
                 {
@@ -598,61 +617,166 @@ namespace SIT.Manager.Classes
             var window = (Application.Current as App)?.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
 
-            if (selectedVersion == null)
+            try
             {
-                Loggy.LogToFile("InstallSIT: selectVersion is 'null'");
+                if (selectedVersion == null)
+                {
+                    Loggy.LogToFile("InstallSIT: selectVersion is 'null'");
+                    return;
+                }
+
+                if (File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_BE.exe"))
+                {
+                    await CleanUpEFTDirectory();
+                }
+
+                if (File.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip"))
+                    File.Delete(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip");
+
+                
+                if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
+                {
+                    await Task.Run(() => DownloadAndRunPatcher(selectedVersion.body));
+                    CheckEFTVersion(App.ManagerConfig.InstallPath);
+                }                
+
+                if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles"))
+                    Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles");
+
+                if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles"))
+                    Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles");
+
+                if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins"))
+                {
+                    await DownloadFile("BepInEx5.zip", App.ManagerConfig.InstallPath + @"\SITLauncher", "https://github.com/BepInEx/BepInEx/releases/download/v5.4.22/BepInEx_x64_5.4.22.0.zip", true);
+                    ExtractArchive(App.ManagerConfig.InstallPath + @"\SITLauncher\BepInEx5.zip", App.ManagerConfig.InstallPath);
+                    Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\BepInEx\plugins");
+                }
+
+                //We don't use index as they might be different from version to version
+                string releaseZipUrl = selectedVersion.assets.Find(q => q.name == "StayInTarkov-Release.zip").browser_download_url;
+
+                await DownloadFile("StayInTarkov-Release.zip", App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles", releaseZipUrl, true);
+
+                ExtractArchive(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip", App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\");
+
+                if (File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll"))
+                    File.Copy(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll", App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles\Assembly-CSharp.dll", true);
+                File.Copy(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release\Assembly-CSharp.dll", App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll", true);
+
+                File.Copy(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release\StayInTarkov.dll", App.ManagerConfig.InstallPath + @"\BepInEx\plugins\StayInTarkov.dll", true);
+
+                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("SIT.Manager.Resources.Aki.Common.dll"))
+                {
+                    using (var file = new FileStream(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Aki.Common.dll", FileMode.Create, FileAccess.Write))
+                    {
+                        resource.CopyTo(file);
+                    }
+                }
+
+                using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("SIT.Manager.Resources.Aki.Reflection.dll"))
+                {
+                    using (var file = new FileStream(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Aki.Reflection.dll", FileMode.Create, FileAccess.Write))
+                    {
+                        resource.CopyTo(file);
+                    }
+                }
+
+                // Run on UI thread to prevent System.InvalidCastException, WinUI bug yikes
+                mainQueue.TryEnqueue(() =>
+                {
+                    CheckSITVersion(App.ManagerConfig.InstallPath);
+                });
+
+                AppNotification notification = new AppNotificationBuilder()
+                    .AddText("Install")
+                    .AddText("Installation of SIT was succesful.")
+                    .BuildNotification();
+
+                notification.Expiration = DateTime.Now.AddSeconds(5);
+
+                AppNotificationManager.Default.Show(notification);
+            }
+            catch (Exception ex)
+            {
+                AppNotificationButton notificationButton = new AppNotificationButton()
+                {
+                    Content = "Open Log"
+                };
+
+                notificationButton.Arguments.Add("errorInstall", "true");
+
+                AppNotification notification = new AppNotificationBuilder()
+                    .AddText("Install Error")
+                    .AddText("Encountered an error during installation.")
+                    .AddButton(notificationButton)
+                    .BuildNotification();
+
+                AppNotificationManager.Default.Show(notification);
+
+                Loggy.LogToFile("Install SIT: " + ex.Message + "\n" + ex);
+
                 return;
             }
+        }
 
-            if (File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_BE.exe"))
+        /// <summary>
+        /// Opens the launcher log
+        /// </summary>
+        public static void OpenLauncherLog()
+        {
+            string filePath = AppContext.BaseDirectory + @"Launcher.log";
+
+            if (File.Exists(filePath))
             {
-                await CleanUpEFTDirectory();
+                Process.Start("explorer.exe", filePath);
             }
+        }
 
-            await Task.Run(() => DownloadAndRunPatcher(selectedVersion.body));
-            CheckEFTVersion(App.ManagerConfig.InstallPath);
+        /// <summary>
+        /// Show a simple native toast notification and removes it after 5 seconds
+        /// </summary>
+        /// <param name="title">The title of the notification</param>
+        /// <param name="content">The content of the notification</param>
+        public static async void ShowSimpleNotification(string title, string content)
+        {
+            AppNotification simpleNotification = new AppNotificationBuilder()
+                .AddText(title)
+                .AddText(content)
+                .BuildNotification();
 
-            if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles"))
-                Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles");
+            AppNotificationManager.Default.Show(simpleNotification);
 
-            if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles"))
-                Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles");
+            await Task.Delay(TimeSpan.FromSeconds(5));
 
-            if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins"))
+            if (simpleNotification?.Id != null)
             {
-                await DownloadFile("BepInEx5.zip", App.ManagerConfig.InstallPath + @"\SITLauncher", "https://github.com/BepInEx/BepInEx/releases/download/v5.4.22/BepInEx_x64_5.4.22.0.zip", true);
-                ExtractArchive(App.ManagerConfig.InstallPath + @"\SITLauncher\BepInEx5.zip", App.ManagerConfig.InstallPath);
-                Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\BepInEx\plugins");
+                await AppNotificationManager.Default.RemoveByIdAsync(simpleNotification.Id); 
             }
+        }
 
-            //We don't use index as they might be different from version to version
-            string releaseZipUrl = selectedVersion.assets.Find(q => q.name == "StayInTarkov-Release.zip").browser_download_url;
+        /// <summary>
+        /// Shows the InfoBar of the main window
+        /// </summary>
+        /// <param name="title">Title of the message</param>
+        /// <param name="message">The message to show</param>
+        /// <param name="severity">The <see cref="InfoBarSeverity"/> to display</param>
+        /// <param name="delay">The delay (in seconds) before removing the InfoBar</param>
+        /// <returns></returns>
+        public static async void ShowInfoBar(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
+        {
 
-            await DownloadFile("StayInTarkov-Release.zip", App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles", releaseZipUrl, true);
+            MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 
-            ExtractArchive(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip", App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\");
+            window.MainInfoBar.Title = title;
+            window.MainInfoBar.Message = message;
+            window.MainInfoBar.Severity = severity;
 
-            if (File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll"))
-                File.Copy(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll", App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles\Assembly-CSharp.dll", true);
-            File.Copy(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release\Assembly-CSharp.dll", App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll", true);
+            window.MainInfoBar.IsOpen = true;
 
-            File.Copy(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release\StayInTarkov.dll", App.ManagerConfig.InstallPath + @"\BepInEx\plugins\StayInTarkov.dll", true);
+            await Task.Delay(TimeSpan.FromSeconds(delay));
 
-            using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("SIT.Manager.Resources.Aki.Common.dll"))
-            {
-                using (var file = new FileStream(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Aki.Common.dll", FileMode.Create, FileAccess.Write))
-                {
-                    resource.CopyTo(file);
-                }
-            }
-
-            using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("SIT.Manager.Resources.Aki.Reflection.dll"))
-            {
-                using (var file = new FileStream(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_Data\Managed\Aki.Reflection.dll", FileMode.Create, FileAccess.Write))
-                {
-                    resource.CopyTo(file);
-                }
-            }
+            window.MainInfoBar.IsOpen = false;
         }
     }
 }

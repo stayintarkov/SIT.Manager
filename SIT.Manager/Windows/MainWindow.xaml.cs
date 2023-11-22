@@ -2,11 +2,18 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using SIT.Manager.Classes;
 using SIT.Manager.Pages;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -18,6 +25,7 @@ namespace SIT.Manager
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        // todo: make public
         public StackPanel actionPanel;
         public Frame contentFrame;
         public ProgressBar actionProgressBar;
@@ -34,31 +42,62 @@ namespace SIT.Manager
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
 
-            ContentFrame.Navigate(typeof(PlayPage));
+            WindowManager manager = WindowManager.Get(this);
+            manager.MinHeight = 450;
+            manager.MaxHeight = 600;
+            manager.MinWidth = 800;
+            manager.MaxWidth = 1200;
 
+            // Navigate to Play page by default
+            NavView.SelectedItem = NavView.MenuItems.FirstOrDefault();
+            ContentFrame.Navigate(typeof(PlayPage), null, new SuppressNavigationTransitionInfo());
+
+            // Set up variables to be accessed outside MainWindow
             actionPanel = ActionPanel;
             contentFrame = ContentFrame;
             actionProgressBar = ActionPanelBar;
             actionProgressRing = ActionPanelRing;
             actionTextBlock = ActionPanelText;
 
+            // Create task to prevent the UI thread from freezing on startup?
+            if (App.ManagerConfig?.LookForUpdates == true)
+            {
+                Task.Run(() =>
+                {
+                    LookForUpdate();
+                });
+            }            
+        }
+
             Closed += OnClosed;
         }
 
         /// <summary>
-        /// Show a simple native toast notification
+        /// Look for an update for SIT.Manager
         /// </summary>
-        /// <param name="title">The title of the notification</param>
-        /// <param name="content">The content of the notification</param>
-        public void ShowSimpleNotification(string title, string content)
+        public async void LookForUpdate()
         {
-            AppNotification simpleNotification = new AppNotificationBuilder()
-                .AddText(title)
-                .AddText(content)
-                .BuildNotification();
+            string? currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+            string latestVersion = await Utils.utilsHttpClient.GetStringAsync(@"https://raw.githubusercontent.com/stayintarkov/SIT.Manager/master/VERSION");
+            latestVersion = latestVersion.Trim();
 
-            AppNotificationManager.Default.Show(simpleNotification);
-        }
+            if (currentVersion != latestVersion)
+            {
+                DispatcherQueue.TryEnqueue(async () =>
+                {
+                    UpdateInfoBar.Title = "Update:";
+                    UpdateInfoBar.Message = "There is a new update available for SIT.Manager";
+                    UpdateInfoBar.Severity = InfoBarSeverity.Informational;
+
+                    UpdateInfoBar.IsOpen = true;
+
+                    await Task.Delay(TimeSpan.FromSeconds(30));
+
+                    UpdateInfoBar.IsOpen = false;
+                });
+            }
+
+        }             
 
         /// <summary>
         /// Used to navigate the NavView
@@ -70,6 +109,12 @@ namespace SIT.Manager
             if (args.IsSettingsInvoked)
             {
                 ContentFrame.Navigate(typeof(SettingsPage));
+
+                NavigationViewItem settings = (NavigationViewItem)NavView.SettingsItem;
+                if (settings.InfoBadge != null)
+                {
+                    settings.InfoBadge = null;
+                }
             }
             else
             {
@@ -86,17 +131,18 @@ namespace SIT.Manager
         /// <param name="e"></param>
         private void NavView_Loaded(object sender, RoutedEventArgs e)
         {
-            var settings = (NavigationViewItem)NavView.SettingsItem;
-            var fontFamily = (FontFamily)Application.Current.Resources["BenderFont"];
+            NavigationViewItem settings = (NavigationViewItem)NavView.SettingsItem;
+            FontFamily fontFamily = (FontFamily)Application.Current.Resources["BenderFont"];
 
             settings.FontFamily = fontFamily;
-            //if (App.LauncherConfig.InstallPath == null)
-            //{
-            //    settings.InfoBadge = new()
-            //    {
-            //        Value = 1
-            //    };
-            //}
+            if (App.ManagerConfig?.InstallPath == null)
+            {
+                settings.InfoBadge = new()
+                {
+                    Value = 1
+                };
+                InstallPathTip.IsOpen = true;
+            }
         }
 
         /// <summary>
@@ -119,6 +165,22 @@ namespace SIT.Manager
                 case "Mods":
                     ContentFrame.Navigate(typeof(ModsPage));
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Handles the Update button on the notification when an update is available
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            string dir = AppContext.BaseDirectory;
+
+            if (File.Exists(dir + @"\SIT.Manager.Updater.exe"))
+            {
+                Process.Start(dir + @"\SIT.Manager.Updater.exe");
+                Application.Current.Exit();
             }
         }
 

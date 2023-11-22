@@ -23,6 +23,8 @@ namespace SIT.Manager.Pages
         {
             this.InitializeComponent();
             DataContext = App.ManagerConfig;
+
+            VersionHyperlinkButton.Content = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
         }
 
         private async void ChangeInstallButton_ClickAsync(object sender, RoutedEventArgs e)
@@ -44,6 +46,7 @@ namespace SIT.Manager.Pages
                 App.ManagerConfig.InstallPath = eftFolder.Path;
 
                 Utils.CheckEFTVersion(eftFolder.Path);
+                Utils.CheckSITVersion(eftFolder.Path);
 
                 App.ManagerConfig.Save();
             }
@@ -104,7 +107,20 @@ namespace SIT.Manager.Pages
             {
                 App.ManagerConfig.ConsoleFontFamily = pickedFontFamily;
                 App.ManagerConfig.Save();
+
+                Utils.ShowInfoBar("Settings:", $"Install path set to {eftFolder.Path}");
             }
+        }
+
+        private void VersionHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataPackage dataPackage = new()
+            {
+                RequestedOperation = DataPackageOperation.Copy,
+            };
+
+            dataPackage.SetText(VersionHyperlinkButton.Content.ToString());            
+            Clipboard.SetContent(dataPackage);
         }
     }
 }

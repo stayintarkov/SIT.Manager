@@ -12,12 +12,6 @@ namespace SIT.Manager.Classes
 {
     public class ManagerConfig : PropertyChangedBase
     {
-        //private ObservableCollection<Server> _servers = new();
-        //public ObservableCollection<Server> Servers
-        //{
-        //    get => _servers;
-        //    set => SetField(ref _servers, value);
-        //}
         private string _lastServer = "http://127.0.0.1:6969";
         public string LastServer
         {
@@ -36,7 +30,7 @@ namespace SIT.Manager.Classes
             get => _password;
             set => SetField(ref _password, value);
         }
-        private string? _installPath;
+        private string _installPath;
         public string InstallPath
         {
             get => _installPath;
@@ -54,35 +48,47 @@ namespace SIT.Manager.Classes
             get => _rememberLogin;
             set => SetField(ref _rememberLogin, value);
         }
-        private bool _automaticallyInstallSIT = true;
-        public bool AutomaticallyInstallSIT
-        {
-            get => _automaticallyInstallSIT;
-            set => SetField(ref _automaticallyInstallSIT, value);
-        }
-        private bool _installReflectionBinaries = true;
-        public bool InstallReflectionBinaries
-        {
-            get => _installReflectionBinaries;
-            set => SetField(ref _installReflectionBinaries, value);
-        }
         private bool _closeAfterLaunch = false;
         public bool CloseAfterLaunch
         {
             get => _closeAfterLaunch;
             set => SetField(ref _closeAfterLaunch, value);
         }
-        private string? _tarkovVersion;
+        private string _tarkovVersion;
         public string TarkovVersion
         {
             get => _tarkovVersion;
             set => SetField(ref _tarkovVersion, value);
+        }
+        private string _sitVersion;
+        public string SitVersion
+        {
+            get => _sitVersion;
+            set => SetField(ref _sitVersion, value);
         }
         private bool _lookForUpdates = true;
         public bool LookForUpdates
         {
             get => _lookForUpdates;
             set => SetField(ref _lookForUpdates, value);
+        }
+        private bool _acceptedModsDisclaimer = false;
+        public bool AcceptedModsDisclaimer
+        {
+            get => _acceptedModsDisclaimer;
+            set => SetField(ref _acceptedModsDisclaimer, value);
+        }
+        private string _modCollectionVersion;
+        public string ModCollectionVersion
+        {
+            get => _modCollectionVersion;
+            set => SetField(ref _modCollectionVersion, value);
+        }
+        private List<string> _installedMods = new();
+        public List<string> InstalledMods
+        {
+            get => _installedMods;
+            set => SetField(ref _installedMods, value);
         }
 
         private string _consoleFontColor = Colors.LightBlue.ToString();
@@ -128,22 +134,6 @@ namespace SIT.Manager.Classes
             {
                 File.WriteAllText(currentDir + "ManagerConfig.json", JsonSerializer.Serialize(App.ManagerConfig, new JsonSerializerOptions { WriteIndented = true }));
             }
-        }
-    }
-
-    public class Server : PropertyChangedBase
-    {
-        private string _name;
-        public string Name
-        {
-            get => _name;
-            set => SetField(ref _name, value);
-        }
-        private string _address;
-        public string Address
-        {
-            get => _address;
-            set => SetField(ref _address, value);
         }
     }
 

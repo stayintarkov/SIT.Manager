@@ -3,7 +3,9 @@
     x:Class="SIT.Manager.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:SIT.Manager">
+    xmlns:local="using:SIT.Manager"
+    RequestedTheme="Dark">
+    
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,9 +16,14 @@
 
             <FontFamily x:Key="BenderFont">/Assets/Fonts/Bender.otf#Bender</FontFamily>
 
+            <DataTemplate x:Key="BoxHeaderTemplate">
+                <TextBlock Text="{Binding}" FontFamily="{StaticResource BenderFont}" FontWeight="Bold"/>
+            </DataTemplate>
+
         </ResourceDictionary>
         
         
         
     </Application.Resources>
+    
 </Application>

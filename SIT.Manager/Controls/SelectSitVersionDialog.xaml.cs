@@ -47,9 +47,12 @@ namespace SIT.Manager.Controls
                             string releasePatch = match.Value.Replace("This version works with version ", "");
                             release.tag_name = release.name + " - Tarkov Version: " + releasePatch;
                             release.body = releasePatch;
+                            sitReleases.Add(release);
                         }
-
-                        sitReleases.Add(release);
+                        else
+                        {
+                            Loggy.LogToFile("FetchReleases: There was a release without a version defined: " + release.html_url);
+                        }
                     }
 
                     if (sitReleases.Count > 0)

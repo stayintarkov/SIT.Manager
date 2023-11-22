@@ -56,4 +56,34 @@
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Margin="10" Grid.Row="0">
+            <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game." IsChecked="{Binding CloseAfterLaunch, Mode=TwoWay}"/>
+            <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher." IsChecked="{Binding LookForUpdates, Mode=TwoWay}"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Install Path:" Margin="5" VerticalAlignment="Center"/>
+                <TextBox PlaceholderText="EFT Install Path..." Margin="5" MinWidth="425" MaxWidth="425" IsHitTestVisible="False" Text="{Binding InstallPath}"/>
+                <Button Name="ChangeInstallButton" Content="Change" Margin="5" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="EFT Version:" Margin="5" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding TarkovVersion, Mode=TwoWay}" Margin="5" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="SIT Version:" Margin="5" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding SitVersion, Mode=TwoWay}" Margin="5" VerticalAlignment="Center"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Margin="0,5" Orientation="Horizontal" Grid.Row="1">
+            <TextBlock Margin="10" Text="Manager Version: "/>
+            <HyperlinkButton Name="VersionHyperlinkButton" Click="VersionHyperlinkButton_Click" ToolTipService.ToolTip="Copy to clipboard" VerticalAlignment="Center" Padding="5"/>
+        </StackPanel>
+
+    </Grid>
 </Page>
