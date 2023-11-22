@@ -3,8 +3,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.Windows.AppNotifications;
-using Microsoft.Windows.AppNotifications.Builder;
 using SIT.Manager.Classes;
 using SIT.Manager.Pages;
 using System;
@@ -37,7 +35,7 @@ namespace SIT.Manager
             this.InitializeComponent();
 
             // Customize Window
-            AppWindow.Resize(new(800, 450));
+            AppWindow.Resize(new(800, 475));
             Title = "SIT Manager";
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
@@ -66,7 +64,9 @@ namespace SIT.Manager
                 {
                     LookForUpdate();
                 });
-            }            
+            }
+
+            Closed += OnClosed;
         }
 
         /// <summary>
@@ -153,6 +153,9 @@ namespace SIT.Manager
                 case "Play":
                     ContentFrame.Navigate(typeof(PlayPage));
                     break;
+                case "Server":
+                    ContentFrame.Navigate(typeof(ServerPage));
+                    break;
                 case "Tools":
                     ContentFrame.Navigate(typeof(ToolsPage));
                     break;
@@ -176,6 +179,12 @@ namespace SIT.Manager
                 Process.Start(dir + @"\SIT.Manager.Updater.exe");
                 Application.Current.Exit();
             }
+        }
+
+        public void OnClosed(object sender, WindowEventArgs e)
+        {
+            if(AkiServer.IsRunning())
+                AkiServer.Stop();
         }
     }
 }

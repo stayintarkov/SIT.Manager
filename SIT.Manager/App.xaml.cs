@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.Windows.AppNotifications;
 using SIT.Manager.Classes;
 using System;
@@ -23,7 +24,9 @@ namespace SIT.Manager
         public App()
         {
             this.InitializeComponent();
+
             ManagerConfig = ManagerConfig.Load();
+
             Loggy.SetupLogFile();
 
             AppNotificationManager.Default.NotificationInvoked += ReceivedNotification;

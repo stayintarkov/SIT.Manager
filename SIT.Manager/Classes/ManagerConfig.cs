@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.UI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Microsoft.UI.Xaml.Media;
 
 namespace SIT.Manager.Classes
 {
@@ -33,6 +35,12 @@ namespace SIT.Manager.Classes
         {
             get => _installPath;
             set => SetField(ref _installPath, value);
+        }
+        private string? _akiServerPath;
+        public string AkiServerPath
+        {
+            get => _akiServerPath;
+            set => SetField(ref _akiServerPath, value);
         }
         private bool _rememberLogin = false;
         public bool RememberLogin
@@ -81,6 +89,20 @@ namespace SIT.Manager.Classes
         {
             get => _installedMods;
             set => SetField(ref _installedMods, value);
+        }
+
+        private string _consoleFontColor = Colors.LightBlue.ToString();
+        public string ConsoleFontColor
+        {
+            get => _consoleFontColor;
+            set => SetField(ref _consoleFontColor, value);
+        }
+
+        private string _consoleFontFamily = "Consolas";
+        public string ConsoleFontFamily
+        {
+            get => _consoleFontFamily;
+            set => SetField(ref _consoleFontFamily, value);
         }
 
         public static ManagerConfig Load()
