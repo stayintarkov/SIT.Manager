@@ -1,9 +1,9 @@
-using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
 using System;
 using System.Reflection;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 
@@ -22,7 +22,7 @@ namespace SIT.Manager.Pages
             this.InitializeComponent();
             DataContext = App.ManagerConfig;
 
-            VersionTextBlock.Text = "Manager Version: " + Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+            VersionHyperlinkButton.Content = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
         }
 
         private async void ChangeInstallButton_ClickAsync(object sender, RoutedEventArgs e)
@@ -44,14 +44,23 @@ namespace SIT.Manager.Pages
                 App.ManagerConfig.InstallPath = eftFolder.Path;
 
                 Utils.CheckEFTVersion(eftFolder.Path);
+                Utils.CheckSITVersion(eftFolder.Path);
 
                 App.ManagerConfig.Save();
 
-                var mainWindow = (Application.Current as App)?.m_window as MainWindow;
-                DispatcherQueue mainQueue = mainWindow.DispatcherQueue;
-
-                mainWindow?.ShowInfoBar("Settings:", $"Install path set to {eftFolder.Path}");
+                Utils.ShowInfoBar("Settings:", $"Install path set to {eftFolder.Path}");
             }
+        }
+
+        private void VersionHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataPackage dataPackage = new()
+            {
+                RequestedOperation = DataPackageOperation.Copy,
+            };
+
+            dataPackage.SetText(VersionHyperlinkButton.Content.ToString());            
+            Clipboard.SetContent(dataPackage);
         }
     }
 }

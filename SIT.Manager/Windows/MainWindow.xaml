@@ -39,20 +39,18 @@
             <TextBlock x:Name="AppTitleTextBlock" Text="SIT Manager" TextWrapping="NoWrap" VerticalAlignment="Center" Grid.Column="1" FontFamily="{StaticResource BenderFont}" Foreground="{StaticResource AppBarItemForegroundThemeBrush}"/>
         </Grid>
 
-        <InfoBar
-            Name="MainInfoBar"
-            Grid.Row="1">
-        </InfoBar>
+        <StackPanel Grid.Row="1">
+            <InfoBar Name="MainInfoBar" x:FieldModifier="Public">
+            </InfoBar>
 
-        <InfoBar
-            Name="UpdateInfoBar"
-            Grid.Row="1">
+            <InfoBar Name="UpdateInfoBar">
 
-            <InfoBar.ActionButton>
-                <Button Name="UpdateButton" Content="Update" Click="UpdateButton_Click" HorizontalAlignment="Right"/>
-            </InfoBar.ActionButton>
+                <InfoBar.ActionButton>
+                    <Button Name="UpdateButton" Content="Update" Click="UpdateButton_Click" HorizontalAlignment="Right"/>
+                </InfoBar.ActionButton>
 
-        </InfoBar>
+            </InfoBar>
+        </StackPanel>
 
         <NavigationView PaneDisplayMode="Left"
                 IsBackButtonVisible="Collapsed"
@@ -66,7 +64,7 @@
                 <NavigationViewItem Icon="Play" Content="Play" Tag="Play" ToolTipService.ToolTip="Connect and play." FontFamily="{StaticResource BenderFont}"/>
                 <NavigationViewItem Icon="AllApps" Content="Tools" Tag="Tools" ToolTipService.ToolTip="Tools to manage SIT and Tarkov." FontFamily="{StaticResource BenderFont}"/>
                 <NavigationViewItem Icon="MapDrive" Content="Server" Tag="Server" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}" IsEnabled="False"/>
-                <NavigationViewItem Icon="Library" Content="Mods" Tag="Mods" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}" IsEnabled="False"/>
+                <NavigationViewItem Icon="Library" Content="Mods" Tag="Mods" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}" IsEnabled="True"/>
             </NavigationView.MenuItems>
             
             <Frame x:Name="ContentFrame" Margin="6" CornerRadius="8">

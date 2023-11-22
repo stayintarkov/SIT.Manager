@@ -14,7 +14,8 @@ namespace SIT.Manager
     /// </summary>
     public partial class App : Application
     {
-        public static ManagerConfig? ManagerConfig { get; set; }
+        public static ManagerConfig ManagerConfig { get; set; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().

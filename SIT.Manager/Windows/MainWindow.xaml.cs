@@ -14,7 +14,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using WinUIEx;
-using WinUIEx.Messaging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +25,7 @@ namespace SIT.Manager
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        // todo: make public
         public StackPanel actionPanel;
         public Frame contentFrame;
         public ProgressBar actionProgressBar;
@@ -60,11 +60,13 @@ namespace SIT.Manager
             actionTextBlock = ActionPanelText;
 
             // Create task to prevent the UI thread from freezing on startup?
-            Task.Run(() =>
+            if (App.ManagerConfig?.LookForUpdates == true)
             {
-                LookForUpdate();
-            });
-            
+                Task.Run(() =>
+                {
+                    LookForUpdate();
+                });
+            }            
         }
 
         /// <summary>
@@ -92,43 +94,7 @@ namespace SIT.Manager
                 });
             }
 
-        }
-
-        /// <summary>
-        /// Show a simple native toast notification
-        /// </summary>
-        /// <param name="title">The title of the notification</param>
-        /// <param name="content">The content of the notification</param>
-        public void ShowSimpleNotification(string title, string content)
-        {
-            AppNotification simpleNotification = new AppNotificationBuilder()
-                .AddText(title)
-                .AddText(content)
-                .BuildNotification();
-
-            AppNotificationManager.Default.Show(simpleNotification);
-        }
-
-        /// <summary>
-        /// Shows the InfoBar of the main window
-        /// </summary>
-        /// <param name="title">Title of the message</param>
-        /// <param name="message">The message to show</param>
-        /// <param name="severity">The <see cref="InfoBarSeverity"/> to display</param>
-        /// <param name="delay">The delay (in seconds) before removing the InfoBar</param>
-        /// <returns></returns>
-        public async Task ShowInfoBar(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
-        {
-            MainInfoBar.Title = title;
-            MainInfoBar.Message = message;
-            MainInfoBar.Severity = severity;
-
-            MainInfoBar.IsOpen = true;
-
-            await Task.Delay(TimeSpan.FromSeconds(delay));
-
-            MainInfoBar.IsOpen = false;
-        }
+        }             
 
         /// <summary>
         /// Used to navigate the NavView
@@ -166,7 +132,7 @@ namespace SIT.Manager
             FontFamily fontFamily = (FontFamily)Application.Current.Resources["BenderFont"];
 
             settings.FontFamily = fontFamily;
-            if (App.ManagerConfig.InstallPath == null)
+            if (App.ManagerConfig?.InstallPath == null)
             {
                 settings.InfoBadge = new()
                 {

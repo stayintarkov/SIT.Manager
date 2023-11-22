@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
 namespace SIT.Manager.Classes
 {
-    class ModInfo : PropertyChangedBase
+    public class ModInfo : PropertyChangedBase
     {
         private string _name;
         public string Name
@@ -54,11 +54,17 @@ namespace SIT.Manager.Classes
             set => SetField(ref _requiresFiles, value);
         }
 
-        private ObservableCollection<string> _modFiles;
-        public ObservableCollection<string> ModFiles
+        private List<string> _pluginFiles = new();
+        public List<string> PluginFiles
         {
-            get => _modFiles;
-            set => SetField(ref _modFiles, value);
+            get => _pluginFiles;
+            set => SetField(ref _pluginFiles, value);
+        }
+        private List<string> _configFiles = new();
+        public List<string> ConfigFiles
+        {
+            get => _configFiles;
+            set => SetField(ref _configFiles, value);
         }
     }
 }

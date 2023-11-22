@@ -37,18 +37,38 @@ namespace SIT.Manager.Classes
         /// <param name="path">The path to check.</param>
         public static void CheckEFTVersion(string path)
         {
-            path = path + @"\EscapeFromTarkov.exe";
-            Debug.WriteLine(path);
+            path += @"\EscapeFromTarkov.exe";
             if (File.Exists(path))
             {
                 string fileVersion = FileVersionInfo.GetVersionInfo(path).ProductVersion;
                 fileVersion = Regex.Match(fileVersion, @"[0]{1,}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\-[0-9]{1,5}").Value.Replace("-", ".");
                 App.ManagerConfig.TarkovVersion = fileVersion;
+
                 Loggy.LogToFile("EFT Version is now: " + fileVersion);
             }
             else
             {
                 Loggy.LogToFile("CheckEFTVersion: File did not exist at " + path);
+            }
+        }
+
+        /// <summary>
+        /// Checks the installed SIT version
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        public static void CheckSITVersion(string path)
+        {
+            path += @"\BepInEx\plugins\StayInTarkov.dll";
+            if (File.Exists(path))
+            {
+                string fileVersion = FileVersionInfo.GetVersionInfo(path).ProductVersion;
+                fileVersion = Regex.Match(fileVersion, @"[1]{1,}\.[0-9]{1,2}\.[0-9]{1,5}\.[0-9]{1,5}").Value.ToString();
+                App.ManagerConfig.SitVersion = fileVersion;
+                Loggy.LogToFile("SIT Version is now: " + fileVersion);
+            }
+            else
+            {
+                Loggy.LogToFile("CheckSITVersion: File did not exist at " + path);
             }
         }
 
@@ -237,7 +257,7 @@ namespace SIT.Manager.Classes
             }
 
             string releasesString = await utilsHttpClient.GetStringAsync(@"https://dev.sp-tarkov.com/api/v1/repos/SPT-AKI/Downgrade-Patches/releases");
-            List<GiteaRelease>? giteaReleases = JsonSerializer.Deserialize<List<GiteaRelease>>(releasesString);
+            List<GiteaRelease> giteaReleases = JsonSerializer.Deserialize<List<GiteaRelease>>(releasesString);
 
             // todo: proper error message
             if (giteaReleases == null)
@@ -336,8 +356,8 @@ namespace SIT.Manager.Classes
             {
                 string mirrorsUrl = patcher.assets.Find(q => q.name == "mirrors.json").browser_download_url;
                 string mirrorsString = await utilsHttpClient.GetStringAsync(mirrorsUrl);
-                List<Mirrors>? mirrors = JsonSerializer.Deserialize<List<Mirrors>>(mirrorsString);
-                string? link = null;
+                List<Mirrors> mirrors = JsonSerializer.Deserialize<List<Mirrors>>(mirrorsString);
+                string link = null;
 
                 foreach (Mirrors mirror in mirrors)
                 {
@@ -660,6 +680,12 @@ namespace SIT.Manager.Classes
                     }
                 }
 
+                // Run on UI thread to prevent System.InvalidCastException, WinUI bug yikes
+                mainQueue.TryEnqueue(() =>
+                {
+                    CheckSITVersion(App.ManagerConfig.InstallPath);
+                });
+
                 AppNotification notification = new AppNotificationBuilder()
                     .AddText("Install")
                     .AddText("Installation of SIT was succesful.")
@@ -703,6 +729,52 @@ namespace SIT.Manager.Classes
             {
                 Process.Start("explorer.exe", filePath);
             }
+        }
+
+        /// <summary>
+        /// Show a simple native toast notification and removes it after 5 seconds
+        /// </summary>
+        /// <param name="title">The title of the notification</param>
+        /// <param name="content">The content of the notification</param>
+        public static async void ShowSimpleNotification(string title, string content)
+        {
+            AppNotification simpleNotification = new AppNotificationBuilder()
+                .AddText(title)
+                .AddText(content)
+                .BuildNotification();
+
+            AppNotificationManager.Default.Show(simpleNotification);
+
+            await Task.Delay(TimeSpan.FromSeconds(5));
+
+            if (simpleNotification?.Id != null)
+            {
+                await AppNotificationManager.Default.RemoveByIdAsync(simpleNotification.Id); 
+            }
+        }
+
+        /// <summary>
+        /// Shows the InfoBar of the main window
+        /// </summary>
+        /// <param name="title">Title of the message</param>
+        /// <param name="message">The message to show</param>
+        /// <param name="severity">The <see cref="InfoBarSeverity"/> to display</param>
+        /// <param name="delay">The delay (in seconds) before removing the InfoBar</param>
+        /// <returns></returns>
+        public static async void ShowInfoBar(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
+        {
+
+            MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+
+            window.MainInfoBar.Title = title;
+            window.MainInfoBar.Message = message;
+            window.MainInfoBar.Severity = severity;
+
+            window.MainInfoBar.IsOpen = true;
+
+            await Task.Delay(TimeSpan.FromSeconds(delay));
+
+            window.MainInfoBar.IsOpen = false;
         }
     }
 }
