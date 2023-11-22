@@ -44,9 +44,14 @@
             <TextBlock Text="Server Console" Margin="5" VerticalAlignment="Center"/>
             <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Color:" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                    <TextBox Name="ConsoleColorValue" MinWidth="200" Margin="0,0,10,0" Text="{Binding ConsoleFontColor}" />
-                    <Button Name="ColorChangeButton" Content="Change" Click="ColorChangeButton_Click"/>
+                    <TextBlock Text="Font family:" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <TextBlock Name="ConsoleFontFamilyPreview" Margin="0,0,10,0" VerticalAlignment="Center" FontFamily="{Binding ConsoleFontFamily}" Text="{Binding ConsoleFontFamily}"/>
+                    <Button Name="ConsoleFamilyFontChange" Content="Change" Click="ConsoleFamilyFontChange_Click"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Font color:" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                    <Rectangle Name="ConsoleColorPreview" Width="30" Height="15" Margin="0,10,10,0" Fill="{Binding ConsoleFontColor}"/>
+                    <Button Name="ColorChangeButton" Content="Change" Margin="0,10,0,0" Click="ColorChangeButton_Click"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

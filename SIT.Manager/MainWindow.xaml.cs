@@ -29,7 +29,7 @@ namespace SIT.Manager
             this.InitializeComponent();
 
             // Customize Window
-            AppWindow.Resize(new(800, 450));
+            AppWindow.Resize(new(800, 475));
             Title = "SIT Manager";
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
@@ -124,7 +124,7 @@ namespace SIT.Manager
 
         public void OnClosed(object sender, WindowEventArgs e)
         {
-            if(AkiServer.IsRunning)
+            if(AkiServer.IsRunning())
                 AkiServer.Stop();
         }
     }

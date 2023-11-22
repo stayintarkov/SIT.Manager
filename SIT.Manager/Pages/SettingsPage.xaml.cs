@@ -7,6 +7,7 @@ using Windows.UI;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -79,11 +80,31 @@ namespace SIT.Manager.Pages
 
             await colorPickerWindow.ShowAsync();
 
-            Color selectedColor = colorPickerWindow.SelectedColor;
+            string pickedColor = colorPickerWindow.SelectedColor;
 
-            App.ManagerConfig.ConsoleFontColor = selectedColor;
+            if(pickedColor != null)
+            {
+                App.ManagerConfig.ConsoleFontColor = pickedColor;
+                App.ManagerConfig.Save();
+            }
+        }
 
-            App.ManagerConfig.Save();
+        private async void ConsoleFamilyFontChange_Click(object sender, RoutedEventArgs e)
+        {
+            FontFamilyPickerDialog fontFamilyPickerDialog = new()
+            {
+                XamlRoot = Content.XamlRoot
+            };
+
+            await fontFamilyPickerDialog.ShowAsync();
+
+            string pickedFontFamily = fontFamilyPickerDialog.selectedFontFamily;
+
+            if (pickedFontFamily != null)
+            {
+                App.ManagerConfig.ConsoleFontFamily = pickedFontFamily;
+                App.ManagerConfig.Save();
+            }
         }
     }
 }

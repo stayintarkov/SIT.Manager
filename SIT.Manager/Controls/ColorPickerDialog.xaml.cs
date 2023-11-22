@@ -1,18 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using Windows.UI;
+using System.Drawing;
+using System;
+using Color = System.Drawing.Color;
+using System.Globalization;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,22 +13,32 @@ namespace SIT.Manager.Controls
 {
     public sealed partial class ColorPickerDialog : ContentDialog
     {
-        public Color SelectedColor;
+        public string SelectedColor;
 
         public ColorPickerDialog()
         {
             this.InitializeComponent();
 
-            ColorPickerControl.Color = App.ManagerConfig.ConsoleFontColor;
+            string color = App.ManagerConfig.ConsoleFontColor;
+
+            if(color != null && color != "")
+            {
+                byte a = byte.Parse(color.Substring(1, 2), NumberStyles.HexNumber);
+                byte r = byte.Parse(color.Substring(3, 2), NumberStyles.HexNumber);
+                byte g = byte.Parse(color.Substring(5, 2), NumberStyles.HexNumber);
+                byte b = byte.Parse(color.Substring(7, 2), NumberStyles.HexNumber);
+
+                ColorPickerControl.Color = Windows.UI.Color.FromArgb(a, r, g, b);
+            }
         }
 
         private void ColorPickerControlSelectButton(object sender, RoutedEventArgs e)
         {
-            SelectedColor = ColorPickerControl.Color;
+            SelectedColor = ColorPickerControl.Color.ToString();
             Hide();
         }
         private void ColorPickerControlCancelButton(object sender, RoutedEventArgs e)
-        {
+        {         
             Hide();
         }
     }

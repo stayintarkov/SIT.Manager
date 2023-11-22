@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.Windows.AppNotifications;
 using SIT.Manager.Classes;
 
@@ -13,6 +14,7 @@ namespace SIT.Manager
     public partial class App : Application
     {
         public static ManagerConfig ManagerConfig { get; set; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -20,7 +22,9 @@ namespace SIT.Manager
         public App()
         {
             this.InitializeComponent();
+
             ManagerConfig = ManagerConfig.Load();
+
             Loggy.SetupLogFile();
 
             AppNotificationManager.Default.Register();

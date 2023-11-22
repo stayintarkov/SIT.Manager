@@ -1,23 +1,13 @@
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using SIT.Manager.Classes;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using static SIT.Manager.Classes.AkiServerUtils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,25 +25,26 @@ namespace SIT.Manager.Pages
         {
             this.InitializeComponent();
 
+            DataContext = App.ManagerConfig;
+
             AkiServer.OutputDataReceived += AkiServer_OutputDataReceived;
             AkiServer.RunningStateChanged += AkiServer_RunningStateChanged;
-
-            Loaded += ServerPage_Loaded;
-        }
-
-        private void ServerPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            ConsoleLog.Foreground = new SolidColorBrush(App.ManagerConfig.ConsoleFontColor);
         }
 
         private void StartServerButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!AkiServer.IsRunning)
+            if (!AkiServer.IsRunning())
             {
                 if (AkiServer.IsUnhandledInstanceRunning())
                 {
                     AddConsole("SPT-AKI is currently running. Please close any running instance of SPT-AKI.");
 
+                    return;
+                }
+
+                if(AkiServer.FilePath == null || !File.Exists(AkiServer.FilePath))
+                {
+                    AddConsole("SPT-AKI not found. Please configure the SPT-AKI path in Settings tab before starting the server.");
                     return;
                 }
 
@@ -100,26 +91,38 @@ namespace SIT.Manager.Pages
 
         private void AkiServer_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            window.DispatcherQueue.TryEnqueue(() =>
-            {
-                AddConsole(e.Data);
-            }); 
+            window.DispatcherQueue.TryEnqueue(() => AddConsole(e.Data));
         }
 
-        private void AkiServer_RunningStateChanged(bool isRunning)
+        private void AkiServer_RunningStateChanged(RunningState runningState)
         {
-            if (isRunning)
+            window.DispatcherQueue.TryEnqueue(() =>
             {
-                AddConsole("Server started!");
-                StartServerButtonSymbolIcon.Symbol = Symbol.Stop;
-                StartServerButtonTextBlock.Text = "Stop Server";
-            }
-            else
-            {
-                AddConsole("Server stopped!");
-                StartServerButtonSymbolIcon.Symbol = Symbol.Play;
-                StartServerButtonTextBlock.Text = "Start Server";
-            }
+                switch(runningState)
+                {
+                    case RunningState.RUNNING:
+                    {
+                        AddConsole("Server started!");
+                        StartServerButtonSymbolIcon.Symbol = Symbol.Stop;
+                        StartServerButtonTextBlock.Text = "Stop Server";
+                    }
+                    break;
+                    case RunningState.NOT_RUNNING:
+                    {
+                        AddConsole("Server stopped!");
+                        StartServerButtonSymbolIcon.Symbol = Symbol.Play;
+                        StartServerButtonTextBlock.Text = "Start Server";
+                    }
+                    break;
+                    case RunningState.STOPPED_UNEXPECTEDLY:
+                    {
+                        AddConsole("Server stopped unexpectedly! Check console for errors.");
+                        StartServerButtonSymbolIcon.Symbol = Symbol.Play;
+                        StartServerButtonTextBlock.Text = "Start Server";
+                    }
+                    break;
+                }
+            });
         }
 
         private void ConsoleLog_SizeChanged(object sender, SizeChangedEventArgs e)

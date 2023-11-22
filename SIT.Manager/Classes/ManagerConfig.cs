@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using Windows.UI;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Microsoft.UI.Xaml.Media;
 
 namespace SIT.Manager.Classes
 {
@@ -84,11 +84,19 @@ namespace SIT.Manager.Classes
             get => _lookForUpdates;
             set => SetField(ref _lookForUpdates, value);
         }
-        private Color _consoleFontColor = Colors.LightBlue;
-        public Color ConsoleFontColor
+
+        private string _consoleFontColor = Colors.LightBlue.ToString();
+        public string ConsoleFontColor
         {
             get => _consoleFontColor;
             set => SetField(ref _consoleFontColor, value);
+        }
+
+        private string _consoleFontFamily = "Consolas";
+        public string ConsoleFontFamily
+        {
+            get => _consoleFontFamily;
+            set => SetField(ref _consoleFontFamily, value);
         }
 
         public static ManagerConfig Load()

@@ -5,17 +5,28 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SIT.Manager.Classes.AkiServerUtils;
 
 namespace SIT.Manager.Classes
 {
-    public static class AkiServer
+    public class AkiServerUtils
     {
+        public enum RunningState
+        {
+            NOT_RUNNING,
+            RUNNING,
+            STOPPED_UNEXPECTEDLY
+        }
+    }
+
+    public static class AkiServer
+    {   
         #region events
         public static event OutputDataReceivedEventHandler? OutputDataReceived;
         public delegate void OutputDataReceivedEventHandler(object sender, DataReceivedEventArgs e);
 
         public static event StateChangedEventHandler? RunningStateChanged;
-        public delegate void StateChangedEventHandler(bool isRunning);
+        public delegate void StateChangedEventHandler(RunningState runningState);
         #endregion
 
         #region properties
@@ -29,19 +40,22 @@ namespace SIT.Manager.Classes
 
         public static string FilePath
         {
-            get => Path.Combine(App.ManagerConfig.AkiServerPath, ExeName);
+            get => App.ManagerConfig.AkiServerPath != null ? Path.Combine(App.ManagerConfig.AkiServerPath, ExeName) : "";
         }
 
         public static string Directory
         {
-            get => App.ManagerConfig.AkiServerPath;
+            get => App.ManagerConfig.AkiServerPath != null ? App.ManagerConfig.AkiServerPath : "";
         }
 
-        private static bool _isRunning = false;
-        public static bool IsRunning 
+        private static RunningState _state = RunningState.NOT_RUNNING;
+        public static RunningState State
         {
-            get => _isRunning;
+            get => _state;
         }
+
+        private static bool stopRequest = false;
+
         #endregion
 
         public static bool IsUnhandledInstanceRunning()
@@ -63,10 +77,10 @@ namespace SIT.Manager.Classes
             return false;
         }
 
-        public static bool Start()
+        public static void Start()
         {            
-            if(_isRunning)
-                return true;
+            if(_state == RunningState.RUNNING)
+                return;
 
             Process = new Process();
 
@@ -75,28 +89,36 @@ namespace SIT.Manager.Classes
             Process.StartInfo.UseShellExecute = false;
             Process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             Process.StartInfo.RedirectStandardOutput = true;
-            Process.OutputDataReceived += OutputDataReceivedEvent;
             Process.StartInfo.CreateNoWindow = true;
-
+            Process.EnableRaisingEvents = true;
+            Process.OutputDataReceived += new DataReceivedEventHandler((sender, e) => OutputDataReceivedEvent(sender, e));
+            Process.Exited += new EventHandler((sender, e) => ExitedEvent(sender, e));
+            
             Process.Start();
             Process.BeginOutputReadLine();
 
-            UpdateRunningState();
+            _state = RunningState.RUNNING;
 
-            return _isRunning;
+            RunningStateChanged?.Invoke(_state);
         }
 
-        public static bool Stop()
+        public static void Stop()
         {
-            if(!_isRunning || Process == null || Process.HasExited)
-                return true;
+            if(_state == RunningState.NOT_RUNNING || Process == null || Process.HasExited)
+                return;
+
+            stopRequest = true;
 
             // this allows to gracefully close a console app.
             Win32.CloseConsoleProgram(Process);
+        }
 
-            UpdateRunningState();
+        public static bool IsRunning()
+        {
+            if (_state == RunningState.RUNNING)
+                return true;
 
-            return !_isRunning;
+            return false;
         }
 
         private static void OutputDataReceivedEvent(object sender, DataReceivedEventArgs e)
@@ -104,18 +126,19 @@ namespace SIT.Manager.Classes
             OutputDataReceived?.Invoke(sender, e);
         }
 
-        private static void UpdateRunningState()
+        private static void ExitedEvent(object? sender, EventArgs e)
         {
-            if (Process == null)
-                return;
-
-            bool currentState = !Process.HasExited;
-
-            if (_isRunning != currentState)
+            if(_state == RunningState.RUNNING && !stopRequest)
             {
-                _isRunning = currentState;
-                RunningStateChanged?.Invoke(_isRunning);
+                _state = RunningState.STOPPED_UNEXPECTEDLY;
             }
+            else
+            {
+                _state = RunningState.NOT_RUNNING;
+            }
+
+            stopRequest = false;
+            RunningStateChanged?.Invoke(_state);
         }
     }
 }

@@ -5,8 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SIT.Manager.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:classes="using:SIT.Manager.Classes" d:DataContext="{d:DesignInstance Type=classes:ManagerConfig}"
-    mc:Ignorable="d"
     NavigationCacheMode="Required">
 
     <Grid CornerRadius="8" BorderBrush="Gray" BorderThickness="2">
@@ -22,7 +20,7 @@
             </Grid.RowDefinitions>
             <TextBlock Margin="10,5,0,0"  Grid.Row="0" Name="ConsoleOutput" Text="Console Output" FontSize="16" FontFamily="{ThemeResource BenderFont}" FontWeight="Bold"/>
             <ScrollViewer Name="ConsoleLogScroller" Grid.Row="1" CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Margin="10" HorizontalScrollBarVisibility="Disabled" Padding="6,0">
-                <RichTextBlock Name="ConsoleLog" Grid.Row="1" HorizontalAlignment="Stretch" MinHeight="200" FontFamily="Consolas" FontSize="16" Foreground="Aqua" Margin="10" TextWrapping="WrapWholeWords" SizeChanged="ConsoleLog_SizeChanged"/>
+                <RichTextBlock Name="ConsoleLog" Grid.Row="1" HorizontalAlignment="Stretch" MinHeight="200" FontFamily="{Binding ConsoleFontFamily}" FontSize="16" Foreground="{Binding ConsoleFontColor}" Margin="10" TextWrapping="WrapWholeWords" SizeChanged="ConsoleLog_SizeChanged"/>
             </ScrollViewer>
         </Grid>
 
