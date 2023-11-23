@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using SIT.Manager.Classes;
 using SIT.Manager.Controls;
 using System;
+using System.IO;
 using System.Reflection;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -40,7 +41,7 @@ namespace SIT.Manager.Pages
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
 
             StorageFolder eftFolder = await folderPicker.PickSingleFolderAsync();
-            if (eftFolder != null)
+            if (eftFolder != null && File.Exists(eftFolder.Path + @"\EscapeFromTarkov.exe"))
             {
                 App.ManagerConfig.InstallPath = eftFolder.Path;
 
@@ -48,6 +49,12 @@ namespace SIT.Manager.Pages
                 Utils.CheckSITVersion(eftFolder.Path);
 
                 App.ManagerConfig.Save();
+                Utils.ShowInfoBar("Config", $"EFT installation path set to '{eftFolder.Path}'");
+            }
+            else
+            {
+                Utils.ShowInfoBar("Error", "The chosen folder was invalid. Make sure it's a proper EFT game folder.", InfoBarSeverity.Error);
+                return;
             }
         }
 
