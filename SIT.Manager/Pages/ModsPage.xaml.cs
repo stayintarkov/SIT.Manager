@@ -45,9 +45,6 @@ namespace SIT.Manager.Pages
                 return;
             }
 
-            //if (ModsList.Items.Count > 0)
-            //    ModsList.Items.Clear();
-
             if (ModsList.IsHitTestVisible == false)
                 ModsList.IsHitTestVisible = true;
 
@@ -169,12 +166,26 @@ namespace SIT.Manager.Pages
 
                 foreach (string pluginFile in mod.PluginFiles)
                 {
-                    File.Delete(gamePluginsPath + pluginFile);
+                    if (File.Exists(gamePluginsPath + pluginFile))
+                    {
+                        File.Delete(gamePluginsPath + pluginFile);
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException($"A file was missing from the mod {mod.Name}. File: {pluginFile}");
+                    }
                 }
 
                 foreach (var configFile in mod.ConfigFiles)
                 {
-                    File.Delete(gameConfigPath + configFile);
+                    if (File.Exists(gamePluginsPath + configFile))
+                    {
+                        File.Delete(gameConfigPath + configFile);
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException($"A file was missing from the mod {mod.Name}. File: {configFile}");
+                    }
                 }
 
                 App.ManagerConfig.InstalledMods.RemoveAll((x) => x == mod.Name);
