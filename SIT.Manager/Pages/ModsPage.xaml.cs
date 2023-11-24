@@ -151,7 +151,7 @@ namespace SIT.Manager.Pages
             }
         }
 
-        private void UninstallMod(ModInfo mod)
+        private async void UninstallMod(ModInfo mod)
         {
             try
             {
@@ -172,7 +172,27 @@ namespace SIT.Manager.Pages
                     }
                     else
                     {
-                        throw new FileNotFoundException($"A file was missing from the mod {mod.Name}. File: {pluginFile}");
+                        ContentDialog dialog = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "Error Uninstalling Mod",
+                            Content = $"A file was missing from the mod {mod.Name}: '{pluginFile}'\n\nForce remove the mod from the list of installed mods anyway?",
+                            CloseButtonText = "No",
+                            IsPrimaryButtonEnabled = true,
+                            PrimaryButtonText = "Yes"
+                        };
+
+                        ContentDialogResult result = await dialog.ShowAsync();
+
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            App.ManagerConfig.InstalledMods.RemoveAll(x => x == mod.Name);
+                            App.ManagerConfig.Save();
+                        }
+                        else
+                        {
+                            throw new FileNotFoundException($"A file was missing from the mod {mod.Name}: '{pluginFile}'");
+                        }
                     }
                 }
 
@@ -184,11 +204,31 @@ namespace SIT.Manager.Pages
                     }
                     else
                     {
-                        throw new FileNotFoundException($"A file was missing from the mod {mod.Name}. File: {configFile}");
+                        ContentDialog dialog = new()
+                        {
+                            XamlRoot = XamlRoot,
+                            Title = "Error Uninstalling Mod",
+                            Content = $"A file was missing from the mod {mod.Name}: '{configFile}'\n\nForce remove the mod from the list of installed mods anyway?",
+                            CloseButtonText = "No",
+                            IsPrimaryButtonEnabled = true,
+                            PrimaryButtonText = "Yes"
+                        };
+
+                        ContentDialogResult result = await dialog.ShowAsync();
+
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            App.ManagerConfig.InstalledMods.RemoveAll(x => x == mod.Name);
+                            App.ManagerConfig.Save();
+                        }
+                        else
+                        {
+                            throw new FileNotFoundException($"A file was missing from the mod {mod.Name}: '{configFile}'");
+                        }
                     }
                 }
 
-                App.ManagerConfig.InstalledMods.RemoveAll((x) => x == mod.Name);
+                App.ManagerConfig.InstalledMods.RemoveAll(x => x == mod.Name);
                 App.ManagerConfig.Save();
 
                 Utils.ShowInfoBar("Uninstall Mod", $"{mod.Name} was successfully uninstalled.", InfoBarSeverity.Success);
