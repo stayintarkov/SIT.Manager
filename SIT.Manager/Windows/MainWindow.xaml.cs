@@ -36,6 +36,7 @@ namespace SIT.Manager
 
             // Customize Window
             AppWindow.Resize(new(800, 475));
+            AppWindow.SetIcon("Stay-In-Tarkov-512.ico");
             Title = "SIT Manager";
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
