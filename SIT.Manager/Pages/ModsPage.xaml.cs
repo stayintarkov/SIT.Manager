@@ -4,6 +4,7 @@ using SIT.Manager.Classes;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 
@@ -51,6 +52,7 @@ namespace SIT.Manager.Pages
                 ModsList.IsHitTestVisible = true;
 
             List<ModInfo> masterList = JsonSerializer.Deserialize<List<ModInfo>>(File.ReadAllText(dir + @"MasterList.json"));
+            masterList = masterList.OrderBy(x => x.Name).ToList();
 
             ModsList.ItemsSource = masterList;
             if (ModsList.Items.Count > 0)
