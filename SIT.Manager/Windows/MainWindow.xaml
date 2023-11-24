@@ -39,10 +39,20 @@
             <TextBlock x:Name="AppTitleTextBlock" Text="SIT Manager" TextWrapping="NoWrap" VerticalAlignment="Center" Grid.Column="1" FontFamily="{StaticResource BenderFont}" Foreground="{StaticResource AppBarItemForegroundThemeBrush}"/>
         </Grid>
 
-        <StackPanel Grid.Row="1">
+        <!--<StackPanel Grid.Row="1">
             <InfoBar Name="MainInfoBar" x:FieldModifier="Public">
             </InfoBar>
 
+            <InfoBar Name="UpdateInfoBar">
+
+                <InfoBar.ActionButton>
+                    <Button Name="UpdateButton" Content="Update" Click="UpdateButton_Click" HorizontalAlignment="Right"/>
+                </InfoBar.ActionButton>
+
+            </InfoBar>
+        </StackPanel>-->
+
+        <StackPanel Name="InfoBarStackPanel" Grid.Row="1" x:FieldModifier="Public">
             <InfoBar Name="UpdateInfoBar">
 
                 <InfoBar.ActionButton>

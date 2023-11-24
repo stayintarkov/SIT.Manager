@@ -764,17 +764,21 @@ namespace SIT.Manager.Classes
         public static async void ShowInfoBar(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
         {
 
-            MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+            MainWindow window = (Application.Current as App).m_window as MainWindow;
 
-            window.MainInfoBar.Title = title;
-            window.MainInfoBar.Message = message;
-            window.MainInfoBar.Severity = severity;
+            InfoBar infoBar = new()
+            {
+                Title = title,
+                Message = message,
+                Severity = severity,
+                IsOpen = true
+            };
 
-            window.MainInfoBar.IsOpen = true;
-
+            window.InfoBarStackPanel.Children.Add(infoBar);
+            
             await Task.Delay(TimeSpan.FromSeconds(delay));
 
-            window.MainInfoBar.IsOpen = false;
+            window.InfoBarStackPanel.Children.Remove(infoBar);
         }
     }
 }
