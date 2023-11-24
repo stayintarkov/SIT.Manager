@@ -184,12 +184,7 @@ namespace SIT.Manager.Pages
 
                         ContentDialogResult result = await dialog.ShowAsync();
 
-                        if (result == ContentDialogResult.Primary)
-                        {
-                            App.ManagerConfig.InstalledMods.RemoveAll(x => x == mod.Name);
-                            App.ManagerConfig.Save();
-                        }
-                        else
+                        if (result != ContentDialogResult.Primary)
                         {
                             throw new FileNotFoundException($"A file was missing from the mod {mod.Name}: '{pluginFile}'");
                         }
@@ -216,12 +211,7 @@ namespace SIT.Manager.Pages
 
                         ContentDialogResult result = await dialog.ShowAsync();
 
-                        if (result == ContentDialogResult.Primary)
-                        {
-                            App.ManagerConfig.InstalledMods.RemoveAll(x => x == mod.Name);
-                            App.ManagerConfig.Save();
-                        }
-                        else
+                        if (result != ContentDialogResult.Primary)
                         {
                             throw new FileNotFoundException($"A file was missing from the mod {mod.Name}: '{configFile}'");
                         }
