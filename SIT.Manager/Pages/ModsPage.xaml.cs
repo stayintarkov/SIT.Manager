@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using Windows.ApplicationModel.Store;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -33,7 +34,14 @@ namespace SIT.Manager.Pages
 
         private void LoadMasterList()
         {
+            if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
+            {
+                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                return;
+            }
+
             string dir = App.ManagerConfig.InstallPath + @"\SITLauncher\Mods\Extracted\";
+            List<ModInfo> outdatedMods = new();
 
             if (!File.Exists(dir + @"MasterList.json"))
             {
@@ -59,10 +67,88 @@ namespace SIT.Manager.Pages
                 if (InfoGrid.Visibility == Visibility.Collapsed)
                     InfoGrid.Visibility = Visibility.Visible;
             }
+
+            foreach (ModInfo mod in masterList)
+            {
+                var keyValuePair = App.ManagerConfig.InstalledMods.Where(x => x.Key == mod.Name).FirstOrDefault();
+                if (!keyValuePair.Equals(default(KeyValuePair<string, string>)))
+                {
+                    Version installedVersion = new(keyValuePair.Value);
+                    Version currentVersion = new(mod.PortVersion);
+
+                    int result = installedVersion.CompareTo(currentVersion);
+                    if (result < 0)
+                    {
+                        outdatedMods.Add(mod);
+                    }
+                }
+                
+            }
+
+            if (outdatedMods.Count > 0)
+            {
+                AutoUpdate(outdatedMods);
+            }
+        }
+
+        /// <summary>
+        /// Automatically updates installed mods that are outdated.
+        /// </summary>
+        /// <param name="outdatedMods"><see cref="List{T}"/> of <see cref="ModInfo"/> that are outdated.</param>
+        private async void AutoUpdate(List<ModInfo> outdatedMods)
+        {
+            // As this is being run on another thread than the UI we need to fetch the MainWindow
+            MainWindow window = (Application.Current as App).m_window as MainWindow;
+
+            List<string> outdatedNames = new();
+            outdatedNames.AddRange(from ModInfo mod in outdatedMods
+                                   select mod.Name);
+
+            string outdatedString = string.Join("\n", outdatedNames);
+
+            ScrollView scrollView = new()
+            {
+                Content = new TextBlock()
+                {
+                    Text = $"You have {outdatedMods.Count} outdated mods. Would you like to automatically update them?\nOutdated Mods:\n\n{outdatedString}"
+                }
+            };
+
+            ContentDialog contentDialog = new()
+            {
+                XamlRoot = window.Content.XamlRoot,
+                Title = "Outdated Mods Found",
+                Content = scrollView,
+                CloseButtonText = "No",
+                IsPrimaryButtonEnabled = true,
+                PrimaryButtonText = "Yes"
+            };
+
+            ContentDialogResult result = await contentDialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                foreach (ModInfo mod in outdatedMods)
+                {
+                    App.ManagerConfig.InstalledMods.Remove(mod.Name);
+                    InstallMod(mod, true);
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            Utils.ShowInfoBar("Updated Mods", $"Updated {outdatedMods.Count} mods.", InfoBarSeverity.Success);
         }
 
         private async void DownloadModPack()
         {
+            if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
+            {
+                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                return;
+            }
+
             try
             {
                 DownloadModPackageButton.IsEnabled = false;
@@ -95,8 +181,14 @@ namespace SIT.Manager.Pages
             }
         }
 
-        private async void InstallMod(ModInfo mod)
+        private async void InstallMod(ModInfo mod, bool suppressNotification = false)
         {
+            if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
+            {
+                Utils.ShowInfoBar("Install Mod", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                return;
+            }
+
             try
             {
                 if (mod.SupportedVersion != App.ManagerConfig.SitVersion)
@@ -136,10 +228,11 @@ namespace SIT.Manager.Pages
                     File.Copy(installPath + @"\SITLauncher\Mods\Extracted\config\" + configFile, gameConfigPath + configFile, true);
                 }
 
-                App.ManagerConfig.InstalledMods.Add(mod.Name);
+                App.ManagerConfig.InstalledMods.Add(mod.Name, mod.PortVersion);
                 App.ManagerConfig.Save();
 
-                Utils.ShowInfoBar("Install Mod", $"{mod.Name} was successfully installed.", InfoBarSeverity.Success);
+                if (suppressNotification == false)
+                    Utils.ShowInfoBar("Install Mod", $"{mod.Name} was successfully installed.", InfoBarSeverity.Success);
                 UninstallButton.IsEnabled = true;
             }
             catch (Exception ex)
@@ -218,7 +311,7 @@ namespace SIT.Manager.Pages
                     }
                 }
 
-                App.ManagerConfig.InstalledMods.RemoveAll(x => x == mod.Name);
+                App.ManagerConfig.InstalledMods.Remove(mod.Name);
                 App.ManagerConfig.Save();
 
                 Utils.ShowInfoBar("Uninstall Mod", $"{mod.Name} was successfully uninstalled.", InfoBarSeverity.Success);
@@ -245,7 +338,7 @@ namespace SIT.Manager.Pages
             if (selectedMod == null)
                 return;
 
-            bool isInstalled = App.ManagerConfig.InstalledMods.Contains(selectedMod.Name);
+            bool isInstalled = App.ManagerConfig.InstalledMods.Keys.Contains(selectedMod.Name);
 
             InstallButton.IsEnabled = !isInstalled;
             UninstallButton.IsEnabled = isInstalled;

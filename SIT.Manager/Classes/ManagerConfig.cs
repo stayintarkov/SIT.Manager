@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace SIT.Manager.Classes
 {
@@ -17,74 +18,86 @@ namespace SIT.Manager.Classes
             get => _lastServer;
             set => SetField(ref _lastServer, value);
         }
+
         private string _username;
         public string Username
         {
             get => _username;
             set => SetField(ref _username, value);
         }
+
         private string _password;
         public string Password
         {
             get => _password;
             set => SetField(ref _password, value);
         }
+
         private string _installPath;
         public string InstallPath
         {
             get => _installPath;
             set => SetField(ref _installPath, value);
         }
-        private string? _akiServerPath;
+
+        private string _akiServerPath;
         public string AkiServerPath
         {
             get => _akiServerPath;
             set => SetField(ref _akiServerPath, value);
         }
+
         private bool _rememberLogin = false;
         public bool RememberLogin
         {
             get => _rememberLogin;
             set => SetField(ref _rememberLogin, value);
         }
+
         private bool _closeAfterLaunch = false;
         public bool CloseAfterLaunch
         {
             get => _closeAfterLaunch;
             set => SetField(ref _closeAfterLaunch, value);
         }
+
         private string _tarkovVersion;
         public string TarkovVersion
         {
             get => _tarkovVersion;
             set => SetField(ref _tarkovVersion, value);
         }
+
         private string _sitVersion;
         public string SitVersion
         {
             get => _sitVersion;
             set => SetField(ref _sitVersion, value);
         }
+
         private bool _lookForUpdates = true;
         public bool LookForUpdates
         {
             get => _lookForUpdates;
             set => SetField(ref _lookForUpdates, value);
         }
+
         private bool _acceptedModsDisclaimer = false;
         public bool AcceptedModsDisclaimer
         {
             get => _acceptedModsDisclaimer;
             set => SetField(ref _acceptedModsDisclaimer, value);
         }
+
         private string _modCollectionVersion;
         public string ModCollectionVersion
         {
             get => _modCollectionVersion;
             set => SetField(ref _modCollectionVersion, value);
         }
-        private List<string> _installedMods = new();
-        public List<string> InstalledMods
+
+        private Dictionary<string, string> _installedMods = new();
+        public Dictionary<string, string> InstalledMods
         {
             get => _installedMods;
             set => SetField(ref _installedMods, value);

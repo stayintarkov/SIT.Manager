@@ -33,6 +33,13 @@ namespace SIT.Manager.Classes
             set => SetField(ref _modVersion, value);
         }
 
+        private string _portVersion;
+        public string PortVersion
+        {
+            get => _portVersion;
+            set => SetField(ref _portVersion, value);
+        }
+
         private string _description;
         public string Description
         {

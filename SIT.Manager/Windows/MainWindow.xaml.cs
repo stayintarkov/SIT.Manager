@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Windows.Media.Capture;
 using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -76,11 +77,15 @@ namespace SIT.Manager
         /// </summary>
         public async void LookForUpdate()
         {
-            string? currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+            Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             string latestVersion = await Utils.utilsHttpClient.GetStringAsync(@"https://raw.githubusercontent.com/stayintarkov/SIT.Manager/master/VERSION");
             latestVersion = latestVersion.Trim();
 
-            if (currentVersion != latestVersion)
+            Version newVersion = new(latestVersion);
+
+            int compare = currentVersion.CompareTo(newVersion);
+
+            if (compare < 0)
             {
                 DispatcherQueue.TryEnqueue(async () =>
                 {
