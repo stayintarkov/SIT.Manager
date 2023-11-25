@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using Windows.ApplicationModel.Store;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -82,7 +81,7 @@ namespace SIT.Manager.Pages
                         outdatedMods.Add(mod);
                     }
                 }
-                
+
             }
 
             if (outdatedMods.Count > 0)

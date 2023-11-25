@@ -775,7 +775,7 @@ namespace SIT.Manager.Classes
             };
 
             window.InfoBarStackPanel.Children.Add(infoBar);
-            
+
             await Task.Delay(TimeSpan.FromSeconds(delay));
 
             window.InfoBarStackPanel.Children.Remove(infoBar);
