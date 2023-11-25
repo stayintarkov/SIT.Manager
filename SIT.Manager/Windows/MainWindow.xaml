@@ -74,7 +74,7 @@
                 <NavigationViewItem Icon="Play" Content="Play" Tag="Play" ToolTipService.ToolTip="Connect and play." FontFamily="{StaticResource BenderFont}"/>
                 <NavigationViewItem Icon="AllApps" Content="Tools" Tag="Tools" ToolTipService.ToolTip="Tools to manage SIT and Tarkov." FontFamily="{StaticResource BenderFont}"/>
                 <NavigationViewItem Icon="MapDrive" Content="Server" Tag="Server" ToolTipService.ToolTip="Server management" FontFamily="{StaticResource BenderFont}"/>
-                <NavigationViewItem Icon="Library" Content="Mods" Tag="Mods" ToolTipService.ToolTip="Not implemented." FontFamily="{StaticResource BenderFont}"/>
+                <NavigationViewItem Icon="Library" Content="Mods" Tag="Mods" ToolTipService.ToolTip="Mod management." FontFamily="{StaticResource BenderFont}"/>
             </NavigationView.MenuItems>
             
             <Frame x:Name="ContentFrame" Margin="6" CornerRadius="8">
