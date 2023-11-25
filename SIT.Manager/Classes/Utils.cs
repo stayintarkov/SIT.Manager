@@ -616,6 +616,12 @@ namespace SIT.Manager.Classes
             var window = (Application.Current as App)?.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
 
+            if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
+            {
+                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                return;
+            }
+
             try
             {
                 if (selectedVersion == null)
