@@ -59,7 +59,7 @@ namespace SIT.Manager
             actionTextBlock = ActionPanelText;
 
             // Create task to prevent the UI thread from freezing on startup?
-            if (App.ManagerConfig?.LookForUpdates == true)
+            if (App.ManagerConfig.LookForUpdates == true)
             {
                 Task.Run(() =>
                 {
@@ -67,7 +67,7 @@ namespace SIT.Manager
                 });
             }
 
-            Closed += OnClosed;
+            Closed += OnClosed;            
         }
 
         /// <summary>

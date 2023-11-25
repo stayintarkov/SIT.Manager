@@ -36,6 +36,8 @@ namespace SIT.Manager
 
         private void ReceivedNotification(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
         {
+            // notificationButton.Arguments.Add("errorInstall", "true");
+
             if (args != null)
             {
                 switch (args.Argument)

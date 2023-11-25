@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace SIT.Manager.Classes
 {
@@ -686,31 +687,11 @@ namespace SIT.Manager.Classes
                     CheckSITVersion(App.ManagerConfig.InstallPath);
                 });
 
-                AppNotification notification = new AppNotificationBuilder()
-                    .AddText("Install")
-                    .AddText("Installation of SIT was succesful.")
-                    .BuildNotification();
-
-                notification.Expiration = DateTime.Now.AddSeconds(5);
-
-                AppNotificationManager.Default.Show(notification);
+                ShowInfoBar("Install", "Installation of SIT was succesful.", InfoBarSeverity.Success);
             }
             catch (Exception ex)
             {
-                AppNotificationButton notificationButton = new AppNotificationButton()
-                {
-                    Content = "Open Log"
-                };
-
-                notificationButton.Arguments.Add("errorInstall", "true");
-
-                AppNotification notification = new AppNotificationBuilder()
-                    .AddText("Install Error")
-                    .AddText("Encountered an error during installation.")
-                    .AddButton(notificationButton)
-                    .BuildNotification();
-
-                AppNotificationManager.Default.Show(notification);
+                ShowInfoBarWithLogButton("Install Error", "Encountered an error during installation.", InfoBarSeverity.Error, 10);
 
                 Loggy.LogToFile("Install SIT: " + ex.Message + "\n" + ex);
 
@@ -763,22 +744,53 @@ namespace SIT.Manager.Classes
         /// <returns></returns>
         public static async void ShowInfoBar(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
         {
-
             MainWindow window = (Application.Current as App).m_window as MainWindow;
 
-            InfoBar infoBar = new()
+            window.DispatcherQueue.TryEnqueue(async () =>
             {
-                Title = title,
-                Message = message,
-                Severity = severity,
-                IsOpen = true
-            };
+                InfoBar infoBar = new()
+                {
+                    Title = title,
+                    Message = message,
+                    Severity = severity,
+                    IsOpen = true
+                };
 
-            window.InfoBarStackPanel.Children.Add(infoBar);
+                window.InfoBarStackPanel.Children.Add(infoBar);
 
-            await Task.Delay(TimeSpan.FromSeconds(delay));
+                await Task.Delay(TimeSpan.FromSeconds(delay));
 
-            window.InfoBarStackPanel.Children.Remove(infoBar);
+                window.InfoBarStackPanel.Children.Remove(infoBar);
+            });
+        }
+
+        public static async void ShowInfoBarWithLogButton(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
+        {
+            MainWindow window = (Application.Current as App).m_window as MainWindow;
+
+            window.DispatcherQueue.TryEnqueue(async () =>
+            {
+                Button infoBarButton = new() { Content = "Open Log" };
+                infoBarButton.Click += (e, s) =>
+                {
+                    OpenLauncherLog();
+                };
+
+                InfoBar infoBar = new()
+                {
+                    Title = title,
+                    Message = message,
+                    Severity = severity,
+                    IsOpen = true,
+                    ActionButton = infoBarButton
+                };
+
+                window.InfoBarStackPanel.Children.Add(infoBar);
+
+                await Task.Delay(TimeSpan.FromSeconds(delay));
+
+                window.InfoBarStackPanel.Children.Remove(infoBar);
+            });
         }
     }
 }
