@@ -122,8 +122,15 @@ namespace SIT.Manager.Classes
 
             string currentDir = AppContext.BaseDirectory;
 
-            if (File.Exists(currentDir + @"\ManagerConfig.json"))
-                config = JsonSerializer.Deserialize<ManagerConfig>(File.ReadAllText(currentDir + @"\ManagerConfig.json"));
+            try
+            {
+                if (File.Exists(currentDir + @"\ManagerConfig.json"))
+                    config = JsonSerializer.Deserialize<ManagerConfig>(File.ReadAllText(currentDir + @"\ManagerConfig.json"));
+            }
+            catch(Exception ex)
+            {
+                
+            }
 
             return config;
         }

@@ -26,7 +26,7 @@ namespace SIT.Manager.Classes
         public delegate void StateChangedEventHandler(RunningState runningState);
         #endregion
 
-        #region properties
+        #region fields
 
         public static Process? Process;
 
@@ -74,6 +74,11 @@ namespace SIT.Manager.Classes
             return false;
         }
 
+        public static bool IsRunning()
+        {
+            return _state == RunningState.RUNNING;
+        }
+
         public static void Start()
         {
             if (_state == RunningState.RUNNING)
@@ -108,14 +113,6 @@ namespace SIT.Manager.Classes
 
             // this allows to gracefully close a console app.
             Win32.CloseConsoleProgram(Process);
-        }
-
-        public static bool IsRunning()
-        {
-            if (_state == RunningState.RUNNING)
-                return true;
-
-            return false;
         }
 
         private static void OutputDataReceivedEvent(object sender, DataReceivedEventArgs e)
