@@ -22,7 +22,7 @@ namespace SIT.Manager
         /// </summary>
         public App()
         {
-            this.InitializeComponent();            
+            this.InitializeComponent();
 
             Loggy.SetupLogFile();
 
@@ -51,9 +51,6 @@ namespace SIT.Manager
         {
             //AppNotificationManager.Default.RemoveAllAsync();
             //AppNotificationManager.Default.Unregister();
-
-            if (AkiServer.IsRunning())
-                AkiServer.Stop();
         }
 
         /// <summary>
@@ -88,7 +85,7 @@ namespace SIT.Manager
             m_window = new MainWindow();
 
             m_window.Activate();
-            
+
             //m_window.Closed += OnWindowClosed;
         }
 

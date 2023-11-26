@@ -12,7 +12,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using WinUIEx;
-using WinUIEx.Messaging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -48,6 +47,8 @@ namespace SIT.Manager
             manager.MinWidth = 800;
             manager.MaxWidth = 1200;
 
+            this.CenterOnScreen();
+
             // Navigate to Play page by default
             NavView.SelectedItem = NavView.MenuItems.FirstOrDefault();
             ContentFrame.Navigate(typeof(PlayPage), null, new SuppressNavigationTransitionInfo());
@@ -74,6 +75,8 @@ namespace SIT.Manager
                     LookForUpdate();
                 });
             }
+
+            Closed += OnClosed;
         }
 
         async void UntilLoaded()
@@ -200,6 +203,17 @@ namespace SIT.Manager
                 Process.Start(dir + @"\SIT.Manager.Updater.exe");
                 Application.Current.Exit();
             }
+        }
+
+        /// <summary>
+        /// Handles the window closing event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void OnClosed(object sender, WindowEventArgs args)
+        {
+            if (AkiServer.State == AkiServer.RunningState.RUNNING)
+                AkiServer.Stop();
         }
     }
 }
