@@ -14,11 +14,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace SIT.Manager.Classes
 {
@@ -770,7 +768,7 @@ namespace SIT.Manager.Classes
                         await Task.Delay(TimeSpan.FromSeconds(delay));
 
                         window.InfoBarStackPanel.Children.Remove(infoBar);
-                    }); 
+                    });
             }
         }
 
@@ -810,7 +808,7 @@ namespace SIT.Manager.Classes
                     await Task.Delay(TimeSpan.FromSeconds(delay));
 
                     window.InfoBarStackPanel.Children.Remove(infoBar);
-                }); 
+                });
             }
         }
     }

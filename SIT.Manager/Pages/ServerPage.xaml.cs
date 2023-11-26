@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using static SIT.Manager.Classes.AkiServerUtils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,7 +31,7 @@ namespace SIT.Manager.Pages
 
         private void StartServerButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!AkiServer.IsRunning())
+            if (AkiServer.State == AkiServer.RunningState.NOT_RUNNING)
             {
                 if (AkiServer.IsUnhandledInstanceRunning())
                 {
@@ -41,7 +40,7 @@ namespace SIT.Manager.Pages
                     return;
                 }
 
-                if (AkiServer.FilePath == null || !File.Exists(AkiServer.FilePath))
+                if (!File.Exists(AkiServer.FilePath))
                 {
                     AddConsole("SPT-AKI not found. Please configure the SPT-AKI path in Settings tab before starting the server.");
                     return;
@@ -93,27 +92,27 @@ namespace SIT.Manager.Pages
             window.DispatcherQueue.TryEnqueue(() => AddConsole(e.Data));
         }
 
-        private void AkiServer_RunningStateChanged(RunningState runningState)
+        private void AkiServer_RunningStateChanged(AkiServer.RunningState runningState)
         {
             window.DispatcherQueue.TryEnqueue(() =>
             {
                 switch (runningState)
                 {
-                    case RunningState.RUNNING:
+                    case AkiServer.RunningState.RUNNING:
                         {
                             AddConsole("Server started!");
                             StartServerButtonSymbolIcon.Symbol = Symbol.Stop;
                             StartServerButtonTextBlock.Text = "Stop Server";
                         }
                         break;
-                    case RunningState.NOT_RUNNING:
+                    case AkiServer.RunningState.NOT_RUNNING:
                         {
                             AddConsole("Server stopped!");
                             StartServerButtonSymbolIcon.Symbol = Symbol.Play;
                             StartServerButtonTextBlock.Text = "Start Server";
                         }
                         break;
-                    case RunningState.STOPPED_UNEXPECTEDLY:
+                    case AkiServer.RunningState.STOPPED_UNEXPECTEDLY:
                         {
                             AddConsole("Server stopped unexpectedly! Check console for errors.");
                             StartServerButtonSymbolIcon.Symbol = Symbol.Play;

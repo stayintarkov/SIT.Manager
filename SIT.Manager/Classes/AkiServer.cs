@@ -2,20 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using static SIT.Manager.Classes.AkiServerUtils;
 
 namespace SIT.Manager.Classes
 {
-    public class AkiServerUtils
-    {
-        public enum RunningState
-        {
-            NOT_RUNNING,
-            RUNNING,
-            STOPPED_UNEXPECTEDLY
-        }
-    }
-
     public static class AkiServer
     {
         #region events
@@ -26,7 +15,14 @@ namespace SIT.Manager.Classes
         public delegate void StateChangedEventHandler(RunningState runningState);
         #endregion
 
-        #region properties
+        #region fields
+
+        public enum RunningState
+        {
+            NOT_RUNNING,
+            RUNNING,
+            STOPPED_UNEXPECTEDLY
+        }
 
         public static Process? Process;
 
@@ -54,25 +50,6 @@ namespace SIT.Manager.Classes
         private static bool stopRequest = false;
 
         #endregion
-
-        public static bool IsUnhandledInstanceRunning()
-        {
-            Process[] akiServerProcesses = Process.GetProcessesByName(ExeName.Replace(".exe", ""));
-
-            if (akiServerProcesses.Length > 0)
-            {
-                if (Process == null || Process.HasExited)
-                    return true;
-
-                foreach (Process akiServerProcess in akiServerProcesses)
-                {
-                    if (Process.Id != akiServerProcess.Id)
-                        return true;
-                }
-            }
-
-            return false;
-        }
 
         public static void Start()
         {
@@ -110,10 +87,21 @@ namespace SIT.Manager.Classes
             Win32.CloseConsoleProgram(Process);
         }
 
-        public static bool IsRunning()
+        public static bool IsUnhandledInstanceRunning()
         {
-            if (_state == RunningState.RUNNING)
-                return true;
+            Process[] akiServerProcesses = Process.GetProcessesByName(ExeName.Replace(".exe", ""));
+
+            if (akiServerProcesses.Length > 0)
+            {
+                if (Process == null || Process.HasExited)
+                    return true;
+
+                foreach (Process akiServerProcess in akiServerProcesses)
+                {
+                    if (Process.Id != akiServerProcess.Id)
+                        return true;
+                }
+            }
 
             return false;
         }
