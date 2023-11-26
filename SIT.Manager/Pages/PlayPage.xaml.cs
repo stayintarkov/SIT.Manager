@@ -22,6 +22,7 @@ namespace SIT.Manager.Pages
         public PlayPage()
         {
             this.InitializeComponent();
+
             DataContext = App.ManagerConfig;
 
             if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
@@ -75,7 +76,7 @@ namespace SIT.Manager.Pages
         /// </summary>
         private async Task<string> Connect()
         {
-            App.ManagerConfig.Save((bool)RememberMeCheck.IsChecked);
+            ManagerConfig.Save((bool)RememberMeCheck.IsChecked);
 
             if (App.ManagerConfig.InstallPath == null)
             {

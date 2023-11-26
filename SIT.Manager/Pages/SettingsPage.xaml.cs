@@ -48,12 +48,12 @@ namespace SIT.Manager.Pages
                 Utils.CheckEFTVersion(eftFolder.Path);
                 Utils.CheckSITVersion(eftFolder.Path);
 
-                App.ManagerConfig.Save();
+                ManagerConfig.Save();
                 Utils.ShowInfoBar("Config", $"EFT installation path set to '{eftFolder.Path}'");
             }
             else
             {
-                Utils.ShowInfoBar("Error", "The chosen folder was invalid. Make sure it's a proper EFT game folder.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("Error", "The selected folder was invalid. Make sure it's a proper EFT game folder.", InfoBarSeverity.Error);
                 return;
             }
         }
@@ -67,16 +67,21 @@ namespace SIT.Manager.Pages
 
             folderPicker.FileTypeFilter.Add("*");
 
-            Window window = new();
+            MainWindow window = (Application.Current as App).m_window as MainWindow;
             IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
 
             StorageFolder akiServerPath = await folderPicker.PickSingleFolderAsync();
-            if (akiServerPath != null)
+            if (akiServerPath != null && File.Exists(akiServerPath.Path + @"\Aki.Server.exe"))
             {
                 App.ManagerConfig.AkiServerPath = akiServerPath.Path;
 
-                App.ManagerConfig.Save();
+                ManagerConfig.Save();
+                Utils.ShowInfoBar("Config", $"SPT-AKI installation path set to '{akiServerPath.Path}'");
+            }
+            else
+            {
+                Utils.ShowInfoBar("Error", "The selected folder was invalid. Make sure it's a proper SPT-AKI server folder.");
             }
         }
 
@@ -94,7 +99,7 @@ namespace SIT.Manager.Pages
             if (pickedColor != null)
             {
                 App.ManagerConfig.ConsoleFontColor = pickedColor;
-                App.ManagerConfig.Save();
+                ManagerConfig.Save();
             }
         }
 
@@ -112,7 +117,7 @@ namespace SIT.Manager.Pages
             if (pickedFontFamily != null)
             {
                 App.ManagerConfig.ConsoleFontFamily = pickedFontFamily;
-                App.ManagerConfig.Save();
+                ManagerConfig.Save();
             }
         }
 

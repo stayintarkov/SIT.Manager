@@ -228,7 +228,7 @@ namespace SIT.Manager.Pages
                 }
 
                 App.ManagerConfig.InstalledMods.Add(mod.Name, mod.PortVersion);
-                App.ManagerConfig.Save();
+                ManagerConfig.Save();
 
                 if (suppressNotification == false)
                     Utils.ShowInfoBar("Install Mod", $"{mod.Name} was successfully installed.", InfoBarSeverity.Success);
@@ -311,7 +311,7 @@ namespace SIT.Manager.Pages
                 }
 
                 App.ManagerConfig.InstalledMods.Remove(mod.Name);
-                App.ManagerConfig.Save();
+                ManagerConfig.Save();
 
                 Utils.ShowInfoBar("Uninstall Mod", $"{mod.Name} was successfully uninstalled.", InfoBarSeverity.Success);
                 InstallButton.IsEnabled = true;
@@ -348,7 +348,7 @@ namespace SIT.Manager.Pages
             ModGrid.Visibility = Visibility.Visible;
 
             App.ManagerConfig.AcceptedModsDisclaimer = true;
-            App.ManagerConfig.Save();
+            ManagerConfig.Save();
         }
         private void InstallButton_Click(object sender, RoutedEventArgs e)
         {

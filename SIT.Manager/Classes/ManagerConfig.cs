@@ -116,19 +116,26 @@ namespace SIT.Manager.Classes
             set => SetField(ref _consoleFontFamily, value);
         }
 
-        public static ManagerConfig Load()
+        public static void Load()
         {
-            ManagerConfig config = new();
+            try
+            {
+                ManagerConfig config = new();
 
-            string currentDir = AppContext.BaseDirectory;
+                string currentDir = AppContext.BaseDirectory;
 
-            if (File.Exists(currentDir + @"\ManagerConfig.json"))
-                config = JsonSerializer.Deserialize<ManagerConfig>(File.ReadAllText(currentDir + @"\ManagerConfig.json"));
+                if (File.Exists(currentDir + @"\ManagerConfig.json"))
+                    config = JsonSerializer.Deserialize<ManagerConfig>(File.ReadAllText(currentDir + @"\ManagerConfig.json"));
 
-            return config;
+                App.ManagerConfig = config;
+            }
+            catch (Exception ex)
+            {
+                Loggy.LogToFile("ManagerConfig.Load: " + ex.Message);
+            }
         }
 
-        public void Save(bool SaveAccount = false)
+        public static void Save(bool SaveAccount = false)
         {
             string currentDir = AppContext.BaseDirectory;
             Debug.WriteLine(currentDir);

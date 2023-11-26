@@ -148,7 +148,7 @@ namespace SIT.Manager.Pages
             }
 
             await Task.Run(() => Utils.InstallSIT(selectedVersion));
-            App.ManagerConfig.Save();
+            ManagerConfig.Save();
         }
     }
 }

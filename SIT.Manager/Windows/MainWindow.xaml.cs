@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using WinUIEx;
+using WinUIEx.Messaging;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -58,6 +59,13 @@ namespace SIT.Manager
             actionProgressRing = ActionPanelRing;
             actionTextBlock = ActionPanelText;
 
+            if (App.ManagerConfig == null)
+            {
+                App.ManagerConfig = new();
+
+                UntilLoaded();
+            }
+
             // Create task to prevent the UI thread from freezing on startup?
             if (App.ManagerConfig.LookForUpdates == true)
             {
@@ -66,8 +74,16 @@ namespace SIT.Manager
                     LookForUpdate();
                 });
             }
+        }
 
-            Closed += OnClosed;            
+        async void UntilLoaded()
+        {
+            while (Content.XamlRoot == null)
+            {
+                await Task.Delay(100);
+            }
+
+            Utils.ShowInfoBarWithLogButton("Error", "There was an error reading the configuration file.", InfoBarSeverity.Error, 30);
         }
 
         /// <summary>
@@ -87,7 +103,7 @@ namespace SIT.Manager
             {
                 DispatcherQueue.TryEnqueue(async () =>
                 {
-                    UpdateInfoBar.Title = "Update:";
+                    UpdateInfoBar.Title = "Update";
                     UpdateInfoBar.Message = "There is a new update available for SIT.Manager";
                     UpdateInfoBar.Severity = InfoBarSeverity.Informational;
 
@@ -184,12 +200,6 @@ namespace SIT.Manager
                 Process.Start(dir + @"\SIT.Manager.Updater.exe");
                 Application.Current.Exit();
             }
-        }
-
-        public void OnClosed(object sender, WindowEventArgs e)
-        {
-            if (AkiServer.IsRunning())
-                AkiServer.Stop();
         }
     }
 }

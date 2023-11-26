@@ -22,14 +22,12 @@ namespace SIT.Manager
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-
-            ManagerConfig = ManagerConfig.Load();
+            this.InitializeComponent();            
 
             Loggy.SetupLogFile();
 
-            AppNotificationManager.Default.NotificationInvoked += ReceivedNotification;
-            AppNotificationManager.Default.Register();
+            //AppNotificationManager.Default.NotificationInvoked += ReceivedNotification;
+            //AppNotificationManager.Default.Register();
 
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
         }
@@ -51,8 +49,11 @@ namespace SIT.Manager
 
         private void OnProcessExit(object? sender, EventArgs e)
         {
-            AppNotificationManager.Default.RemoveAllAsync();
-            AppNotificationManager.Default.Unregister();
+            //AppNotificationManager.Default.RemoveAllAsync();
+            //AppNotificationManager.Default.Unregister();
+
+            if (AkiServer.IsRunning())
+                AkiServer.Stop();
         }
 
         /// <summary>
@@ -82,9 +83,12 @@ namespace SIT.Manager
             // Otherwise, register for activation redirection
             AppInstance.GetCurrent().Activated += App_Activated;
 
+            ManagerConfig.Load();
+
             m_window = new MainWindow();
 
             m_window.Activate();
+            
             //m_window.Closed += OnWindowClosed;
         }
 
@@ -95,8 +99,8 @@ namespace SIT.Manager
 
         void OnWindowClosed(object sender, WindowEventArgs e)
         {
-            AppNotificationManager.Default.RemoveAllAsync();
-            AppNotificationManager.Default.Unregister();
+            //AppNotificationManager.Default.RemoveAllAsync();
+            //AppNotificationManager.Default.Unregister();
         }
 
         internal Window m_window;

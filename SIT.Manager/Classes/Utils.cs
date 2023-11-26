@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -752,51 +753,65 @@ namespace SIT.Manager.Classes
         {
             MainWindow window = (Application.Current as App).m_window as MainWindow;
 
-            window.DispatcherQueue.TryEnqueue(async () =>
+            if (window.DispatcherQueue.HasThreadAccess)
             {
-                InfoBar infoBar = new()
-                {
-                    Title = title,
-                    Message = message,
-                    Severity = severity,
-                    IsOpen = true
-                };
+                window.DispatcherQueue.TryEnqueue(async () =>
+                    {
+                        InfoBar infoBar = new()
+                        {
+                            Title = title,
+                            Message = message,
+                            Severity = severity,
+                            IsOpen = true
+                        };
 
-                window.InfoBarStackPanel.Children.Add(infoBar);
+                        window.InfoBarStackPanel.Children.Add(infoBar);
 
-                await Task.Delay(TimeSpan.FromSeconds(delay));
+                        await Task.Delay(TimeSpan.FromSeconds(delay));
 
-                window.InfoBarStackPanel.Children.Remove(infoBar);
-            });
+                        window.InfoBarStackPanel.Children.Remove(infoBar);
+                    }); 
+            }
         }
 
+        /// <summary>
+        /// Shows the InfoBar of the main window with an Open Log button
+        /// </summary>
+        /// <param name="title">Title of the message</param>
+        /// <param name="message">The message to show</param>
+        /// <param name="severity">The <see cref="InfoBarSeverity"/> to display</param>
+        /// <param name="delay">The delay (in seconds) before removing the InfoBar</param>
+        /// <returns></returns>
         public static async void ShowInfoBarWithLogButton(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
         {
             MainWindow window = (Application.Current as App).m_window as MainWindow;
 
-            window.DispatcherQueue.TryEnqueue(async () =>
+            if (window.DispatcherQueue.HasThreadAccess)
             {
-                Button infoBarButton = new() { Content = "Open Log" };
-                infoBarButton.Click += (e, s) =>
+                window.DispatcherQueue.TryEnqueue(async () =>
                 {
-                    OpenLauncherLog();
-                };
+                    Button infoBarButton = new() { Content = "Open Log" };
+                    infoBarButton.Click += (e, s) =>
+                    {
+                        OpenLauncherLog();
+                    };
 
-                InfoBar infoBar = new()
-                {
-                    Title = title,
-                    Message = message,
-                    Severity = severity,
-                    IsOpen = true,
-                    ActionButton = infoBarButton
-                };
+                    InfoBar infoBar = new()
+                    {
+                        Title = title,
+                        Message = message,
+                        Severity = severity,
+                        IsOpen = true,
+                        ActionButton = infoBarButton
+                    };
 
-                window.InfoBarStackPanel.Children.Add(infoBar);
+                    window.InfoBarStackPanel.Children.Add(infoBar);
 
-                await Task.Delay(TimeSpan.FromSeconds(delay));
+                    await Task.Delay(TimeSpan.FromSeconds(delay));
 
-                window.InfoBarStackPanel.Children.Remove(infoBar);
-            });
+                    window.InfoBarStackPanel.Children.Remove(infoBar);
+                }); 
+            }
         }
     }
 }
