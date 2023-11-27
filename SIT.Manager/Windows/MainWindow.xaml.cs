@@ -94,30 +94,38 @@ namespace SIT.Manager
         /// </summary>
         public async void LookForUpdate()
         {
-            Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            string latestVersion = await Utils.utilsHttpClient.GetStringAsync(@"https://raw.githubusercontent.com/stayintarkov/SIT.Manager/master/VERSION");
-            latestVersion = latestVersion.Trim();
-
-            Version newVersion = new(latestVersion);
-
-            int compare = currentVersion.CompareTo(newVersion);
-
-            if (compare < 0)
+            try
             {
-                DispatcherQueue.TryEnqueue(async () =>
+                Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                string latestVersion = await Utils.utilsHttpClient.GetStringAsync(@"https://raw.githubusercontent.com/stayintarkov/SIT.Manager/master/VERSION");
+                latestVersion = latestVersion.Trim();
+
+                Version newVersion = new(latestVersion);
+
+                int compare = currentVersion.CompareTo(newVersion);
+
+                if (compare < 0)
                 {
-                    UpdateInfoBar.Title = "Update";
-                    UpdateInfoBar.Message = "There is a new update available for SIT.Manager";
-                    UpdateInfoBar.Severity = InfoBarSeverity.Informational;
+                    DispatcherQueue.TryEnqueue(async () =>
+                    {
+                        UpdateInfoBar.Title = "Update";
+                        UpdateInfoBar.Message = "There is a new update available for SIT.Manager";
+                        UpdateInfoBar.Severity = InfoBarSeverity.Informational;
 
-                    UpdateInfoBar.IsOpen = true;
+                        UpdateInfoBar.IsOpen = true;
 
-                    await Task.Delay(TimeSpan.FromSeconds(30));
+                        await Task.Delay(TimeSpan.FromSeconds(30));
 
-                    UpdateInfoBar.IsOpen = false;
-                });
+                        UpdateInfoBar.IsOpen = false;
+                    });
+                }
             }
-
+            catch (Exception ex)
+            {
+                Loggy.LogToFile("LookForUpdate: " + ex.Message);
+                Utils.ShowInfoBarWithLogButton("Error", "Unable to look for updates.", InfoBarSeverity.Error);
+                return;
+            }
         }
 
         /// <summary>
