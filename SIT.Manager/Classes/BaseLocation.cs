@@ -46,16 +46,16 @@ public class BossLocationSpawn
 
 public class BotLocationModifier
 {
-    public int AccuracySpeed { get; set; }
-    public int DistToActivate { get; set; }
-    public int DistToPersueAxemanCoef { get; set; }
-    public int DistToSleep { get; set; }
-    public int GainSight { get; set; }
-    public int KhorovodChance { get; set; }
-    public int MagnetPower { get; set; }
-    public int MarksmanAccuratyCoef { get; set; }
-    public int Scattering { get; set; }
-    public int VisibleDistance { get; set; }
+    public float AccuracySpeed { get; set; }
+    public float DistToActivate { get; set; }
+    public float DistToPersueAxemanCoef { get; set; }
+    public float DistToSleep { get; set; }
+    public float GainSight { get; set; }
+    public float KhorovodChance { get; set; }
+    public float MagnetPower { get; set; }
+    public float MarksmanAccuratyCoef { get; set; }
+    public float Scattering { get; set; }
+    public float VisibleDistance { get; set; }
 }
 
 public class Center
