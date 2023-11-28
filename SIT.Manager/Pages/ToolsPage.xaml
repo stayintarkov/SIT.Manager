@@ -42,7 +42,7 @@
         </Button>
         <Button Name="OpenLocationEditorButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Opens the Location Editor GUI." Click="OpenLocationEditorButton_Click">
             <StackPanel Orientation="Horizontal">
-                <SymbolIcon Symbol="OpenFile" Margin="0,0,10,0"/>
+                <SymbolIcon Symbol="Edit" Margin="0,0,10,0"/>
                 <TextBlock Text="Location Editor"/>
             </StackPanel>
         </Button>

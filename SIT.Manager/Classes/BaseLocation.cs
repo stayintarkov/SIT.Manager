@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
-
 public class AirdropParameter
 {
     public int AirdropPointDeactivateDistance { get; set; }
@@ -23,6 +24,8 @@ public class Banner
 
 public class BossLocationSpawn
 {
+    [JsonIgnore]
+    public int Name { get; set; }
     public int BossChance { get; set; }
     public string BossDifficult { get; set; }
     public string BossEscortAmount { get; set; }
@@ -31,9 +34,14 @@ public class BossLocationSpawn
     public string BossName { get; set; }
     public bool BossPlayer { get; set; }
     public string BossZone { get; set; }
+    public int Delay { get; set; }
+    public bool ForceSpawn { get; set; }
+    public bool IgnoreMaxBots { get; set; }
     public bool RandomTimeSpawn { get; set; }
     public List<Support> Supports { get; set; }
     public int Time { get; set; }
+    public string TriggerId { get; set; }
+    public string TriggerName { get; set; }
 }
 
 public class BotLocationModifier
@@ -68,6 +76,7 @@ public class Exit
     public int Chance { get; set; }
     public int Count { get; set; }
     public string EntryPoints { get; set; }
+    public bool EventAvailable { get; set; }
     public int ExfiltrationTime { get; set; }
     public string ExfiltrationType { get; set; }
     public string Id { get; set; }
@@ -139,7 +148,7 @@ public class BaseLocation
     public int AveragePlayTime { get; set; }
     public int AveragePlayerLevel { get; set; }
     public List<Banner> Banners { get; set; }
-    public List<BossLocationSpawn> BossLocationSpawn { get; set; }
+    public ObservableCollection<BossLocationSpawn> BossLocationSpawn { get; set; }
     public int BotAssault { get; set; }
     public int BotEasy { get; set; }
     public int BotHard { get; set; }
@@ -221,7 +230,7 @@ public class BaseLocation
     public int users_spawn_seconds_n { get; set; }
     public int users_spawn_seconds_n2 { get; set; }
     public int users_summon_seconds { get; set; }
-    public List<Wave> waves { get; set; }
+    public ObservableCollection<Wave> waves { get; set; }
 }
 
 public class Scene
@@ -235,6 +244,7 @@ public class SpawnPointParam
     public string BotZoneName { get; set; }
     public List<string> Categories { get; set; }
     public ColliderParams ColliderParams { get; set; }
+    public int CorePointId { get; set; }
     public int DelayToCanSpawnSec { get; set; }
     public string Id { get; set; }
     public string Infiltration { get; set; }

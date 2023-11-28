@@ -60,6 +60,11 @@ namespace SIT.Manager.Pages
                     location.waves[i].Name = i + 1;
                 }
 
+                for (int i = 0; i < location.BossLocationSpawn.Count; i++)
+                {
+                    location.BossLocationSpawn[i].Name = i + 1;
+                }
+
                 switch (location.Scene.path)
                 {
                     case "maps/factory_day_preset.bundle":
@@ -103,6 +108,11 @@ namespace SIT.Manager.Pages
                     WaveList.SelectedIndex = 0;
                 }
 
+                if (location.BossLocationSpawn.Count > 0)
+                {
+                    BossList.SelectedIndex = 0;
+                }
+
                 Utils.ShowInfoBar("Load Location", $"Loaded location {LocationTextBox.Text} successfully.", InfoBarSeverity.Success);
             }
                 
@@ -143,9 +153,6 @@ namespace SIT.Manager.Pages
 
         private void AddWaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (WaveList.SelectedIndex == -1)
-                return;
-
             BaseLocation location = (BaseLocation)DataContext;
 
             if (location != null)
@@ -156,8 +163,6 @@ namespace SIT.Manager.Pages
                 {
                     location.waves[i].Name = i + 1;
                 }
-
-                WaveList.ItemsSource = location.waves;
 
                 if (location.waves.Count > 0)
                 {
@@ -182,11 +187,52 @@ namespace SIT.Manager.Pages
                     location.waves[i].Name = i + 1;
                 }
 
-                WaveList.ItemsSource = location.waves;
-
                 if (location.waves.Count > 0)
                 {
                     WaveList.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void AddBossButton_Click(object sender, RoutedEventArgs e)
+        {
+            BaseLocation location = (BaseLocation)DataContext;
+
+            if (location != null)
+            {
+                location.BossLocationSpawn.Add(new BossLocationSpawn());
+
+                for (int i = 0; i < location.BossLocationSpawn.Count; i++)
+                {
+                    location.BossLocationSpawn[i].Name = i + 1;
+                }
+
+                if (location.BossLocationSpawn.Count > 0)
+                {
+                    BossList.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void RemoveBossButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (BossList.SelectedIndex == -1)
+                return;
+
+            BaseLocation location = (BaseLocation)DataContext;
+
+            if (location != null)
+            {
+                location.BossLocationSpawn.RemoveAt(BossList.SelectedIndex);
+
+                for (int i = 0; i < location.BossLocationSpawn.Count; i++)
+                {
+                    location.BossLocationSpawn[i].Name = i + 1;
+                }
+
+                if (location.BossLocationSpawn.Count > 0)
+                {
+                    BossList.SelectedIndex = 0;
                 }
             }
         }

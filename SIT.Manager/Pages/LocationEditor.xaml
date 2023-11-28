@@ -18,72 +18,152 @@
         </Grid.RowDefinitions>
 
         <CommandBar DefaultLabelPosition="Right" Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Left">
-            <AppBarButton Name="NewButton" Icon="Add" Label="New" Click="NewButton_Click"/>
+            <!--<AppBarButton Name="NewButton" Icon="Add" Label="New" Click="NewButton_Click"/>-->
             <AppBarButton Name="LoadButton" Icon="Upload" Label="Load" Click="LoadButton_Click"/>
             <AppBarButton Name="SaveButton" Icon="Download" Label="Save" Click="SaveButton_Click"/>
         </CommandBar>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="3" Margin="5">
-            <TextBox Name="LocationTextBox" Header="Location" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="200" IsReadOnly="True" PlaceholderText="Click 'New' or 'Load'"/>
-            <Button Name="AddWaveButton" Margin="10,0" Content="Add Wave" VerticalAlignment="Bottom" Click="AddWaveButton_Click"/>
-            <Button Name="RemoveWaveButton" Margin="10,0" Content="Remove Wave" VerticalAlignment="Bottom" Click="RemoveWaveButton_Click"/>
-        </StackPanel>
+        <TextBox Margin="5" Name="LocationTextBox" Header="Location" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="200" IsReadOnly="True" PlaceholderText="Click 'Load'" HorizontalAlignment="Left" Grid.Row="1"/>
 
         <ScrollView Grid.Row="2">
             <StackPanel Orientation="Horizontal">
+                <Expander Header="General Settings" VerticalAlignment="Top">
+                    
+                    <StackPanel Margin="5" HorizontalAlignment="Left">
+                        <NumberBox Margin="0,5" Header="BotMax" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotMax, Mode=TwoWay}" ToolTipService.ToolTip="Total max bots on the map allowed"/>
+                        <NumberBox Margin="0,5" Header="BotMaxPlayer" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotMaxPlayer, Mode=TwoWay}" ToolTipService.ToolTip="Total max bots that is PMC"/>
+                        <NumberBox Margin="0,5" Header="BotNormal" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotNormal, Mode=TwoWay}"/>
+                        <NumberBox Margin="0,5" Header="BotSpawnTimeOffMax" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnTimeOffMax, Mode=TwoWay}" ToolTipService.ToolTip="Maximum spawn time in seconds when running offline"/>
+                        <NumberBox Margin="0,5" Header="BotSpawnTimeOffMin" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnTimeOffMin, Mode=TwoWay}" ToolTipService.ToolTip="Minimum spawntime in seconds when running offline"/>
+                        <NumberBox Margin="0,5" Header="BotSpawnTimeOnMax" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnTimeOnMax, Mode=TwoWay}" ToolTipService.ToolTip="Maximum spawn time in seconds when running online"/>
+                        <NumberBox Margin="0,5" Header="BotSpawnTimeOnMin" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnTimeOnMin, Mode=TwoWay}" ToolTipService.ToolTip="Minimum spawntime in seconds when running online"/>
+                        <NumberBox Margin="0,5" Header="BotStart" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotStart, Mode=TwoWay}"/>
+                        <NumberBox Margin="0,5" Header="BotStop" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotStop, Mode=TwoWay}"/>
+                        <NumberBox Margin="0,5" Header="BotSpawnCountStep" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnCountStep, Mode=TwoWay}"/>
+                        <NumberBox Margin="0,5" Header="BotSpawnPeriodCheck" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnPeriodCheck, Mode=TwoWay}"/>
+                    </StackPanel>
+                    
+                </Expander>
 
-                <StackPanel Margin="5" HorizontalAlignment="Left">
-                    <NumberBox Margin="0,5" Header="BotMax" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotMax, Mode=TwoWay}" ToolTipService.ToolTip="Total max bots on the map allowed"/>
-                    <NumberBox Margin="0,5" Header="BotMaxPlayer" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotMaxPlayer, Mode=TwoWay}" ToolTipService.ToolTip="Total max bots that is PMC"/>
-                    <NumberBox Margin="0,5" Header="BotNormal" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotNormal, Mode=TwoWay}"/>
-                    <NumberBox Margin="0,5" Header="BotSpawnTimeOffMax" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnTimeOffMax, Mode=TwoWay}" ToolTipService.ToolTip="Maximum spawn time in seconds when running offline"/>
-                    <NumberBox Margin="0,5" Header="BotSpawnTimeOffMin" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnTimeOffMin, Mode=TwoWay}" ToolTipService.ToolTip="Minimum spawntime in seconds when running offline"/>
-                    <NumberBox Margin="0,5" Header="BotSpawnTimeOnMax" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnTimeOnMax, Mode=TwoWay}" ToolTipService.ToolTip="Maximum spawn time in seconds when running online"/>
-                    <NumberBox Margin="0,5" Header="BotSpawnTimeOnMin" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnTimeOnMin, Mode=TwoWay}" ToolTipService.ToolTip="Minimum spawntime in seconds when running online"/>
-                    <NumberBox Margin="0,5" Header="BotStart" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotStart, Mode=TwoWay}"/>
-                    <NumberBox Margin="0,5" Header="BotStop" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotStop, Mode=TwoWay}"/>
-                    <NumberBox Margin="0,5" Header="BotSpawnCountStep" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnCountStep, Mode=TwoWay}"/>
-                    <NumberBox Margin="0,5" Header="BotSpawnPeriodCheck" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Value="{Binding BotSpawnPeriodCheck, Mode=TwoWay}"/>
-                </StackPanel>
+                <Expander Header="Waves Settings" VerticalAlignment="Top">
 
-                <ListView Name="WaveList" Margin="5" Header="Spawn Waves"
-                    HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="150"
-                    ItemsSource="{Binding waves, Mode=TwoWay}" DisplayMemberPath="Name" VerticalAlignment="Top">
-                </ListView>
-
-                <Expander Margin="5" Header="Wave Editor" VerticalAlignment="Top" Width="200" HorizontalAlignment="Left">
                     <StackPanel>
 
-                        <ComboBox Margin="0,5" Name="BotPresetCombo" Header="BotPreset" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=WaveList}" SelectedValue="{Binding Path=BotPreset, Mode=TwoWay}" SelectedValuePath="Content" ToolTipService.ToolTip="Bot Difficulty">
-                            <ComboBoxItem Content="easy"/>
-                            <ComboBoxItem Content="normal"/>
-                            <ComboBoxItem Content="hard"/>
-                        </ComboBox>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
-                        <ComboBox Margin="0,5" Header="BotSide" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=WaveList}" SelectedValue="{Binding Path=BotSide, Mode=TwoWay}" SelectedValuePath="Content" ToolTipService.ToolTip="The side of the Bot">
-                            <ComboBoxItem Content="Savage"/>
-                            <ComboBoxItem Content="Bear"/>
-                            <ComboBoxItem Content="Usec"/>
-                        </ComboBox>
+                            <Button Name="AddWaveButton" Margin="10,0,10,5" Content="Add Wave" VerticalAlignment="Bottom" Click="AddWaveButton_Click" IsEnabled="False"/>
+                            <Button Name="RemoveWaveButton" Margin="10,0,10,5" Content="Remove Wave" VerticalAlignment="Bottom" Click="RemoveWaveButton_Click" IsEnabled="False"/>
 
-                        <ComboBox Margin="0,5" Header="SpawnPoints" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=WaveList}" SelectedValue="{Binding Path=SpawnPoints, Mode=TwoWay}" SelectedValuePath="Content" IsEnabled="False">
-                            <ComboBoxItem Content="BotZone"/>
-                        </ComboBox>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal">
+                            
+                            <ListView Name="WaveList" Margin="5" Header="Spawn Waves" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="150" ItemsSource="{Binding waves, Mode=TwoWay}" DisplayMemberPath="Name" VerticalAlignment="Top"/>
 
-                        <ComboBox Margin="0,5" Header="WildSpawnType" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=WaveList}" SelectedValue="{Binding Path=WildSpawnType, Mode=TwoWay}" SelectedValuePath="Content">
-                            <ComboBoxItem Content="assault"/>
-                            <ComboBoxItem Content="marksman"/>
-                        </ComboBox>
+                            <StackPanel>
 
-                        <CheckBox Margin="0,5" Content="isPlayers" DataContext="{Binding SelectedItem, ElementName=WaveList}" IsChecked="{Binding isPlayers, Mode=TwoWay}" ToolTipService.ToolTip="Needs to be checked for waves to work on >3.8"/>
-                        <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="number" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding number, Mode=TwoWay}" ToolTipService.ToolTip="The number of the wave (needs to be >0)"/>
-                        <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="slots_max" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding slots_max, Mode=TwoWay}" ToolTipService.ToolTip="Max slots to spawn"/>
-                        <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="slots_min" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding slots_min, Mode=TwoWay}" ToolTipService.ToolTip="Min slots to spawn"/>
-                        <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="time_max" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding time_max, Mode=TwoWay}" ToolTipService.ToolTip="Max time to spawn bot wave"/>
-                        <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="time_min" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding time_min, Mode=TwoWay}" ToolTipService.ToolTip="Min time to spawn bot wave"/>
+                                <ComboBox Margin="0,5" Name="BotPresetCombo" Header="BotPreset" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=WaveList}" SelectedValue="{Binding Path=BotPreset, Mode=TwoWay}" SelectedValuePath="Content" ToolTipService.ToolTip="Bot Difficulty">
+                                    <ComboBoxItem Content="easy"/>
+                                    <ComboBoxItem Content="normal"/>
+                                    <ComboBoxItem Content="hard"/>
+                                </ComboBox>
+
+                                <ComboBox Margin="0,5" Header="BotSide" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=WaveList}" SelectedValue="{Binding Path=BotSide, Mode=TwoWay}" SelectedValuePath="Content" ToolTipService.ToolTip="The side of the Bot">
+                                    <ComboBoxItem Content="Savage"/>
+                                    <ComboBoxItem Content="Bear"/>
+                                    <ComboBoxItem Content="Usec"/>
+                                </ComboBox>
+
+                                <ComboBox Margin="0,5" Header="SpawnPoints" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=WaveList}" SelectedValue="{Binding Path=SpawnPoints, Mode=TwoWay}" SelectedValuePath="Content" IsEnabled="False">
+                                    <ComboBoxItem Content="BotZone"/>
+                                </ComboBox>
+
+                                <ComboBox Margin="0,5" Header="WildSpawnType" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=WaveList}" SelectedValue="{Binding Path=WildSpawnType, Mode=TwoWay}" SelectedValuePath="Content">
+                                    <ComboBoxItem Content="assault"/>
+                                    <ComboBoxItem Content="marksman"/>
+                                </ComboBox>
+
+                                <CheckBox Margin="0,5" Content="isPlayers" DataContext="{Binding SelectedItem, ElementName=WaveList}" IsChecked="{Binding isPlayers, Mode=TwoWay}" ToolTipService.ToolTip="Needs to be checked for waves to work on >3.8"/>
+                                <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="number" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding number, Mode=TwoWay}" ToolTipService.ToolTip="The number of the wave (needs to be >0)"/>
+                                <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="slots_max" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding slots_max, Mode=TwoWay}" ToolTipService.ToolTip="Max slots to spawn"/>
+                                <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="slots_min" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding slots_min, Mode=TwoWay}" ToolTipService.ToolTip="Min slots to spawn"/>
+                                <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="time_max" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding time_max, Mode=TwoWay}" ToolTipService.ToolTip="Max time to spawn bot wave"/>
+                                <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="time_min" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=WaveList}" Value="{Binding time_min, Mode=TwoWay}" ToolTipService.ToolTip="Min time to spawn bot wave"/>
+                            </StackPanel>
+
+                        </StackPanel>
                     </StackPanel>
+
                 </Expander>
+
+                <Expander Header="Boss Settings" VerticalAlignment="Top">
+
+                    <StackPanel>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                            <Button Name="AddBossButton" Margin="10,0,10,5" Content="Add Boss" VerticalAlignment="Bottom" Click="AddBossButton_Click" IsEnabled="False"/>
+                            <Button Name="RemoveBossButton" Margin="10,0,10,5" Content="Remove Boss" VerticalAlignment="Bottom" Click="RemoveBossButton_Click" IsEnabled="False"/>
+
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal">
+
+                            <ListView Name="BossList" Margin="5" Header="Boss List" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="150" ItemsSource="{Binding BossLocationSpawn, Mode=TwoWay}" DisplayMemberPath="Name" VerticalAlignment="Top"/>
+
+                            <StackPanel>
+
+                                <NumberBox Margin="0,5" HorizontalAlignment="Left" Header="BossChance" Width="160" Maximum="100" Minimum="0" ValidationMode="InvalidInputOverwritten" SpinButtonPlacementMode="Compact" HeaderTemplate="{StaticResource BoxHeaderTemplate}" DataContext="{Binding SelectedItem, ElementName=BossList}" Value="{Binding BossChance, Mode=TwoWay}"/>
+
+                                <TextBox Margin="0,5" Header="BossEscortAmount" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=BossList}" Text="{Binding Path=BossEscortAmount, Mode=TwoWay}"/>
+
+                                <ComboBox Margin="0,5" Header="BossEscortType" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=BossList}" SelectedValue="{Binding Path=BossEscortType, Mode=TwoWay}" SelectedValuePath="Content">
+                                    <ComboBoxItem Content="followerBully"/>
+                                    <ComboBoxItem Content="followerTagilla"/>
+                                    <ComboBoxItem Content="followerZryachiy"/>
+                                    <ComboBoxItem Content="followerGluharAssault"/>
+                                    <ComboBoxItem Content="followerSanitar"/>
+                                    <ComboBoxItem Content="followerKojaniy"/>
+                                    <ComboBoxItem Content="followerBoar"/>
+                                    <ComboBoxItem Content="bossBoarSniper"/>
+                                    <ComboBoxItem Content="crazyAssaultEvent"/>
+                                    <ComboBoxItem Content="pmcBot"/>
+                                    <ComboBoxItem Content="exUsec"/>
+                                    <ComboBoxItem Content="sectantWarrior"/>
+                                    <ComboBoxItem Content="arenaFighterEvent"/>
+                                </ComboBox>
+
+                                <ComboBox Margin="0,5" Header="BossName" HeaderTemplate="{StaticResource BoxHeaderTemplate}" Width="160" DataContext="{Binding SelectedItem, ElementName=BossList}" SelectedValue="{Binding Path=BossName, Mode=TwoWay}" SelectedValuePath="Content">
+                                    <ComboBoxItem Content="bossKnight"/>
+                                    <ComboBoxItem Content="bossBully"/>
+                                    <ComboBoxItem Content="bossTagilla"/>
+                                    <ComboBoxItem Content="bossKilla"/>
+                                    <ComboBoxItem Content="bossZryachiy"/>
+                                    <ComboBoxItem Content="bossGluhar"/>
+                                    <ComboBoxItem Content="bossSanitar"/>
+                                    <ComboBoxItem Content="bossKojaniy"/>
+                                    <ComboBoxItem Content="bossBoar"/>
+                                    <ComboBoxItem Content="bossBoarSniper"/>
+                                    <ComboBoxItem Content="sectantPriest"/>
+                                    <ComboBoxItem Content="arenaFighterEvent"/>
+                                    <ComboBoxItem Content="pmcBot"/>
+                                    <ComboBoxItem Content="exUsec"/>
+                                    <ComboBoxItem Content="crazyAssaultEvent"/>
+                                </ComboBox>
+
+                                <CheckBox Margin="0,5" Content="ForceSpawn" DataContext="{Binding SelectedItem, ElementName=BossList}" IsChecked="{Binding ForceSpawn, Mode=TwoWay}"/>
+                                <CheckBox Margin="0,5" Content="IgnoreMaxBots" DataContext="{Binding SelectedItem, ElementName=BossList}" IsChecked="{Binding IgnoreMaxBots, Mode=TwoWay}"/>
+                                <CheckBox Margin="0,5" Content="RandomTimeSpawn" DataContext="{Binding SelectedItem, ElementName=BossList}" IsChecked="{Binding RandomTimeSpawn, Mode=TwoWay}"/>
+
+                            </StackPanel>
+
+                        </StackPanel>
+                    </StackPanel>
+
+                </Expander>
+                
             </StackPanel>
+
         </ScrollView>
 
     </Grid>

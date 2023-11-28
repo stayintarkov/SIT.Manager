@@ -52,7 +52,7 @@ namespace SIT.Manager
 
             // Navigate to Play page by default
             NavView.SelectedItem = NavView.MenuItems.FirstOrDefault();
-            ContentFrame.Navigate(typeof(PlayPage), null, new SuppressNavigationTransitionInfo());
+            ContentFrame.Navigate(typeof(PlayPage), null, new SuppressNavigationTransitionInfo());            
 
             // Set up variables to be accessed outside MainWindow
             actionPanel = ActionPanel;
@@ -165,6 +165,7 @@ namespace SIT.Manager
             FontFamily fontFamily = (FontFamily)Application.Current.Resources["BenderFont"];
 
             settings.FontFamily = fontFamily;
+            settings.Content = "Settings";
             if (App.ManagerConfig?.InstallPath == null)
             {
                 settings.InfoBadge = new()
