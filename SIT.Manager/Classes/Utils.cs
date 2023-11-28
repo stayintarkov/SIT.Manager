@@ -152,7 +152,7 @@ namespace SIT.Manager.Classes
         /// <returns></returns>
         public async static Task<bool> DownloadFile(string fileName, string filePath, string fileUrl, bool showProgress = false)
         {
-            var window = (Application.Current as App)?.m_window as MainWindow;
+            var window = App.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
 
             if (fileUrl.Contains("mega.nz"))
@@ -245,7 +245,7 @@ namespace SIT.Manager.Classes
         /// <returns></returns>
         public async static Task DownloadAndRunPatcher(string sitVersionTarget = "")
         {
-            MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+            MainWindow window = App.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
 
             Loggy.LogToFile("Downloading Patcher");
@@ -474,7 +474,7 @@ namespace SIT.Manager.Classes
         /// <returns></returns>
         public static void ExtractArchive(string filePath, string destination)
         {
-            var window = (Application.Current as App)?.m_window as MainWindow;
+            var window = App.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
 
             try
@@ -612,7 +612,7 @@ namespace SIT.Manager.Classes
         /// <returns></returns>
         public async static Task InstallSIT(GithubRelease selectedVersion)
         {
-            var window = (Application.Current as App)?.m_window as MainWindow;
+            var window = App.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
 
             if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
@@ -749,7 +749,7 @@ namespace SIT.Manager.Classes
         /// <returns></returns>
         public static async void ShowInfoBar(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
         {
-            MainWindow window = (Application.Current as App).m_window as MainWindow;
+            MainWindow window = App.m_window as MainWindow;
 
             if (window.DispatcherQueue.HasThreadAccess)
             {
@@ -782,7 +782,7 @@ namespace SIT.Manager.Classes
         /// <returns></returns>
         public static async void ShowInfoBarWithLogButton(string title, string message, InfoBarSeverity severity = InfoBarSeverity.Informational, int delay = 5)
         {
-            MainWindow window = (Application.Current as App).m_window as MainWindow;
+            MainWindow window = App.m_window as MainWindow;
 
             if (window.DispatcherQueue.HasThreadAccess)
             {

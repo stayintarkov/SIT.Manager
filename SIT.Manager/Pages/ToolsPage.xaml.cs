@@ -150,5 +150,12 @@ namespace SIT.Manager.Pages
             await Task.Run(() => Utils.InstallSIT(selectedVersion));
             ManagerConfig.Save();
         }
+
+        private void OpenLocationEditorButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow window = App.m_window as MainWindow;
+            
+            window.contentFrame.Navigate(typeof(LocationEditor));
+        }
     }
 }

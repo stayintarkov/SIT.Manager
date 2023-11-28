@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Windows.UI.WindowManagement;
 using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -43,9 +44,9 @@ namespace SIT.Manager
 
             WindowManager manager = WindowManager.Get(this);
             manager.MinHeight = 450;
-            manager.MaxHeight = 600;
+            manager.MaxHeight = 900;
             manager.MinWidth = 800;
-            manager.MaxWidth = 1200;
+            manager.MaxWidth = 1500;
 
             this.CenterOnScreen();
 
@@ -76,7 +77,7 @@ namespace SIT.Manager
                 });
             }
 
-            Closed += OnClosed;
+            Closed += OnClosed;            
         }
 
         async void UntilLoaded()
@@ -149,7 +150,7 @@ namespace SIT.Manager
             {
                 // find NavigationViewItem with Content that equals InvokedItem
                 var item = sender.MenuItems.OfType<NavigationViewItem>().First(x => (string)x.Content == (string)args.InvokedItem);
-                NavView_Navigate(item as NavigationViewItem);
+                NavView_Navigate(item);
             }
         }
 

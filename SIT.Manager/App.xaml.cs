@@ -100,6 +100,6 @@ namespace SIT.Manager
             //AppNotificationManager.Default.Unregister();
         }
 
-        internal Window m_window;
+        internal static Window m_window;
     }
 }

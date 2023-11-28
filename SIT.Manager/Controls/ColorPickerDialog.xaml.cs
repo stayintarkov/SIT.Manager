@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.UI;
 using System.Globalization;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -24,7 +25,7 @@ namespace SIT.Manager.Controls
                 byte g = byte.Parse(color.Substring(5, 2), NumberStyles.HexNumber);
                 byte b = byte.Parse(color.Substring(7, 2), NumberStyles.HexNumber);
 
-                ColorPickerControl.Color = Windows.UI.Color.FromArgb(a, r, g, b);
+                ColorPickerControl.Color = Color.FromArgb(a, r, g, b);
             }
         }
 

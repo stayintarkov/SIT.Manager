@@ -36,7 +36,7 @@ namespace SIT.Manager.Pages
 
             folderPicker.FileTypeFilter.Add("*");
 
-            MainWindow window = (Application.Current as App).m_window as MainWindow;
+            MainWindow window = App.m_window as MainWindow;
             IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
 
@@ -67,7 +67,7 @@ namespace SIT.Manager.Pages
 
             folderPicker.FileTypeFilter.Add("*");
 
-            MainWindow window = (Application.Current as App).m_window as MainWindow;
+            MainWindow window = App.m_window as MainWindow;
             IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
 

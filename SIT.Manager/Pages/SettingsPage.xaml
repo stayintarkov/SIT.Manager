@@ -29,7 +29,7 @@
                 <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10" >
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="EFT Path:" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        <TextBox PlaceholderText="EFT Install Path..." Margin="0,0,10,0" MinWidth="425" MaxWidth="425" IsHitTestVisible="False" Text="{Binding InstallPath}"/>
+                        <TextBox PlaceholderText="EFT Install Path..." Margin="0,0,10,0" MinWidth="425" MaxWidth="425" IsReadOnly="True" Text="{Binding InstallPath}"/>
                         <Button Name="ChangeInstallButton" Content="Change" Margin="0,0,10,0" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -47,7 +47,7 @@
                 <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="SPT-AKI Path:"  VerticalAlignment="Center"/>
-                        <TextBox PlaceholderText="SPT-AKI Install Path..." Margin="5" MinWidth="397" MaxWidth="425" IsHitTestVisible="False" Text="{Binding AkiServerPath}"/>
+                        <TextBox PlaceholderText="SPT-AKI Install Path..." Margin="5" MinWidth="397" MaxWidth="425" IsReadOnly="True" Text="{Binding AkiServerPath}"/>
                         <Button Name="ChangeAkiServerPath" Content="Change" Margin="5" ToolTipService.ToolTip="Change the SPT-AKI Install Path." Click="ChangeAkiServerPath_Click"/>
                     </StackPanel>
                 </StackPanel>

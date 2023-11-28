@@ -17,7 +17,7 @@ namespace SIT.Manager.Pages
     /// </summary>
     public sealed partial class ServerPage : Page
     {
-        MainWindow? window = (Application.Current as App)?.m_window as MainWindow;
+        MainWindow? window = App.m_window as MainWindow;
 
         public ServerPage()
         {

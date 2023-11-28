@@ -97,7 +97,7 @@ namespace SIT.Manager.Pages
         private async void AutoUpdate(List<ModInfo> outdatedMods)
         {
             // As this is being run on another thread than the UI we need to fetch the MainWindow
-            MainWindow window = (Application.Current as App).m_window as MainWindow;
+            MainWindow window = App.m_window as MainWindow;
 
             List<string> outdatedNames = new();
             outdatedNames.AddRange(from ModInfo mod in outdatedMods

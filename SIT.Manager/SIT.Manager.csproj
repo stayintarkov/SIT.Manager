@@ -30,6 +30,7 @@
     <None Remove="Controls\PopupTest.xaml" />
     <None Remove="Controls\SelectEditionDialog.xaml" />
     <None Remove="Controls\SelectSitVersionDialog.xaml" />
+    <None Remove="Pages\LocationEditor.xaml" />
     <None Remove="Pages\ModsPage.xaml" />
     <None Remove="Pages\PlayPage.xaml" />
     <None Remove="Pages\ServerPage.xaml" />
@@ -95,7 +96,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Windows\" />
     <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Themes\" />
   </ItemGroup>
@@ -119,6 +119,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\LocationEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\FontFamilyPickerDialog.xaml">
@@ -163,14 +168,14 @@
     <DebugType>embedded</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DebugType>embedded</DebugType>
     <Optimize>True</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>True</Optimize>
   </PropertyGroup>
 
