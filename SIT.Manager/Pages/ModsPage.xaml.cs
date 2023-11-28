@@ -285,7 +285,7 @@ namespace SIT.Manager.Pages
 
                 foreach (var configFile in mod.ConfigFiles)
                 {
-                    if (File.Exists(gamePluginsPath + configFile))
+                    if (File.Exists(gameConfigPath + configFile))
                     {
                         File.Delete(gameConfigPath + configFile);
                     }
