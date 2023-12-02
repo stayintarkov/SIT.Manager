@@ -205,6 +205,11 @@ namespace SIT.Manager.Pages
                         return null;
                     }
                 }
+                else if(returnData == "INVALID_PASSWORD")
+                {
+                    Utils.ShowInfoBar("Connect", $"Invalid password!", InfoBarSeverity.Error);
+                    return "error";
+                }
 
                 return returnData;
             }
