@@ -21,6 +21,14 @@
 
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Themes\**" />
+    <Content Remove="Themes\**" />
+    <EmbeddedResource Remove="Themes\**" />
+    <None Remove="Themes\**" />
+    <Page Remove="Themes\**" />
+    <PRIResource Remove="Themes\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Remove="Assets\Stay-In-Tarkov-512.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -97,7 +105,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
-    <Folder Include="Themes\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />

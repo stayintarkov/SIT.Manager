@@ -9,7 +9,11 @@
     mc:Ignorable="d"
     >
 
-    <StackPanel Margin="10" VerticalAlignment="Center" Width="215" CornerRadius="8" BorderBrush="Gray" BorderThickness="2">
+    <Page.Background>
+        <ImageBrush ImageSource="ms-appx:///Assets/bg3.png"/>
+    </Page.Background>
+
+    <StackPanel Margin="10" VerticalAlignment="Center" Width="215" CornerRadius="8" BorderBrush="Gray" BorderThickness="2" Background="Black">
         <Button Name="InstallSITButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Downgrade EFT if needed, install SIT and mod support." Click="InstallSITButton_ClickAsync">
             <StackPanel Orientation="Horizontal">
                 <SymbolIcon Symbol="Add" Margin="0,0,10,0"/>

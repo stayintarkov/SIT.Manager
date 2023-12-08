@@ -10,7 +10,7 @@
     mc:Ignorable="d">
 
     <Page.Background>
-        <ImageBrush ImageSource="ms-appx:///Assets/StayInTarkov.jpg"/>
+        <ImageBrush ImageSource="ms-appx:///Assets/bg3.png"/>
     </Page.Background>
 
     <Grid Margin="10" >
