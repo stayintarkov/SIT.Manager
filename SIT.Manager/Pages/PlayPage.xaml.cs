@@ -144,7 +144,7 @@ namespace SIT.Manager.Pages
                 AddressBox.Text = AddressBox.Text.Remove(AddressBox.Text.Length - 1, 1);
             }
 
-            if (!AddressBox.Text.Match(@"^.*(:\d)$"))
+            if (!AddressBox.Text.Match(@":\d{2,5}$"))
             {
                 AddressBox.Text = AddressBox.Text + @":6969";
             }
