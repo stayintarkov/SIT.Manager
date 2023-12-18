@@ -166,7 +166,7 @@ namespace SIT.Manager.Pages
 
                 Directory.CreateDirectory(dir + @"\Extracted");
 
-                await Utils.DownloadFile("SIT.Mod.Ports.Collection.zip", dir, "https://github.tarkov.free.hr/stayintarkov/SIT-Mod-Port-Mirror/releases/latest/download/SIT.Mod.Ports.Collection.zip", true);
+                await Utils.DownloadFile("SIT.Mod.Ports.Collection.zip", dir, "https://github.tarkov.free.hr/NukedBart/SIT-Mod-Port-Mirror/releases/latest/download/SIT.Mod.Ports.Collection.zip", true);
                 Utils.ExtractArchive(dir + @"\SIT.Mod.Ports.Collection.zip", dir + @"\Extracted");
                 DownloadModPackageButton.IsEnabled = true;
 
