@@ -38,7 +38,7 @@ namespace SIT.Manager
             // Customize Window
             AppWindow.Resize(new(800, 475));
             AppWindow.SetIcon("Stay-In-Tarkov-512.ico");
-            Title = "SIT Manager";
+            Title = "SIT 启动器";
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
 
@@ -87,7 +87,7 @@ namespace SIT.Manager
                 await Task.Delay(100);
             }
 
-            Utils.ShowInfoBarWithLogButton("Error", "There was an error reading the configuration file.", InfoBarSeverity.Error, 30);
+            Utils.ShowInfoBarWithLogButton("错误", "读取配置文件时发生错误。", InfoBarSeverity.Error, 30);
         }
 
         /// <summary>
@@ -109,8 +109,8 @@ namespace SIT.Manager
                 {
                     DispatcherQueue.TryEnqueue(async () =>
                     {
-                        UpdateInfoBar.Title = "Update";
-                        UpdateInfoBar.Message = "There is a new update available for SIT.Manager";
+                        UpdateInfoBar.Title = "更新";
+                        UpdateInfoBar.Message = "GitHub 汇报了一个 SIT.Manager 启动器更新。(不建议中国用户更新)";
                         UpdateInfoBar.Severity = InfoBarSeverity.Informational;
 
                         UpdateInfoBar.IsOpen = true;
@@ -124,7 +124,7 @@ namespace SIT.Manager
             catch (Exception ex)
             {
                 Loggy.LogToFile("LookForUpdate: " + ex.Message);
-                Utils.ShowInfoBarWithLogButton("Error", "Unable to look for updates.", InfoBarSeverity.Error);
+                Utils.ShowInfoBarWithLogButton("错误", "无法检查更新。", InfoBarSeverity.Error);
                 return;
             }
         }
@@ -165,7 +165,7 @@ namespace SIT.Manager
             FontFamily fontFamily = (FontFamily)Application.Current.Resources["BenderFont"];
 
             settings.FontFamily = fontFamily;
-            settings.Content = "Settings";
+            settings.Content = "设置";
             if (App.ManagerConfig?.InstallPath == null)
             {
                 settings.InfoBadge = new()

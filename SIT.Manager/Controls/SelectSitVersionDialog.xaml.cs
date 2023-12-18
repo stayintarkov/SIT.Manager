@@ -23,7 +23,7 @@ namespace SIT.Manager.Controls
 
             VersionBox.Items.Add(new GithubRelease()
             {
-                tag_name = "Downloading info..."
+                tag_name = "下载信息中..."
             });
             VersionBox.SelectedIndex = 0;
 
@@ -47,6 +47,7 @@ namespace SIT.Manager.Controls
                             string releasePatch = match.Value.Replace("This version works with version ", "");
                             release.tag_name = release.name + " - Tarkov Version: " + releasePatch;
                             release.body = releasePatch;
+                            release.assets.Find(q => q.name == "StayInTarkov-Release.zip").browser_download_url.Replace("github.com", "github.tarkov.free.hr");
                             sitReleases.Add(release);
                         }
                         else

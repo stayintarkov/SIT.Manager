@@ -12,8 +12,8 @@
 
         <Grid.Resources>
             <TeachingTip x:Name="InstallPathTip"
-                Title="Setup"
-                Subtitle="Client install path isn't configured yet. Go to settings to configure the launcher."
+                Title="安装"
+                Subtitle="游戏客户端路径未设定。转到 设置 来配置启动器。"
                 PreferredPlacement="Bottom">
                 <TeachingTip.IconSource>
                     <SymbolIconSource Symbol="Setting"/>
@@ -36,7 +36,7 @@
             </Grid.ColumnDefinitions>
             
             <ImageIcon Source="ms-appx:///Assets/Stay-In-Tarkov-512.png" HorizontalAlignment="Left" Width="16" Height="16" Margin="8,0" Grid.Column="0"/>
-            <TextBlock x:Name="AppTitleTextBlock" Text="SIT Manager" TextWrapping="NoWrap" VerticalAlignment="Center" Grid.Column="1" FontFamily="{StaticResource BenderFont}" Foreground="{StaticResource AppBarItemForegroundThemeBrush}"/>
+            <TextBlock x:Name="AppTitleTextBlock" Text="SIT 启动器" TextWrapping="NoWrap" VerticalAlignment="Center" Grid.Column="1" FontFamily="{StaticResource BenderFont}" Foreground="{StaticResource AppBarItemForegroundThemeBrush}"/>
         </Grid>
 
         <!--<StackPanel Grid.Row="1">
@@ -56,7 +56,7 @@
             <InfoBar Name="UpdateInfoBar">
 
                 <InfoBar.ActionButton>
-                    <Button Name="UpdateButton" Content="Update" Click="UpdateButton_Click" HorizontalAlignment="Right"/>
+                    <Button Name="UpdateButton" Content="更新(别乱点)" Click="UpdateButton_Click" HorizontalAlignment="Right"/>
                 </InfoBar.ActionButton>
 
             </InfoBar>
@@ -71,10 +71,10 @@
                 Grid.Row="2" Name="NavView">
 
             <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Play" Content="Play" Tag="Play" ToolTipService.ToolTip="Connect and play." FontFamily="{StaticResource BenderFont}"/>
-                <NavigationViewItem Icon="AllApps" Content="Tools" Tag="Tools" ToolTipService.ToolTip="Tools to manage SIT and Tarkov." FontFamily="{StaticResource BenderFont}"/>
-                <NavigationViewItem Icon="MapDrive" Content="Server" Tag="Server" ToolTipService.ToolTip="Server management" FontFamily="{StaticResource BenderFont}"/>
-                <NavigationViewItem Icon="Library" Content="Mods" Tag="Mods" ToolTipService.ToolTip="Mod management." FontFamily="{StaticResource BenderFont}"/>
+                <NavigationViewItem Icon="Play" Content="启动" Tag="Play" ToolTipService.ToolTip="连接到服务器并启动游戏。" FontFamily="{StaticResource BenderFont}"/>
+                <NavigationViewItem Icon="AllApps" Content="工具箱" Tag="Tools" ToolTipService.ToolTip="SIT 和 逃离塔科夫 主游戏的管理工具。" FontFamily="{StaticResource BenderFont}"/>
+                <NavigationViewItem Icon="MapDrive" Content="服务器管理" Tag="Server" ToolTipService.ToolTip="服务器管理。" FontFamily="{StaticResource BenderFont}"/>
+                <NavigationViewItem Icon="Library" Content="模组管理" Tag="Mods" ToolTipService.ToolTip="模组管理。" FontFamily="{StaticResource BenderFont}"/>
             </NavigationView.MenuItems>
             
             <Frame x:Name="ContentFrame" Margin="6" CornerRadius="8">

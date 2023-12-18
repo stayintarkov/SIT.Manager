@@ -35,7 +35,7 @@ namespace SIT.Manager.Pages
         {
             if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
-                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("错误", "\"安装路径\" 未配置。转到 设置 来配置。", InfoBarSeverity.Error);
                 return;
             }
 
@@ -46,7 +46,7 @@ namespace SIT.Manager.Pages
             {
                 ModsList.Items.Add(new ModInfo()
                 {
-                    Name = "No mods found"
+                    Name = "未找到模组"
                 });
                 ModsList.IsHitTestVisible = false;
                 return;
@@ -109,18 +109,18 @@ namespace SIT.Manager.Pages
             {
                 Content = new TextBlock()
                 {
-                    Text = $"You have {outdatedMods.Count} outdated mods. Would you like to automatically update them?\nOutdated Mods:\n\n{outdatedString}"
+                    Text = $"你有 {outdatedMods.Count} 个旧版本模组。你要更新它们吗？\n旧版本模组:\n\n{outdatedString}"
                 }
             };
 
             ContentDialog contentDialog = new()
             {
                 XamlRoot = window.Content.XamlRoot,
-                Title = "Outdated Mods Found",
+                Title = "找到一些模组更新",
                 Content = scrollView,
-                CloseButtonText = "No",
+                CloseButtonText = "否",
                 IsPrimaryButtonEnabled = true,
-                PrimaryButtonText = "Yes"
+                PrimaryButtonText = "是"
             };
 
             ContentDialogResult result = await contentDialog.ShowAsync();
@@ -137,14 +137,14 @@ namespace SIT.Manager.Pages
                 return;
             }
 
-            Utils.ShowInfoBar("Updated Mods", $"Updated {outdatedMods.Count} mods.", InfoBarSeverity.Success);
+            Utils.ShowInfoBar("模组更新", $"已更新 {outdatedMods.Count} 个模组。", InfoBarSeverity.Success);
         }
 
         private async void DownloadModPack()
         {
             if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
-                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("错误", "\"安装路径\" 未配置。转到 设置 配置客户端安装路径。", InfoBarSeverity.Error);
                 return;
             }
 
@@ -166,7 +166,7 @@ namespace SIT.Manager.Pages
 
                 Directory.CreateDirectory(dir + @"\Extracted");
 
-                await Utils.DownloadFile("SIT.Mod.Ports.Collection.zip", dir, "https://github.com/stayintarkov/SIT-Mod-Ports/releases/latest/download/SIT.Mod.Ports.Collection.zip", true);
+                await Utils.DownloadFile("SIT.Mod.Ports.Collection.zip", dir, "https://github.tarkov.free.hr/stayintarkov/SIT-Mod-Port-Mirror/releases/latest/download/SIT.Mod.Ports.Collection.zip", true);
                 Utils.ExtractArchive(dir + @"\SIT.Mod.Ports.Collection.zip", dir + @"\Extracted");
                 DownloadModPackageButton.IsEnabled = true;
 
@@ -184,7 +184,7 @@ namespace SIT.Manager.Pages
         {
             if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
-                Utils.ShowInfoBar("Install Mod", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("模组安装", "\"安装路径\" 未配置。转到 设置 配置客户端安装路径。", InfoBarSeverity.Error);
                 return;
             }
 
@@ -195,12 +195,12 @@ namespace SIT.Manager.Pages
                     ContentDialog contentDialog = new ContentDialog()
                     {
                         XamlRoot = XamlRoot,
-                        Title = "Warning",
-                        Content = $"The mod you are trying to install is not compatible with your currently installed version of SIT.\n\nSupported SIT Version: {mod.SupportedVersion}\nInstalled SIT Version: {(string.IsNullOrEmpty(App.ManagerConfig.SitVersion) ? "Unknown" : App.ManagerConfig.SitVersion)}\n\nContinue anyway?",
+                        Title = "警告",
+                        Content = $"你尝试安装的模组与当前已安装 SIT 版本不兼容。\n\n兼容的 SIT 版本: {mod.SupportedVersion}\n当前已安装 SIT 版本: {(string.IsNullOrEmpty(App.ManagerConfig.SitVersion) ? "未知" : App.ManagerConfig.SitVersion)}\n\n仍要继续？",
                         HorizontalContentAlignment = HorizontalAlignment.Center,
                         IsPrimaryButtonEnabled = true,
-                        PrimaryButtonText = "Yes",
-                        CloseButtonText = "No"
+                        PrimaryButtonText = "是",
+                        CloseButtonText = "否"
                     };
 
                     ContentDialogResult response = await contentDialog.ShowAsync();
@@ -231,14 +231,14 @@ namespace SIT.Manager.Pages
                 ManagerConfig.Save();
 
                 if (suppressNotification == false)
-                    Utils.ShowInfoBar("Install Mod", $"{mod.Name} was successfully installed.", InfoBarSeverity.Success);
+                    Utils.ShowInfoBar("模组安装", $"{mod.Name} 已安装成功。", InfoBarSeverity.Success);
                 UninstallButton.IsEnabled = true;
             }
             catch (Exception ex)
             {
                 Loggy.LogToFile("InstallMod: " + ex.Message);
                 InstallButton.IsEnabled = true;
-                Utils.ShowInfoBar("Install Mod", $"{mod.Name} failed to install. Check your Launcher.log", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("安装模组", $"{mod.Name} 安装失败。检查你的启动器日志。(Launcher.log)", InfoBarSeverity.Error);
                 return;
             }
         }
@@ -267,11 +267,11 @@ namespace SIT.Manager.Pages
                         ContentDialog dialog = new()
                         {
                             XamlRoot = XamlRoot,
-                            Title = "Error Uninstalling Mod",
-                            Content = $"A file was missing from the mod {mod.Name}: '{pluginFile}'\n\nForce remove the mod from the list of installed mods anyway?",
-                            CloseButtonText = "No",
+                            Title = "卸载模组时出错",
+                            Content = $"汇报了 {mod.Name} 的一个文件缺失: \"{pluginFile}\"\n\n是否强制将此模组移出已安装模组列表？",
+                            CloseButtonText = "否",
                             IsPrimaryButtonEnabled = true,
-                            PrimaryButtonText = "Yes"
+                            PrimaryButtonText = "是"
                         };
 
                         ContentDialogResult result = await dialog.ShowAsync();
@@ -294,8 +294,8 @@ namespace SIT.Manager.Pages
                         ContentDialog dialog = new()
                         {
                             XamlRoot = XamlRoot,
-                            Title = "Error Uninstalling Mod",
-                            Content = $"A file was missing from the mod {mod.Name}: '{configFile}'\n\nForce remove the mod from the list of installed mods anyway?",
+                            Title = "卸载模组时出错",
+                            Content = $"汇报了 {mod.Name} 的一个文件缺失: \"{configFile}\"\n\n是否强制将此模组移出已安装模组列表？",
                             CloseButtonText = "No",
                             IsPrimaryButtonEnabled = true,
                             PrimaryButtonText = "Yes"
@@ -313,14 +313,14 @@ namespace SIT.Manager.Pages
                 App.ManagerConfig.InstalledMods.Remove(mod.Name);
                 ManagerConfig.Save();
 
-                Utils.ShowInfoBar("Uninstall Mod", $"{mod.Name} was successfully uninstalled.", InfoBarSeverity.Success);
+                Utils.ShowInfoBar("模组卸载", $"{mod.Name} 已成功卸载。", InfoBarSeverity.Success);
                 InstallButton.IsEnabled = true;
             }
             catch (Exception ex)
             {
                 Loggy.LogToFile("UninstallMod: " + ex.Message);
                 UninstallButton.IsEnabled = true;
-                Utils.ShowInfoBar("Uninstall Mod", $"{mod.Name} failed to uninstall. Check your Launcher.log", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("模组卸载", $"{mod.Name} 卸载失败。检查你的启动器日志。(Launcher.log)", InfoBarSeverity.Error);
                 return;
             }
         }

@@ -209,7 +209,7 @@ namespace SIT.Manager.Classes
                     {
                         window.actionPanel.Visibility = Visibility.Visible;
                         window.actionProgressRing.Visibility = Visibility.Visible;
-                        window.actionTextBlock.Text = $"Downloading '{fileName}'";
+                        window.actionTextBlock.Text = $"下载 \"{fileName}\" 中";
                     });
 
                 filePath = filePath + $@"\{fileName}";
@@ -305,9 +305,9 @@ namespace SIT.Manager.Classes
                         ContentDialog contentDialog = new()
                         {
                             XamlRoot = window.Content.XamlRoot,
-                            Title = "Downgrade Error",
-                            Content = "Escape From Tarkov cannot be downgraded to the version required by the selected SIT version.\nMake sure the Escape from Tarkov path configured is compatible with the selected SIT version or use a different SIT version instead.",
-                            CloseButtonText = "Ok"
+                            Title = "下载错误",
+                            Content = "逃离塔科夫 主游戏无法降级至 SIT 所需版本。\n确保 逃离塔科夫 主游戏目录中的游戏版本与选定的 SIT 版本兼容，或使用其它 SIT 版本。",
+                            CloseButtonText = "好"
                         };
 
                         await contentDialog.ShowAsync();
@@ -329,11 +329,11 @@ namespace SIT.Manager.Classes
                     ContentDialog contentDialog = new()
                     {
                         XamlRoot = window.Content.XamlRoot,
-                        Title = "Warning",
-                        Content = $"Your Tarkov version is incorrect for the selected patcher.\nAre you sure you want to continue?\n\nInstalled: {App.ManagerConfig.TarkovVersion.Split(".").Last()}\nRequired: {patcherList[0].name.Split(" to ")[0]}",
+                        Title = "警告",
+                        Content = $"你选择的补丁版本与你的塔科夫主游戏不匹配。\n仍要继续？\n\n已安装版本: {App.ManagerConfig.TarkovVersion.Split(".").Last()}\n所需版本: {patcherList[0].name.Split(" to ")[0]}",
                         IsPrimaryButtonEnabled = true,
-                        PrimaryButtonText = "Yes",
-                        CloseButtonText = "No"
+                        PrimaryButtonText = "是",
+                        CloseButtonText = "否"
                     };
 
                     ContentDialogResult contentDialogResult = await contentDialog.ShowAsync();
@@ -401,7 +401,7 @@ namespace SIT.Manager.Classes
                     window.actionPanel.Visibility = Visibility.Visible;
                     window.actionProgressRing.Visibility = Visibility.Visible;
                     window.actionProgressBar.Visibility = Visibility.Collapsed;
-                    window.actionTextBlock.Text = "Copying Patcher files to root directory";
+                    window.actionTextBlock.Text = "正在复制补丁文件至根目录";
                 });
 
                 var patcherDir = Directory.GetDirectories(App.ManagerConfig.InstallPath, "Patcher*").First();
@@ -411,7 +411,7 @@ namespace SIT.Manager.Classes
 
                 mainQueue.TryEnqueue(() =>
                 {
-                    window.actionTextBlock.Text = "Running Patcher";
+                    window.actionTextBlock.Text = "补丁应用中";
                 });
 
                 result = await RunPatcher();
@@ -434,9 +434,9 @@ namespace SIT.Manager.Classes
                     ContentDialog contentDialog = new()
                     {
                         XamlRoot = window.Content.XamlRoot,
-                        Title = "Patcher Error",
-                        Content = $"Patcher failed to run:\n{result}\n\nMake sure your folder is clean!",
-                        CloseButtonText = "Ok"
+                        Title = "补丁安装错误",
+                        Content = $"补丁安装错误:\n{result}\n\n确保主游戏目录无杂项!",
+                        CloseButtonText = "好"
                     };
 
                     await contentDialog.ShowAsync();
@@ -455,9 +455,9 @@ namespace SIT.Manager.Classes
                     ContentDialog contentDialog = new()
                     {
                         XamlRoot = window.Content.XamlRoot,
-                        Title = "Patcher Success",
+                        Title = "补丁安装成功",
                         Content = result,
-                        CloseButtonText = "Ok"
+                        CloseButtonText = "好"
                     };
 
                     await contentDialog.ShowAsync();
@@ -507,7 +507,7 @@ namespace SIT.Manager.Classes
 
                         completed++;
                         progressBar.Report(((float)completed / totalFiles.Count()) * 100);
-                        mainQueue.TryEnqueue(() => { window.actionTextBlock.Text = $"Extracting file {file.Key.Split("/").Last()} ({completed}/{totalFiles.Count()})"; });
+                        mainQueue.TryEnqueue(() => { window.actionTextBlock.Text = $"释放文件 {file.Key.Split("/").Last()} ({completed}/{totalFiles.Count()})"; });
                     }
                 }
 
@@ -617,7 +617,7 @@ namespace SIT.Manager.Classes
 
             if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
-                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("错误", "\"安装路径\" 未配置。转到 设置 配置客户端安装路径。", InfoBarSeverity.Error);
                 return;
             }
 
@@ -652,7 +652,7 @@ namespace SIT.Manager.Classes
 
                 if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins"))
                 {
-                    await DownloadFile("BepInEx5.zip", App.ManagerConfig.InstallPath + @"\SITLauncher", "https://github.com/BepInEx/BepInEx/releases/download/v5.4.22/BepInEx_x64_5.4.22.0.zip", true);
+                    await DownloadFile("BepInEx5.zip", App.ManagerConfig.InstallPath + @"\SITLauncher", "https://github.tarkov.free.hr/BepInEx/BepInEx/releases/download/v5.4.22/BepInEx_x64_5.4.22.0.zip", true);
                     ExtractArchive(App.ManagerConfig.InstallPath + @"\SITLauncher\BepInEx5.zip", App.ManagerConfig.InstallPath);
                     Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\BepInEx\plugins");
                 }
@@ -692,11 +692,11 @@ namespace SIT.Manager.Classes
                     CheckSITVersion(App.ManagerConfig.InstallPath);
                 });
 
-                ShowInfoBar("Install", "Installation of SIT was succesful.", InfoBarSeverity.Success);
+                ShowInfoBar("安装", "SIT 已成功安装。", InfoBarSeverity.Success);
             }
             catch (Exception ex)
             {
-                ShowInfoBarWithLogButton("Install Error", "Encountered an error during installation.", InfoBarSeverity.Error, 10);
+                ShowInfoBarWithLogButton("安装错误", "安装时发生错误。", InfoBarSeverity.Error, 10);
 
                 Loggy.LogToFile("Install SIT: " + ex.Message + "\n" + ex);
 
@@ -788,7 +788,7 @@ namespace SIT.Manager.Classes
             {
                 window.DispatcherQueue.TryEnqueue(async () =>
                 {
-                    Button infoBarButton = new() { Content = "Open Log" };
+                    Button infoBarButton = new() { Content = "查看日志" };
                     infoBarButton.Click += (e, s) =>
                     {
                         OpenLauncherLog();

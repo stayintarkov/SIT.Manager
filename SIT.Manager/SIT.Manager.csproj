@@ -68,6 +68,9 @@
   </ItemGroup>
 
   <ItemGroup>
+	<Reference Include="zlib.net, Version=1.0.3.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>.\Resources\zlib.net.dll</HintPath>
+    </Reference>
     <PackageReference Include="MegaApiClient" Version="1.10.3" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
@@ -109,11 +112,11 @@
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
-  <ItemGroup>
+  <!--ItemGroup>
     <Reference Include="bsg.componentace.compression.libs.zlib">
       <HintPath>..\..\SIT Mod Ports\References\bsg.componentace.compression.libs.zlib.dll</HintPath>
     </Reference>
-  </ItemGroup>
+  </ItemGroup-->
   <ItemGroup>
     <Compile Update="Resource.Designer.cs">
       <DesignTime>True</DesignTime>

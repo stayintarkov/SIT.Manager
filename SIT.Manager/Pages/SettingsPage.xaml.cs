@@ -49,11 +49,11 @@ namespace SIT.Manager.Pages
                 Utils.CheckSITVersion(eftFolder.Path);
 
                 ManagerConfig.Save();
-                Utils.ShowInfoBar("Config", $"EFT installation path set to '{eftFolder.Path}'");
+                Utils.ShowInfoBar("配置", $"逃离塔科夫游戏路径已设定为 \"{eftFolder.Path}\"");
             }
             else
             {
-                Utils.ShowInfoBar("Error", "The selected folder was invalid. Make sure it's a proper EFT game folder.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("错误", "选定的路径无效。请确保选定路径为正确的 逃离塔科夫 主游戏安装目录。", InfoBarSeverity.Error);
                 return;
             }
         }
@@ -77,11 +77,11 @@ namespace SIT.Manager.Pages
                 App.ManagerConfig.AkiServerPath = akiServerPath.Path;
 
                 ManagerConfig.Save();
-                Utils.ShowInfoBar("Config", $"SPT-AKI installation path set to '{akiServerPath.Path}'");
+                Utils.ShowInfoBar("配置", $"SPT-AKI 服务端路径已设定为 \"{akiServerPath.Path}\"");
             }
             else
             {
-                Utils.ShowInfoBar("Error", "The selected folder was invalid. Make sure it's a proper SPT-AKI server folder.");
+                Utils.ShowInfoBar("错误", "选定的路径无效。请确保选定路径为正确的 SPT-AKI 服务端安装目录。");
             }
         }
 

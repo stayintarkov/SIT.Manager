@@ -7,13 +7,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Select Edition"
+    Title="选择版本"
     FullSizeDesired="False"
-    CloseButtonText="Create"
+    CloseButtonText="注册"
     Height="150">
 
     <StackPanel>
-        <TextBlock Text="Choose the Edition for your SIT account:" Margin="5"/>
+        <TextBlock Text="选择你的 SIT 账户版本:" Margin="5"/>
         <ComboBox Name="EditionBox" Width="200" HorizontalAlignment="Center" SelectionChanged="EditionBox_SelectionChanged">
             <ComboBoxItem Content="Standard"/>
             <ComboBoxItem Content="Left Behind"/>

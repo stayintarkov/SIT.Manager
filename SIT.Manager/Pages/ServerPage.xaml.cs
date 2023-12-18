@@ -35,18 +35,18 @@ namespace SIT.Manager.Pages
             {
                 if (AkiServer.IsUnhandledInstanceRunning())
                 {
-                    AddConsole("SPT-AKI is currently running. Please close any running instance of SPT-AKI.");
+                    AddConsole("其它 SPT-AKI 服务端正在运行。请关闭任何正在运行的 SPT-AKI 服务端实例。");
 
                     return;
                 }
 
                 if (!File.Exists(AkiServer.FilePath))
                 {
-                    AddConsole("SPT-AKI not found. Please configure the SPT-AKI path in Settings tab before starting the server.");
+                    AddConsole("未找到 SPT-AKI 服务端。启动服务器前请转到 设置 配置 SPT-AKI 服务端路径。");
                     return;
                 }
 
-                AddConsole("Starting server...");
+                AddConsole("服务器启动中...");
 
                 try
                 {
@@ -59,7 +59,7 @@ namespace SIT.Manager.Pages
             }
             else
             {
-                AddConsole("Stopping server...");
+                AddConsole("正在关闭服务器...");
 
                 try
                 {
@@ -100,23 +100,23 @@ namespace SIT.Manager.Pages
                 {
                     case AkiServer.RunningState.RUNNING:
                         {
-                            AddConsole("Server started!");
+                            AddConsole("服务器已启动!");
                             StartServerButtonSymbolIcon.Symbol = Symbol.Stop;
-                            StartServerButtonTextBlock.Text = "Stop Server";
+                            StartServerButtonTextBlock.Text = "关闭服务器";
                         }
                         break;
                     case AkiServer.RunningState.NOT_RUNNING:
                         {
-                            AddConsole("Server stopped!");
+                            AddConsole("服务器已关闭!");
                             StartServerButtonSymbolIcon.Symbol = Symbol.Play;
-                            StartServerButtonTextBlock.Text = "Start Server";
+                            StartServerButtonTextBlock.Text = "启动服务器";
                         }
                         break;
                     case AkiServer.RunningState.STOPPED_UNEXPECTEDLY:
                         {
-                            AddConsole("Server stopped unexpectedly! Check console for errors.");
+                            AddConsole("服务器错误关闭! 请检查控制台中的错误报告。");
                             StartServerButtonSymbolIcon.Symbol = Symbol.Play;
-                            StartServerButtonTextBlock.Text = "Start Server";
+                            StartServerButtonTextBlock.Text = "启动服务器";
                         }
                         break;
                 }

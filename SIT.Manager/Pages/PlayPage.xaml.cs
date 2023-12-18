@@ -37,7 +37,7 @@ namespace SIT.Manager.Pages
             {
                 ToolTipService.SetToolTip(ConnectButton, new ToolTip()
                 {
-                    Content = $"Fill in all the fields first."
+                    Content = $"请先将上述表单填写完整。"
                 });
                 ConnectButton.IsEnabled = false;
             }
@@ -45,7 +45,7 @@ namespace SIT.Manager.Pages
             {
                 ToolTipService.SetToolTip(ConnectButton, new ToolTip()
                 {
-                    Content = $"Attempt to connect to {AddressBox.Text} and launch the game."
+                    Content = $"尝试连接到 {AddressBox.Text} 并启动游戏。"
                 });
                 ConnectButton.IsEnabled = true;
             }
@@ -57,7 +57,7 @@ namespace SIT.Manager.Pages
             {
                 ToolTipService.SetToolTip(ConnectButton, new ToolTip()
                 {
-                    Content = $"Fill in all the fields first."
+                    Content = $"请先将上述表单填写完整。"
                 });
                 ConnectButton.IsEnabled = false;
             }
@@ -65,7 +65,7 @@ namespace SIT.Manager.Pages
             {
                 ToolTipService.SetToolTip(ConnectButton, new ToolTip()
                 {
-                    Content = $"Attempt to connect to {AddressBox.Text} and launch the game."
+                    Content = $"尝试连接到 {AddressBox.Text} 并启动游戏。"
                 });
                 ConnectButton.IsEnabled = true;
             }
@@ -83,9 +83,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Config Error",
-                    Content = "'Install Path' is not configured. Go to settings to configure the installation path.",
-                    CloseButtonText = "Ok"
+                    Title = "配置错误",
+                    Content = "\"安装路径\" 未配置。转到 设置 配置客户端安装路径。",
+                    CloseButtonText = "好"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
@@ -97,9 +97,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Install Error",
-                    Content = "Unable to find 'StayInTarkov.dll'. Install SIT before connecting.",
-                    CloseButtonText = "Ok"
+                    Title = "安装错误",
+                    Content = "无法找到 \"StayInTarkov.dll\"。连接服务器前需先安装 SIT。",
+                    CloseButtonText = "好"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
@@ -111,9 +111,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Install Error",
-                    Content = "Unable to find 'EscapeFromTarkov.exe' in the installation path.",
-                    CloseButtonText = "Ok"
+                    Title = "安装错误",
+                    Content = "无法在游戏安装目录中找到 \"EscapeFromTarkov.exe\"。",
+                    CloseButtonText = "好"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
@@ -125,16 +125,16 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Input Error",
-                    Content = "Missing address, username or password.",
-                    CloseButtonText = "Ok"
+                    Title = "凭据错误",
+                    Content = "服务器地址、用户名或密码未填写。",
+                    CloseButtonText = "好"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
                 return "error";
             }
 
-            if (!AddressBox.Text.Contains(@"http://"))
+            if (!(AddressBox.Text.Contains(@"http://") || AddressBox.Text.Contains(@"https://")))
             {
                 AddressBox.Text = @"http://" + AddressBox.Text;
             }
@@ -142,11 +142,6 @@ namespace SIT.Manager.Pages
             if (AddressBox.Text.EndsWith(@"/") || AddressBox.Text.EndsWith(@"\"))
             {
                 AddressBox.Text = AddressBox.Text.Remove(AddressBox.Text.Length - 1, 1);
-            }
-
-            if (!AddressBox.Text.Match(@":\d{2,5}$"))
-            {
-                AddressBox.Text = AddressBox.Text + @":6969";
             }
 
             string returnData = await LoginToServer();
@@ -180,11 +175,11 @@ namespace SIT.Manager.Pages
                     ContentDialog createAccountDialog = new()
                     {
                         XamlRoot = Content.XamlRoot,
-                        Title = "Account Not Found",
-                        Content = "Your account has not been found, would you like to register a new account with these credentials?",
+                        Title = "账户不存在",
+                        Content = "服务器中找不到指定账户。是否使用当前凭据注册账户？",
                         IsPrimaryButtonEnabled = true,
-                        PrimaryButtonText = "Yes",
-                        CloseButtonText = "No"
+                        PrimaryButtonText = "是",
+                        CloseButtonText = "否"
                     };
 
                     ContentDialogResult msgBoxResult = await createAccountDialog.ShowAsync(ContentDialogPlacement.InPlace);
@@ -212,7 +207,7 @@ namespace SIT.Manager.Pages
                 }
                 else if(returnData == "INVALID_PASSWORD")
                 {
-                    Utils.ShowInfoBar("Connect", $"Invalid password!", InfoBarSeverity.Error);
+                    Utils.ShowInfoBar("连接", $"密码错误!", InfoBarSeverity.Error);
                     return "error";
                 }
 
@@ -223,9 +218,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Login Error",
-                    Content = $"Unable to communicate with the Server\n{webEx.Message}",
-                    CloseButtonText = "Ok"
+                    Title = "登录错误",
+                    Content = $"无法与服务器进行通信\n{webEx.Message}",
+                    CloseButtonText = "好"
                 };
 
                 Loggy.LogToFile("Login Error: " + webEx);
@@ -238,9 +233,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Login Error",
-                    Content = $"Unable to communicate with the Server\n{ex.Message}",
-                    CloseButtonText = "Ok"
+                    Title = "登录错误",
+                    Content = $"无法与服务器进行通信\n{ex.Message}",
+                    CloseButtonText = "好"
                 };
 
                 Loggy.LogToFile("Login Error: " + ex);
@@ -268,7 +263,7 @@ namespace SIT.Manager.Pages
                 return;
             }
 
-            Utils.ShowInfoBar("Connect", $"Successfully connected to {AddressBox.Text}", InfoBarSeverity.Success);
+            Utils.ShowInfoBar("连接", $"已成功连接至 {AddressBox.Text}", InfoBarSeverity.Success);
 
             string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBox.Text}\",\"Version\":\"live\"}}";
             Process.Start(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov.exe", arguments);

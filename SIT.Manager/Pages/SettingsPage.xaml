@@ -18,51 +18,51 @@
         
         <ScrollViewer Grid.Row="0">
             <StackPanel Margin="10">
-                <TextBlock Text="Launcher Settings" Margin="5" VerticalAlignment="Center"/>
+                <TextBlock Text="启动器设置" Margin="5" VerticalAlignment="Center"/>
                 <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
-                    <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game." IsChecked="{Binding CloseAfterLaunch, Mode=TwoWay}"/>
-                    <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher." IsChecked="{Binding LookForUpdates, Mode=TwoWay}"/>
+                    <CheckBox Content="启动游戏后关闭启动器" ToolTipService.ToolTip="在游戏启动之后自动关闭启动器。" IsChecked="{Binding CloseAfterLaunch, Mode=TwoWay}"/>
+                    <CheckBox Content="自动检查更新(不推荐中国玩家启用)" ToolTipService.ToolTip="打开启动器时自动检查更新。" IsChecked="{Binding LookForUpdates, Mode=TwoWay}"/>
                 </StackPanel>
 
 
-                <TextBlock Text="EFT Settings" Margin="5" VerticalAlignment="Center"/>
+                <TextBlock Text="逃离塔科夫设置" Margin="5" VerticalAlignment="Center"/>
                 <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10" >
                     <StackPanel Orientation="Horizontal" >
-                        <TextBlock Text="EFT Path:" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        <TextBox PlaceholderText="EFT Install Path..." Margin="0,0,10,0" MinWidth="425" MaxWidth="425" IsReadOnly="True" Text="{Binding InstallPath}"/>
-                        <Button Name="ChangeInstallButton" Content="Change" Margin="0,0,10,0" ToolTipService.ToolTip="Change the EFT Install Path." Click="ChangeInstallButton_ClickAsync"/>
+                        <TextBlock Text="逃离塔科夫游戏路径:" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBox PlaceholderText="塔科夫安装路径..." Margin="0,0,10,0" MinWidth="425" MaxWidth="425" IsReadOnly="True" Text="{Binding InstallPath}"/>
+                        <Button Name="ChangeInstallButton" Content="浏览" Margin="0,0,10,0" ToolTipService.ToolTip="更改逃离塔科夫游戏安装路径。" Click="ChangeInstallButton_ClickAsync"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="EFT Version:" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="逃离塔科夫游戏版本:" Margin="0,10,10,0" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding TarkovVersion, Mode=TwoWay}" Margin="0,10,10,0" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="SIT Version:" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="SIT 模组版本:" Margin="0,10,10,0" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding SitVersion, Mode=TwoWay}" Margin="0,10,10,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Text="SPT-AKI Settings" Margin="5" VerticalAlignment="Center"/>
+                <TextBlock Text="SPT-AKI 服务端设置" Margin="5" VerticalAlignment="Center"/>
 
                 <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="SPT-AKI Path:"  VerticalAlignment="Center"/>
-                        <TextBox PlaceholderText="SPT-AKI Install Path..." Margin="5" MinWidth="397" MaxWidth="425" IsReadOnly="True" Text="{Binding AkiServerPath}"/>
-                        <Button Name="ChangeAkiServerPath" Content="Change" Margin="5" ToolTipService.ToolTip="Change the SPT-AKI Install Path." Click="ChangeAkiServerPath_Click"/>
+                        <TextBlock Text="SPT-AKI 服务端路径:"  VerticalAlignment="Center"/>
+                        <TextBox PlaceholderText="SPT-AKI 服务端的路径..." Margin="5" MinWidth="397" MaxWidth="425" IsReadOnly="True" Text="{Binding AkiServerPath}"/>
+                        <Button Name="ChangeAkiServerPath" Content="浏览" Margin="5" ToolTipService.ToolTip="更改 SPT-AKI 服务端的安装路径。" Click="ChangeAkiServerPath_Click"/>
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Text="Server Console" Margin="5" VerticalAlignment="Center"/>
+                <TextBlock Text="服务器命令控制台设置" Margin="5" VerticalAlignment="Center"/>
                 <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Font family:" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="字体:" Margin="0,0,10,0" VerticalAlignment="Center"/>
                         <TextBlock Name="ConsoleFontFamilyPreview" Margin="0,0,10,0" VerticalAlignment="Center" FontFamily="{Binding ConsoleFontFamily}" Text="{Binding ConsoleFontFamily}"/>
-                        <Button Name="ConsoleFamilyFontChange" Content="Change" Click="ConsoleFamilyFontChange_Click"/>
+                        <Button Name="ConsoleFamilyFontChange" Content="变更" Click="ConsoleFamilyFontChange_Click"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Font Color:" Margin="0,10,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="字体颜色:" Margin="0,10,10,0" VerticalAlignment="Center"/>
                         <Rectangle Name="ConsoleColorPreview" Width="30" Height="15" Margin="0,10,10,0" Fill="{Binding ConsoleFontColor}"/>
-                        <Button Name="ColorChangeButton" Content="Change" Margin="0,10,0,0" Click="ColorChangeButton_Click"/>
+                        <Button Name="ColorChangeButton" Content="变更" Margin="0,10,0,0" Click="ColorChangeButton_Click"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

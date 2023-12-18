@@ -20,11 +20,11 @@
         </Popup>
 
         <StackPanel>
-            <TextBox Name="AddressBox" Margin="10" Width="300" HorizontalAlignment="Left" Text="{Binding LastServer, Mode=TwoWay}" PlaceholderText="Enter Server Address..." TextChanged="InputBox_TextChanged" Header="Address" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
-            <TextBox Name="UsernameBox" Margin="10" Width="150" HorizontalAlignment="Left" Text="{Binding Username, Mode=TwoWay}" PlaceholderText="Enter Username..." TextChanged="InputBox_TextChanged" Header="Username" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
-            <PasswordBox Name="PasswordBox" Margin="10" Width="150" HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" PlaceholderText="Enter Password..." PasswordChanged="PasswordBox_PasswordChanged" Header="Password" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
-            <CheckBox Name="RememberMeCheck" Content="Remember Me" Margin="10" IsChecked="{Binding RememberLogin, Mode=TwoWay}"/>
-            <Button Name="ConnectButton" Content="Connect" Margin="10" ToolTipService.ToolTip="Connect to the server." Click="ConnectButton_Click"/>
+            <TextBox Name="AddressBox" Margin="10" Width="300" HorizontalAlignment="Left" Text="{Binding LastServer, Mode=TwoWay}" PlaceholderText="此处键入服务器地址..." TextChanged="InputBox_TextChanged" Header="服务器地址" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
+            <TextBox Name="UsernameBox" Margin="10" Width="150" HorizontalAlignment="Left" Text="{Binding Username, Mode=TwoWay}" PlaceholderText="此处键入用户名..." TextChanged="InputBox_TextChanged" Header="用户名" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
+            <PasswordBox Name="PasswordBox" Margin="10" Width="150" HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" PlaceholderText="服主能看到密码明文!!" PasswordChanged="PasswordBox_PasswordChanged" Header="密码" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
+            <CheckBox Name="RememberMeCheck" Content="保存登录信息" Margin="10" IsChecked="{Binding RememberLogin, Mode=TwoWay}"/>
+            <Button Name="ConnectButton" Content="连接" Margin="10" ToolTipService.ToolTip="使用上述凭据连接到指定服务器。" Click="ConnectButton_Click"/>
         </StackPanel>
     </Grid>
 </Page>

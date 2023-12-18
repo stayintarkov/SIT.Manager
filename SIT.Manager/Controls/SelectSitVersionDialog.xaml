@@ -7,17 +7,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Select Version"
+    Title="选择版本"
     FullSizeDesired="False"
     IsPrimaryButtonEnabled="True"
-    PrimaryButtonText="Install"
-    CloseButtonText="Cancel"
+    PrimaryButtonText="安装"
+    CloseButtonText="取消"
     Height="150"
     MaxWidth="600"
     MinWidth="600">
 
     <StackPanel>
-        <TextBlock Text="Choose the version to install:" Margin="5"/>
+        <TextBlock Text="选择欲安装版本:" Margin="5"/>
         <ComboBox Width="500" Name="VersionBox" HorizontalAlignment="Center" SelectionChanged="VersionBox_SelectionChanged">
             
             <ComboBox.ItemTemplate>

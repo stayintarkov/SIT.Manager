@@ -7,15 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Color Picker"
+    Title="选色器"
     FullSizeDesired="False"
     Height="300">
 
     <StackPanel>
         <ColorPicker Name="ColorPickerControl" ColorSpectrumShape="Ring" IsColorPreviewVisible="False" IsColorChannelTextInputVisible="False" IsHexInputVisible="False" IsMoreButtonVisible="False"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Name="ColorPickerCancelButton" Content="Cancel" Margin="0,0,10,0" Click="ColorPickerControlCancelButton"/>
-            <Button Name="ColorPickerSelectButton" Content="Select" Margin="0,0,10,0" Click="ColorPickerControlSelectButton"/>
+            <Button Name="ColorPickerCancelButton" Content="取消" Margin="0,0,10,0" Click="ColorPickerControlCancelButton"/>
+            <Button Name="ColorPickerSelectButton" Content="完成" Margin="0,0,10,0" Click="ColorPickerControlSelectButton"/>
         </StackPanel>
     </StackPanel>
 </ContentDialog>

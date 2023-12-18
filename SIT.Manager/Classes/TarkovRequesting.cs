@@ -68,7 +68,7 @@ namespace SIT.Manager.Classes
 
             if (method != "GET" && !string.IsNullOrEmpty(data))
             {
-                byte[] bytes = compress ? SimpleZlib.CompressToBytes(data, zlibConst.Z_BEST_SPEED) : Encoding.UTF8.GetBytes(data);
+                byte[] bytes = compress ? SimpleZlib.CompressToBytes(data, ComponentAce.Compression.Libs.zlib.zlibConst.Z_BEST_SPEED) : Encoding.UTF8.GetBytes(data);
 
                 request.ContentType = "application/json";
                 request.ContentLength = bytes.Length;
@@ -126,7 +126,7 @@ namespace SIT.Manager.Classes
 
             if (method != "GET" && !string.IsNullOrEmpty(data))
             {
-                byte[] bytes = compress ? SimpleZlib.CompressToBytes(data, zlibConst.Z_BEST_COMPRESSION) : Encoding.UTF8.GetBytes(data);
+                byte[] bytes = compress ? SimpleZlib.CompressToBytes(data, ComponentAce.Compression.Libs.zlib.zlibConst.Z_BEST_COMPRESSION) : Encoding.UTF8.GetBytes(data);
 
                 request.ContentType = "application/json";
                 request.ContentLength = bytes.Length;

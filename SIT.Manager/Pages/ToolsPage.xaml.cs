@@ -29,9 +29,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Config Error",
-                    Content = "'Install Path' is not configured. Go to settings to configure the installation path.",
-                    CloseButtonText = "Ok"
+                    Title = "配置错误",
+                    Content = "\"安装路径\" 未配置。转到 设置 配置客户端安装路径。",
+                    CloseButtonText = "好"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
@@ -51,9 +51,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Config Error",
-                    Content = "'Install Path' is not configured. Go to settings to configure the installation path.",
-                    CloseButtonText = "Ok"
+                    Title = "配置错误",
+                    Content = "\"安装路径\" 未配置。转到 设置 配置客户端安装路径。",
+                    CloseButtonText = "好"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
@@ -68,8 +68,8 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Config Error",
-                    Content = $"Could not find the given path. Is BepInEx installed?\nPath: {dirPath}",
+                    Title = "配置错误",
+                    Content = $"无法找到指定路径。检查 BepInEx 是否已安装。\n路径: {dirPath}",
                     CloseButtonText = "Ok"
                 };
 
@@ -94,9 +94,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Config Error",
-                    Content = $"Could not find '{sitCfg}'. Make sure SIT is installed and that you have started the game once.",
-                    CloseButtonText = "Ok"
+                    Title = "配置错误",
+                    Content = $"无法找到 \"{sitCfg}\"。请确认 SIT 已正确安装并至少启动过一次游戏。",
+                    CloseButtonText = "好"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
@@ -119,9 +119,9 @@ namespace SIT.Manager.Pages
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Config Error",
-                    Content = "Log file could not be found.",
-                    CloseButtonText = "Ok"
+                    Title = "配置错误",
+                    Content = "运行日志文件未找到。",
+                    CloseButtonText = "好"
                 };
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);

@@ -44,7 +44,7 @@ using (var progressBar = new ProgressBar())
 	{
 		Progress<float> progress = new Progress<float>((prog) => { progressBar.Report(prog / 100); });
 		using (var file = new FileStream(workingDir + @"\SIT.Manager.zip", FileMode.Create, FileAccess.Write, FileShare.None))
-			await HttpClientProgressExtensions.DownloadDataAsync(httpClient, "https://github.com/stayintarkov/SIT.Manager/releases/latest/download/SIT.Manager.zip", file, progress);
+			await HttpClientProgressExtensions.DownloadDataAsync(httpClient, "https://github.tarkov.free.hr/stayintarkov/SIT.Manager/releases/latest/download/SIT.Manager.zip", file, progress);
 	}
 	catch (Exception ex)
 	{

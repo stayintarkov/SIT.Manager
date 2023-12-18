@@ -18,23 +18,23 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Margin="10,5,0,0"  Grid.Row="0" Name="ConsoleOutput" Text="Console Output" FontSize="16" FontFamily="{ThemeResource BenderFont}" FontWeight="Bold"/>
+            <TextBlock Margin="10,5,0,0"  Grid.Row="0" Name="ConsoleOutput" Text="服务端命令控制台输出" FontSize="16" FontFamily="{ThemeResource BenderFont}" FontWeight="Bold"/>
             <ScrollViewer Name="ConsoleLogScroller" Grid.Row="1" CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Margin="10" HorizontalScrollBarVisibility="Disabled" Padding="6,0">
                 <RichTextBlock Name="ConsoleLog" Grid.Row="1" HorizontalAlignment="Stretch" MinHeight="200" FontFamily="{Binding ConsoleFontFamily}" FontSize="16" Foreground="{Binding ConsoleFontColor}" Margin="10" TextWrapping="WrapWholeWords" SizeChanged="ConsoleLog_SizeChanged"/>
             </ScrollViewer>
         </Grid>
 
         <StackPanel Grid.Row="1" Margin="10,0,10,10" Orientation="Horizontal">
-            <Button Name="StartServerButton" HorizontalAlignment="Left" Margin="0,0,5,0" ToolTipService.ToolTip="Start" Click="StartServerButton_Click">
+            <Button Name="StartServerButton" HorizontalAlignment="Left" Margin="0,0,5,0" ToolTipService.ToolTip="启动" Click="StartServerButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Name ="StartServerButtonSymbolIcon" Symbol="Play" Margin="0,0,10,0"/>
-                    <TextBlock Name="StartServerButtonTextBlock" Text="Start Server"/>
+                    <TextBlock Name="StartServerButtonTextBlock" Text="启动服务器"/>
                 </StackPanel>
             </Button>
-            <Button Name="EditServerConfigButton" HorizontalAlignment="Left" Margin="0,0,5,0" ToolTipService.ToolTip="Edit Server">
+            <Button Name="EditServerConfigButton" HorizontalAlignment="Left" Margin="0,0,5,0" ToolTipService.ToolTip="编辑服务器配置">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Edit" Margin="0,0,10,0"/>
-                    <TextBlock Text="Edit Server Config"/>
+                    <TextBlock Text="编辑服务器配置"/>
                 </StackPanel>
             </Button>
         </StackPanel>

@@ -51,7 +51,7 @@ namespace SIT.Manager.Pages
 
                 if (location == null)
                 {
-                    Utils.ShowInfoBar("Load Error", "There was an error saving the file.", InfoBarSeverity.Error);
+                    Utils.ShowInfoBar("加载错误", "加载文件时出错。", InfoBarSeverity.Error);
                     return;
                 }
 
@@ -68,34 +68,34 @@ namespace SIT.Manager.Pages
                 switch (location.Scene.path)
                 {
                     case "maps/factory_day_preset.bundle":
-                        LocationTextBox.Text = "Factory (Day)";
+                        LocationTextBox.Text = "工厂 (白图)";
                         break;
                     case "maps/factory_night_preset.bundle":
-                        LocationTextBox.Text = "Factory (Night)";
+                        LocationTextBox.Text = "工厂 (夜图)";
                         break;
                     case "maps/woods_preset.bundle":
-                        LocationTextBox.Text = "Woods";
+                        LocationTextBox.Text = "森林";
                         break;
                     case "maps/customs_preset.bundle":
-                        LocationTextBox.Text = "Customs";
+                        LocationTextBox.Text = "海关";
                         break;
                     case "maps/shopping_mall.bundle":
-                        LocationTextBox.Text = "Interchange";
+                        LocationTextBox.Text = "立交桥";
                         break;
                     case "maps/rezerv_base_preset.bundle":
-                        LocationTextBox.Text = "Reserve";
+                        LocationTextBox.Text = "储备站";
                         break;
                     case "maps/shoreline_preset.bundle":
-                        LocationTextBox.Text = "Shoreline";
+                        LocationTextBox.Text = "海岸线";
                         break;
                     case "maps/laboratory_preset.bundle":
-                        LocationTextBox.Text = "Labs";
+                        LocationTextBox.Text = "实验室";
                         break;
                     case "maps/lighthouse_preset.bundle":
-                        LocationTextBox.Text = "Lighthouse";
+                        LocationTextBox.Text = "灯塔";
                         break;
                     case "maps/city_preset.bundle":
-                        LocationTextBox.Text = "Streets";
+                        LocationTextBox.Text = "塔科夫街区";
                         break;
                     default:
                         break;
@@ -113,7 +113,7 @@ namespace SIT.Manager.Pages
                     BossList.SelectedIndex = 0;
                 }
 
-                Utils.ShowInfoBar("Load Location", $"Loaded location {LocationTextBox.Text} successfully.", InfoBarSeverity.Success);
+                Utils.ShowInfoBar("加载地图配置", $"地图配置 {LocationTextBox.Text} 已成功加载。", InfoBarSeverity.Success);
             }
                 
         }
@@ -143,12 +143,12 @@ namespace SIT.Manager.Pages
             BaseLocation baseLocation = (BaseLocation)DataContext;
             if (baseLocation == null)
             {
-                Utils.ShowInfoBar("Save Error", "There was an error saving the file.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("保存错误", "保存文件时出错。", InfoBarSeverity.Error);
                 return;
             }
             var json = JsonSerializer.Serialize(baseLocation, new JsonSerializerOptions() { WriteIndented = true });
             File.WriteAllText(file.Path, json);
-            Utils.ShowInfoBar("Save", $"Successfully saved the file to: {file.Path}", InfoBarSeverity.Success);
+            Utils.ShowInfoBar("保存", $"已成功保存至: {file.Path}", InfoBarSeverity.Success);
         }
 
         private void AddWaveButton_Click(object sender, RoutedEventArgs e)
