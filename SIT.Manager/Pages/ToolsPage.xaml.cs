@@ -1,6 +1,5 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.Win32;
 using SIT.Manager.Classes;
 using SIT.Manager.Controls;
 using System;
