@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Win32;
 using SIT.Manager.Classes;
 using SIT.Manager.Controls;
 using System;
@@ -154,8 +155,68 @@ namespace SIT.Manager.Pages
         private void OpenLocationEditorButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow window = App.m_window as MainWindow;
-            
+
             window.contentFrame.Navigate(typeof(LocationEditor));
+        }
+        private async void ClearCacheButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp", "Battlestate Games", "EscapeFromTarkov");
+
+                // Check if the directory exists.
+                if (Directory.Exists(cachePath))
+                {
+                    // Delete all files within the directory.
+                    foreach (string file in Directory.GetFiles(cachePath))
+                    {
+                        File.Delete(file);
+                    }
+
+                    // Delete all subdirectories and their contents.
+                    foreach (string subDirectory in Directory.GetDirectories(cachePath))
+                    {
+                        Directory.Delete(subDirectory, true);
+                    }
+
+                    // Optionally, display a success message or perform additional actions.
+                    ContentDialog contentDialog = new()
+                    {
+                        XamlRoot = Content.XamlRoot,
+                        Title = "Cache Cleared",
+                        Content = "Cache cleared successfully!",
+                        CloseButtonText = "Ok"
+                    };
+
+                    await contentDialog.ShowAsync();
+                }
+                else
+                {
+                    // Handle the case where the cache directory does not exist.
+                    ContentDialog contentDialog = new()
+                    {
+                        XamlRoot = Content.XamlRoot,
+                        Title = "Cache Clear Error",
+                        Content = $"Cache directory not found at: {cachePath}",
+                        CloseButtonText = "Ok"
+                    };
+
+                    await contentDialog.ShowAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that may occur during the process.
+                ContentDialog contentDialog = new()
+                {
+                    XamlRoot = Content.XamlRoot,
+                    Title = "Error",
+                    Content = $"An error occurred: {ex.Message}",
+                    CloseButtonText = "Ok"
+                };
+
+                await contentDialog.ShowAsync();
+            }
         }
     }
 }

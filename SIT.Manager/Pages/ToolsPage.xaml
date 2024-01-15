@@ -50,5 +50,11 @@
                 <TextBlock Text="Location Editor"/>
             </StackPanel>
         </Button>
+        <Button Name="ClearCacheButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Clears the local users EFT Cache." Click="ClearCacheButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Delete" Margin="0,0,10,0"/>
+                <TextBlock Text="Clear Cache"/>
+            </StackPanel>
+        </Button>
     </StackPanel>
 </Page>

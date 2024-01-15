@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -143,12 +144,12 @@ namespace SIT.Manager.Pages
             {
                 AddressBox.Text = AddressBox.Text.Remove(AddressBox.Text.Length - 1, 1);
             }
-
-            if (!AddressBox.Text.Match(@":\d{2,5}$"))
+            
+            if (!Regex.IsMatch(AddressBox.Text, @":\d{2,5}$"))
             {
                 AddressBox.Text = AddressBox.Text + @":6969";
             }
-
+            
             string returnData = await LoginToServer();
             return returnData;
         }
