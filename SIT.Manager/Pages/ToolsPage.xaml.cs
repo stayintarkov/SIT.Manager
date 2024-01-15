@@ -157,7 +157,7 @@ namespace SIT.Manager.Pages
 
             window.contentFrame.Navigate(typeof(LocationEditor));
         }
-        private async void ClearCacheButton_Click(object sender, RoutedEventArgs e)
+        private void ClearCacheButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -179,42 +179,18 @@ namespace SIT.Manager.Pages
                     }
 
                     // Optionally, display a success message or perform additional actions.
-                    ContentDialog contentDialog = new()
-                    {
-                        XamlRoot = Content.XamlRoot,
-                        Title = "Cache Cleared",
-                        Content = "Cache cleared successfully!",
-                        CloseButtonText = "Ok"
-                    };
-
-                    await contentDialog.ShowAsync();
+                    Utils.ShowInfoBar("Cache Cleared", "Cache cleared successfully!", InfoBarSeverity.Success);
                 }
                 else
                 {
                     // Handle the case where the cache directory does not exist.
-                    ContentDialog contentDialog = new()
-                    {
-                        XamlRoot = Content.XamlRoot,
-                        Title = "Cache Clear Error",
-                        Content = $"Cache directory not found at: {cachePath}",
-                        CloseButtonText = "Ok"
-                    };
-
-                    await contentDialog.ShowAsync();
+                    Utils.ShowInfoBar("Cache Clear Error", "$\"Cache directory not found at: {cachePath}", InfoBarSeverity.Informational);
                 }
             }
             catch (Exception ex)
             {
                 // Handle any exceptions that may occur during the process.
-                ContentDialog contentDialog = new()
-                {
-                    XamlRoot = Content.XamlRoot,
-                    Title = "Error",
-                    Content = $"An error occurred: {ex.Message}",
-                    CloseButtonText = "Ok"
-                };
-
-                await contentDialog.ShowAsync();
+                Utils.ShowInfoBar("Error", $"An error occurred: {ex.Message}", InfoBarSeverity.Error);
             }
         }
     }
