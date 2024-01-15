@@ -157,7 +157,7 @@ namespace SIT.Manager.Pages
 
             window.contentFrame.Navigate(typeof(LocationEditor));
         }
-        private async void ClearCacheButton_Click(object sender, RoutedEventArgs e)
+        private void ClearCacheButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
