@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Newtonsoft.Json.Linq;
 using SIT.Manager.Classes;
 using SIT.Manager.Controls;
 using System;
@@ -157,35 +158,131 @@ namespace SIT.Manager.Pages
 
             window.contentFrame.Navigate(typeof(LocationEditor));
         }
-        private void ClearCacheButton_Click(object sender, RoutedEventArgs e)
+        private async void ClearCacheButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                string cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp", "Battlestate Games", "EscapeFromTarkov");
-
-                // Check if the directory exists.
-                if (Directory.Exists(cachePath))
+                // Prompt the user for their choice using a dialog.
+                ContentDialog choiceDialog = new ContentDialog
                 {
-                    // Delete all files within the directory.
-                    foreach (string file in Directory.GetFiles(cachePath))
-                    {
-                        File.Delete(file);
-                    }
+                    XamlRoot = Content.XamlRoot,
+                    Title = "Clear Cache",
+                    Content = "Do you want to clear the EFT local cache or clear all cache?",
+                    PrimaryButtonText = "Clear EFT Local Cache",
+                    SecondaryButtonText = "Clear All Cache",
+                    CloseButtonText = "Cancel"
+                };
 
-                    // Delete all subdirectories and their contents.
-                    foreach (string subDirectory in Directory.GetDirectories(cachePath))
-                    {
-                        Directory.Delete(subDirectory, true);
-                    }
+                ContentDialogResult result = await choiceDialog.ShowAsync();
 
-                    // Optionally, display a success message or perform additional actions.
-                    Utils.ShowInfoBar("Cache Cleared", "Cache cleared successfully!", InfoBarSeverity.Success);
-                }
-                else
+                // Process the user's choice.
+                if (result == ContentDialogResult.Primary)
                 {
-                    // Handle the case where the cache directory does not exist.
-                    Utils.ShowInfoBar("Cache Clear Error", "$\"Cache directory not found at: {cachePath}", InfoBarSeverity.Informational);
+                    // User chose to clear EFT local cache.
+                    string eftCachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp", "Battlestate Games", "EscapeFromTarkov");
+
+                    // Check if the directory exists.
+                    if (Directory.Exists(eftCachePath))
+                    {
+                        // Delete all files within the directory.
+                        foreach (string file in Directory.GetFiles(eftCachePath))
+                        {
+                            File.Delete(file);
+                        }
+
+                        // Delete all subdirectories and their contents.
+                        foreach (string subDirectory in Directory.GetDirectories(eftCachePath))
+                        {
+                            Directory.Delete(subDirectory, true);
+                        }
+
+                        // Optionally, display a success message or perform additional actions.
+                        Utils.ShowInfoBar("Cache Cleared", "EFT local cache cleared successfully!", InfoBarSeverity.Informational);
+                    }
+                    else
+                    {
+                        // Handle the case where the cache directory does not exist.
+                        Utils.ShowInfoBar("Cache Clear Error", $"EFT local cache directory not found at: {eftCachePath}", InfoBarSeverity.Error);
+                    }
                 }
+                else if (result == ContentDialogResult.Secondary)
+                {
+                    // User chose to clear everything.
+                    try
+                    {
+                        // Read the 'ManagerConfig.json' file to get the InstallPath.
+                        string configFilePath = "ManagerConfig.json"; // Update with the correct path.
+                        string jsonContent = File.ReadAllText(configFilePath);
+
+                        // Parse JSON to get the InstallPath.
+                        JObject configObject = JObject.Parse(jsonContent);
+                        string installPath = configObject["InstallPath"]?.ToString();
+                        string serverPath = configObject["AkiServerPath"]?.ToString();
+
+                        if (!string.IsNullOrEmpty(installPath) && !string.IsNullOrEmpty(serverPath))
+                        {
+                            // Combine the installPath and serverPath with the additional subpath.
+                            string cachePath = Path.Combine(installPath, "BepInEx", "cache");
+                            string serverCachePath = Path.Combine(serverPath, "user", "cache");
+
+                            // Clear both EFT local cache and additional path.
+                            foreach (string file in Directory.GetFiles(cachePath))
+                            {
+                                File.Delete(file);
+                            }
+
+                            foreach (string subDirectory in Directory.GetDirectories(cachePath))
+                            {
+                                Directory.Delete(subDirectory, true);
+                            }
+
+                            foreach (string file in Directory.GetFiles(serverCachePath))
+                            {
+                                File.Delete(file);
+                            }
+
+                            foreach (string subDirectory in Directory.GetDirectories(serverCachePath))
+                            {
+                                Directory.Delete(subDirectory, true);
+                            }
+
+                            // Optionally, display a success message or perform additional actions.
+                            Utils.ShowInfoBar("Cache Cleared", "All cache cleared please restart your server!", InfoBarSeverity.Informational);
+                        }
+
+                        else if (!string.IsNullOrEmpty(installPath) && string.IsNullOrEmpty(serverPath))
+                        {
+                            // Combine the installPath with the additional subpath.
+                            string cachePath = Path.Combine(installPath, "BepInEx", "cache");
+
+                            // Clear both EFT local cache and additional path.
+                            foreach (string file in Directory.GetFiles(cachePath))
+                            {
+                                File.Delete(file);
+                            }
+
+                            foreach (string subDirectory in Directory.GetDirectories(cachePath))
+                            {
+                                Directory.Delete(subDirectory, true);
+                            }
+
+                            // Optionally, display a success message or perform additional actions.
+                            Utils.ShowInfoBar("Cache Cleared", "Everything cleared successfully!", InfoBarSeverity.Informational);
+                        }
+
+                        else
+                        {
+                            // Handle the case where InstallPath is not found or empty.
+                            Utils.ShowInfoBar("Cache Clear Error", "InstallPath not found in 'ManagerConfig.json'.", InfoBarSeverity.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle any exceptions that may occur during the process.
+                        Utils.ShowInfoBar("Error", $"An error occurred: {ex.Message}", InfoBarSeverity.Error);
+                    }
+                }
+                // No need to handle the Cancel case separately as it will naturally exit the method.
             }
             catch (Exception ex)
             {
