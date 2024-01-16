@@ -154,8 +154,44 @@ namespace SIT.Manager.Pages
         private void OpenLocationEditorButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow window = App.m_window as MainWindow;
-            
+
             window.contentFrame.Navigate(typeof(LocationEditor));
+        }
+        private void ClearCacheButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp", "Battlestate Games", "EscapeFromTarkov");
+
+                // Check if the directory exists.
+                if (Directory.Exists(cachePath))
+                {
+                    // Delete all files within the directory.
+                    foreach (string file in Directory.GetFiles(cachePath))
+                    {
+                        File.Delete(file);
+                    }
+
+                    // Delete all subdirectories and their contents.
+                    foreach (string subDirectory in Directory.GetDirectories(cachePath))
+                    {
+                        Directory.Delete(subDirectory, true);
+                    }
+
+                    // Optionally, display a success message or perform additional actions.
+                    Utils.ShowInfoBar("Cache Cleared", "Cache cleared successfully!", InfoBarSeverity.Success);
+                }
+                else
+                {
+                    // Handle the case where the cache directory does not exist.
+                    Utils.ShowInfoBar("Cache Clear Error", "$\"Cache directory not found at: {cachePath}", InfoBarSeverity.Informational);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that may occur during the process.
+                Utils.ShowInfoBar("Error", $"An error occurred: {ex.Message}", InfoBarSeverity.Error);
+            }
         }
     }
 }
