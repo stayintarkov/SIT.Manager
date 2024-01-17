@@ -52,7 +52,7 @@ using (var progressBar = new ProgressBar())
     Console.WriteLine("Downloading '{0}' to '{1}'", zipName, zipPath);
     try
 	{
-        Progress<float> progress = new(prog => progressBar.Report(prog / 100));
+        Progress<float> progress = new(prog => progressBar.Report(prog));
         using FileStream fs = new(zipPath, FileMode.Create, FileAccess.Write, FileShare.None);
         await HttpClientProgressExtensions.DownloadDataAsync(httpClient, SITMANAGER_RELEASE_URI, fs, progress);
     }
