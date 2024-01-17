@@ -4,7 +4,7 @@ namespace SIT.Manager.Updater.Classes
 {
     public static class HttpClientProgressExtensions
     {
-        public static async Task DownloadDataAsync(this HttpClient client, string requestUrl, Stream destination, IProgress<float>? progress = null, CancellationToken cancellationToken = default(CancellationToken))
+        public static async Task DownloadDataAsync(this HttpClient client, string requestUrl, Stream destination, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             using HttpResponseMessage response = await client.GetAsync(requestUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             long? contentLength = response.Content.Headers.ContentLength;
@@ -16,7 +16,7 @@ namespace SIT.Manager.Updater.Classes
                 return;
             }
             // Such progress and contentLength much reporting Wow!
-            var progressWrapper = new Progress<long>(totalBytes => progress.Report(((float)totalBytes / contentLength.Value)));
+            var progressWrapper = new Progress<long>(totalBytes => progress.Report((float)totalBytes / contentLength.Value));
             await download.CopyToAsync(destination, 81920, progressWrapper, cancellationToken);
         }
 
