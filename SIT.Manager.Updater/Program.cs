@@ -15,7 +15,7 @@ if (processes.Length > 0)
 {
     Console.WriteLine("An instance of 'SIT.Manager' was found. Would you like to close all instances? Y/N");
     string? response = Console.ReadLine();
-    if (string.Equals(response, "y"))
+    if (string.Equals(response, "y", StringComparison.InvariantCultureIgnoreCase))
 	{
 		foreach (Process process in processes)
 		{
