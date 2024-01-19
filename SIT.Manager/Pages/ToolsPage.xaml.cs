@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Newtonsoft.Json.Linq;
 using SIT.Manager.Classes;
 using SIT.Manager.Controls;
 using System;
@@ -154,8 +155,140 @@ namespace SIT.Manager.Pages
         private void OpenLocationEditorButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow window = App.m_window as MainWindow;
-            
+
             window.contentFrame.Navigate(typeof(LocationEditor));
+        }
+        private async void ClearCacheButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Prompt the user for their choice using a dialog.
+                ContentDialog choiceDialog = new ContentDialog
+                {
+                    XamlRoot = Content.XamlRoot,
+                    Title = "清除缓存",
+                    Content = "确实要清除 逃离塔科夫 本地缓存或全部缓存？",
+                    PrimaryButtonText = "清除 逃离塔科夫 本地缓存",
+                    SecondaryButtonText = "清除全部缓存",
+                    CloseButtonText = "取消操作"
+                };
+
+                ContentDialogResult result = await choiceDialog.ShowAsync();
+
+                // Process the user's choice.
+                if (result == ContentDialogResult.Primary)
+                {
+                    // User chose to clear EFT local cache.
+                    string eftCachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp", "Battlestate Games", "EscapeFromTarkov");
+
+                    // Check if the directory exists.
+                    if (Directory.Exists(eftCachePath))
+                    {
+                        // Delete all files within the directory.
+                        foreach (string file in Directory.GetFiles(eftCachePath))
+                        {
+                            File.Delete(file);
+                        }
+
+                        // Delete all subdirectories and their contents.
+                        foreach (string subDirectory in Directory.GetDirectories(eftCachePath))
+                        {
+                            Directory.Delete(subDirectory, true);
+                        }
+
+                        // Optionally, display a success message or perform additional actions.
+                        Utils.ShowInfoBar("缓存已清除", "逃离塔科夫 本地缓存已成功清除！", InfoBarSeverity.Informational);
+                    }
+                    else
+                    {
+                        // Handle the case where the cache directory does not exist.
+                        Utils.ShowInfoBar("清除缓存时出错", $"逃离塔科夫 本地缓存目录：{eftCachePath} 未找到。", InfoBarSeverity.Error);
+                    }
+                }
+                else if (result == ContentDialogResult.Secondary)
+                {
+                    // User chose to clear everything.
+                    try
+                    {
+                        // Read the 'ManagerConfig.json' file to get the InstallPath.
+                        string configFilePath = "ManagerConfig.json"; // Update with the correct path.
+                        string jsonContent = File.ReadAllText(configFilePath);
+
+                        // Parse JSON to get the InstallPath.
+                        JObject configObject = JObject.Parse(jsonContent);
+                        string installPath = configObject["InstallPath"]?.ToString();
+                        string serverPath = configObject["AkiServerPath"]?.ToString();
+
+                        if (!string.IsNullOrEmpty(installPath) && !string.IsNullOrEmpty(serverPath))
+                        {
+                            // Combine the installPath and serverPath with the additional subpath.
+                            string cachePath = Path.Combine(installPath, "BepInEx", "cache");
+                            string serverCachePath = Path.Combine(serverPath, "user", "cache");
+
+                            // Clear both EFT local cache and additional path.
+                            foreach (string file in Directory.GetFiles(cachePath))
+                            {
+                                File.Delete(file);
+                            }
+
+                            foreach (string subDirectory in Directory.GetDirectories(cachePath))
+                            {
+                                Directory.Delete(subDirectory, true);
+                            }
+
+                            foreach (string file in Directory.GetFiles(serverCachePath))
+                            {
+                                File.Delete(file);
+                            }
+
+                            foreach (string subDirectory in Directory.GetDirectories(serverCachePath))
+                            {
+                                Directory.Delete(subDirectory, true);
+                            }
+
+                            // Optionally, display a success message or perform additional actions.
+                            Utils.ShowInfoBar("缓存已清除", "所有缓存文件均已清除。请重新启动服务器！", InfoBarSeverity.Informational);
+                        }
+
+                        else if (!string.IsNullOrEmpty(installPath) && string.IsNullOrEmpty(serverPath))
+                        {
+                            // Combine the installPath with the additional subpath.
+                            string cachePath = Path.Combine(installPath, "BepInEx", "cache");
+
+                            // Clear both EFT local cache and additional path.
+                            foreach (string file in Directory.GetFiles(cachePath))
+                            {
+                                File.Delete(file);
+                            }
+
+                            foreach (string subDirectory in Directory.GetDirectories(cachePath))
+                            {
+                                Directory.Delete(subDirectory, true);
+                            }
+
+                            // Optionally, display a success message or perform additional actions.
+                            Utils.ShowInfoBar("缓存已清除", "所有缓存文件均已清除！", InfoBarSeverity.Informational);
+                        }
+
+                        else
+                        {
+                            // Handle the case where InstallPath is not found or empty.
+                            Utils.ShowInfoBar("清除缓存时出错", "未能在 'ManagerConfig.json' 中找到 逃离塔科夫 游戏安装目录。", InfoBarSeverity.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle any exceptions that may occur during the process.
+                        Utils.ShowInfoBar("错误", $"清除缓存时出错：{ex.Message}", InfoBarSeverity.Error);
+                    }
+                }
+                // No need to handle the Cancel case separately as it will naturally exit the method.
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that may occur during the process.
+                Utils.ShowInfoBar("错误", $"清除缓存时出错：{ex.Message}", InfoBarSeverity.Error);
+            }
         }
     }
 }
