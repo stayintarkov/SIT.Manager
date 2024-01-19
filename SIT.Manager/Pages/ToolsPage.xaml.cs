@@ -166,11 +166,11 @@ namespace SIT.Manager.Pages
                 ContentDialog choiceDialog = new ContentDialog
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Clear Cache",
-                    Content = "Do you want to clear the EFT local cache or clear all cache?",
-                    PrimaryButtonText = "Clear EFT Local Cache",
-                    SecondaryButtonText = "Clear All Cache",
-                    CloseButtonText = "Cancel"
+                    Title = "清除缓存",
+                    Content = "确实要清除 逃离塔科夫 本地缓存或全部缓存？",
+                    PrimaryButtonText = "清除 逃离塔科夫 本地缓存",
+                    SecondaryButtonText = "清除全部缓存",
+                    CloseButtonText = "取消操作"
                 };
 
                 ContentDialogResult result = await choiceDialog.ShowAsync();
@@ -197,12 +197,12 @@ namespace SIT.Manager.Pages
                         }
 
                         // Optionally, display a success message or perform additional actions.
-                        Utils.ShowInfoBar("Cache Cleared", "EFT local cache cleared successfully!", InfoBarSeverity.Informational);
+                        Utils.ShowInfoBar("缓存已清除", "逃离塔科夫 本地缓存已成功清除！", InfoBarSeverity.Informational);
                     }
                     else
                     {
                         // Handle the case where the cache directory does not exist.
-                        Utils.ShowInfoBar("Cache Clear Error", $"EFT local cache directory not found at: {eftCachePath}", InfoBarSeverity.Error);
+                        Utils.ShowInfoBar("清除缓存时出错", $"逃离塔科夫 本地缓存目录：{eftCachePath} 未找到。", InfoBarSeverity.Error);
                     }
                 }
                 else if (result == ContentDialogResult.Secondary)
@@ -247,7 +247,7 @@ namespace SIT.Manager.Pages
                             }
 
                             // Optionally, display a success message or perform additional actions.
-                            Utils.ShowInfoBar("Cache Cleared", "All cache cleared please restart your server!", InfoBarSeverity.Informational);
+                            Utils.ShowInfoBar("缓存已清除", "所有缓存文件均已清除。请重新启动服务器！", InfoBarSeverity.Informational);
                         }
 
                         else if (!string.IsNullOrEmpty(installPath) && string.IsNullOrEmpty(serverPath))
@@ -267,19 +267,19 @@ namespace SIT.Manager.Pages
                             }
 
                             // Optionally, display a success message or perform additional actions.
-                            Utils.ShowInfoBar("Cache Cleared", "Everything cleared successfully!", InfoBarSeverity.Informational);
+                            Utils.ShowInfoBar("缓存已清除", "所有缓存文件均已清除！", InfoBarSeverity.Informational);
                         }
 
                         else
                         {
                             // Handle the case where InstallPath is not found or empty.
-                            Utils.ShowInfoBar("Cache Clear Error", "InstallPath not found in 'ManagerConfig.json'.", InfoBarSeverity.Error);
+                            Utils.ShowInfoBar("清除缓存时出错", "未能在 'ManagerConfig.json' 中找到 逃离塔科夫 游戏安装目录。", InfoBarSeverity.Error);
                         }
                     }
                     catch (Exception ex)
                     {
                         // Handle any exceptions that may occur during the process.
-                        Utils.ShowInfoBar("Error", $"An error occurred: {ex.Message}", InfoBarSeverity.Error);
+                        Utils.ShowInfoBar("错误", $"清除缓存时出错：{ex.Message}", InfoBarSeverity.Error);
                     }
                 }
                 // No need to handle the Cancel case separately as it will naturally exit the method.
@@ -287,7 +287,7 @@ namespace SIT.Manager.Pages
             catch (Exception ex)
             {
                 // Handle any exceptions that may occur during the process.
-                Utils.ShowInfoBar("Error", $"An error occurred: {ex.Message}", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("错误", $"清除缓存时出错：{ex.Message}", InfoBarSeverity.Error);
             }
         }
     }
