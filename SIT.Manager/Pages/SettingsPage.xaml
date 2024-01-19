@@ -30,7 +30,7 @@
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="逃离塔科夫游戏路径:" Margin="0,0,10,0" VerticalAlignment="Center"/>
                         <TextBox PlaceholderText="塔科夫安装路径..." Margin="0,0,10,0" MinWidth="425" MaxWidth="425" IsReadOnly="True" Text="{Binding InstallPath}"/>
-                        <Button Name="ChangeInstallButton" Content="浏览" Margin="0,0,10,0" ToolTipService.ToolTip="更改逃离塔科夫游戏安装路径。" Click="ChangeInstallButton_ClickAsync"/>
+                        <Button Name="ChangeInstallButton" Content="浏览" Margin="0,0,10,0" ToolTipService.ToolTip="更改逃离塔科夫游戏安装路径。" Click="ChangeInstallButton_ClickAsync" Visibility="Collapsed"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="逃离塔科夫游戏版本:" Margin="0,10,10,0" VerticalAlignment="Center"/>

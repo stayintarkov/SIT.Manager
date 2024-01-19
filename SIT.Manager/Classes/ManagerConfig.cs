@@ -11,7 +11,7 @@ namespace SIT.Manager.Classes
 {
     public class ManagerConfig : PropertyChangedBase
     {
-        private string _lastServer = "http://127.0.0.1:6969";
+        private string _lastServer = "http://v4.ulla.gq:6969";
         public string LastServer
         {
             get => _lastServer;
@@ -32,7 +32,7 @@ namespace SIT.Manager.Classes
             set => SetField(ref _password, value);
         }
 
-        private string _installPath;
+        private string _installPath = "../";
         public string InstallPath
         {
             get => _installPath;
