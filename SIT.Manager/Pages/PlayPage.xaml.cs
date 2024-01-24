@@ -135,19 +135,23 @@ namespace SIT.Manager.Pages
                 return "error";
             }
 
-            if (!AddressBox.Text.Contains(@"http://"))
+            try
             {
-                AddressBox.Text = @"http://" + AddressBox.Text;
+                UriBuilder builder = new(AddressBox.Text);
+                builder.Port = builder.Port == 80 ? 6969 : builder.Port;
+                AddressBox.Text = builder.Uri.ToString().TrimEnd(new[] { '/', '\\' });
             }
+            catch(UriFormatException)
+            {
+                await new ContentDialog()
+                {
+                    XamlRoot = Content.XamlRoot,
+                    Title = "Input Error",
+                    Content = "Invalid address.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync(ContentDialogPlacement.InPlace);
 
-            if (AddressBox.Text.EndsWith(@"/") || AddressBox.Text.EndsWith(@"\"))
-            {
-                AddressBox.Text = AddressBox.Text.Remove(AddressBox.Text.Length - 1, 1);
-            }
-            
-            if (!Regex.IsMatch(AddressBox.Text, @":\d{2,5}$"))
-            {
-                AddressBox.Text = AddressBox.Text + @":6969";
+                return "error";
             }
             
             string returnData = await LoginToServer();
