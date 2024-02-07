@@ -9,6 +9,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -182,6 +183,9 @@ namespace SIT.Manager.Pages
                 // If failed, attempt to register
                 if (returnData == "FAILED")
                 {
+                    string jsonData = requesting.PostJson("/launcher/server/connect", JsonSerializer.Serialize(new object())).ToString();
+                    Newtonsoft.Json.Linq.JObject connectData = Newtonsoft.Json.Linq.JObject.Parse(jsonData);
+                    AkiServer.Editions = connectData["editions"].Values<string>().ToArray();
                     ContentDialog createAccountDialog = new()
                     {
                         XamlRoot = Content.XamlRoot,
