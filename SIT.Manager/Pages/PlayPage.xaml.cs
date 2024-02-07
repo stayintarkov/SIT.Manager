@@ -27,50 +27,16 @@ namespace SIT.Manager.Pages
 
             DataContext = App.ManagerConfig;
 
-            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
-            {
-                ConnectButton.IsEnabled = false;
-            }
+            ConnectionInfo_TextChanged(null, null);
         }
 
-        private void InputBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void ConnectionInfo_TextChanged(object sender, object args)
         {
-            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
+            bool missingInfo = AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath);
+            ToolTipService.SetToolTip(ConnectButton, new ToolTip()
             {
-                ToolTipService.SetToolTip(ConnectButton, new ToolTip()
-                {
-                    Content = $"Fill in all the fields first."
-                });
-                ConnectButton.IsEnabled = false;
-            }
-            else if (AddressBox.Text.Length > 0)
-            {
-                ToolTipService.SetToolTip(ConnectButton, new ToolTip()
-                {
-                    Content = $"Attempt to connect to {AddressBox.Text} and launch the game."
-                });
-                ConnectButton.IsEnabled = true;
-            }
-        }
-
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
-            {
-                ToolTipService.SetToolTip(ConnectButton, new ToolTip()
-                {
-                    Content = $"Fill in all the fields first."
-                });
-                ConnectButton.IsEnabled = false;
-            }
-            else if (AddressBox.Text.Length > 0)
-            {
-                ToolTipService.SetToolTip(ConnectButton, new ToolTip()
-                {
-                    Content = $"Attempt to connect to {AddressBox.Text} and launch the game."
-                });
-                ConnectButton.IsEnabled = true;
-            }
+                Content = missingInfo ? "Fill in all the fields first." : $"Attempt to connect to {AddressBox.Text} and launch the game."
+            });
         }
 
         /// <summary>
