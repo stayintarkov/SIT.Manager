@@ -12,7 +12,7 @@ namespace SIT.Manager.Updater.Classes
 
                 var newDirectory = Path.Combine(dest, Path.GetFileName(directory));
                 Directory.CreateDirectory(newDirectory);
-                MoveDirectory(directory, newDirectory);
+                await MoveDirectory(directory, newDirectory);
             }
 
             foreach (var file in Directory.GetFiles(root))

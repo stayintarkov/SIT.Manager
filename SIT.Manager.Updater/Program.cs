@@ -3,85 +3,91 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO.Compression;
 
+const string SITMANAGER_PROC_NAME = "SIT.Manager.exe";
+const string SITMANAGER_RELEASE_URI = @"https://github.com/stayintarkov/SIT.Manager/releases/latest/download/SIT.Manager.zip";
+
 Console.WriteLine("Ready to download latest version.");
 Console.WriteLine("Press any key to start...");
-Console.ReadLine();
+Console.ReadKey();
 
-Process[] processes = Process.GetProcessesByName("SIT.Manager");
+Process[] processes = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(SITMANAGER_PROC_NAME));
 if (processes.Length > 0)
 {
     Console.WriteLine("An instance of 'SIT.Manager' was found. Would you like to close all instances? Y/N");
     string? response = Console.ReadLine();
-    if (response.ToLower() == "y")
+    if (string.Equals(response, "y", StringComparison.InvariantCultureIgnoreCase))
 	{
 		foreach (Process process in processes)
 		{
-			Console.WriteLine("Killing " + process.ProcessName);
-			process.Kill();
-			Console.WriteLine();
+			Console.WriteLine("Killing {0} with PID {1}\n", process.ProcessName, process.Id);
+			bool clsMsgSent = process.CloseMainWindow();
+			if (clsMsgSent)
+				process.WaitForExit();
+			else
+				process.Kill();
 		}
 	}
 	else
 	{
-        Environment.Exit(2);
+        Environment.Exit(1);
     }
 }
 
 string workingDir = AppDomain.CurrentDomain.BaseDirectory;
 HttpClient httpClient = new();
 
-if (!File.Exists(workingDir + @"\SIT.Manager.exe"))
+if (!File.Exists(Path.Combine(workingDir, SITMANAGER_PROC_NAME)))
 {
-	Console.WriteLine("Unable to find 'SIT.Manager.exe' in root directory. Make sure the app is installed correctly.");
+	Console.WriteLine("Unable to find '{0}' in root directory. Make sure the app is installed correctly.", SITMANAGER_PROC_NAME);
 	Console.ReadKey();
 	Environment.Exit(2);
 }
 
+string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+Directory.CreateDirectory(tempPath);
+string zipName = Path.GetFileName(SITMANAGER_RELEASE_URI);
+string zipPath = Path.Combine(tempPath, zipName);
 using (var progressBar = new ProgressBar())
 {
-	Console.WriteLine("Downloading 'SIT.Manager.zip' to " + workingDir);
-	try
+    Console.WriteLine("Downloading '{0}' to '{1}'", zipName, zipPath);
+    try
 	{
-		Progress<float> progress = new Progress<float>((prog) => { progressBar.Report(prog / 100); });
-		using (var file = new FileStream(workingDir + @"\SIT.Manager.zip", FileMode.Create, FileAccess.Write, FileShare.None))
-			await HttpClientProgressExtensions.DownloadDataAsync(httpClient, "https://github.com/stayintarkov/SIT.Manager/releases/latest/download/SIT.Manager.zip", file, progress);
-	}
+        Progress<float> progress = new(prog => progressBar.Report(prog));
+        using FileStream fs = new(zipPath, FileMode.Create, FileAccess.Write, FileShare.None);
+        await HttpClientProgressExtensions.DownloadDataAsync(httpClient, SITMANAGER_RELEASE_URI, fs, progress);
+    }
 	catch (Exception ex)
 	{
-		Console.WriteLine("Error during download: " + ex.Message);
+		Console.WriteLine("Error during download: {0}", ex.Message);
 		Console.WriteLine("Press any key to exit");
 		Console.ReadKey();
-		Environment.Exit(2);
+		Environment.Exit(3);
 	}
 }
 
 Console.WriteLine("Download complete.");
 Console.WriteLine("Creating backup of SIT.Manager");
 
-if (Directory.Exists(workingDir + @"\Backup"))
-{
-	Directory.Delete(workingDir + @"\Backup", true);	
-}
+string backupPath = Path.Combine(workingDir, "Backup");
+if (Directory.Exists(backupPath))
+	Directory.Delete(backupPath, true);
 
-Directory.CreateDirectory(workingDir + @"\Backup");
+Directory.CreateDirectory(backupPath);
+await Utils.MoveDirectory(workingDir, backupPath);
 
-await Utils.MoveDirectory(workingDir, workingDir + @"\Backup");
+Console.WriteLine("\nBackup complete. Extracting new version...\n");
 
-Console.WriteLine();
-Console.WriteLine("Backup complete. Extracting new version...");
-Console.WriteLine();
+ZipFile.ExtractToDirectory(zipPath, tempPath, false);
 
-ZipFile.ExtractToDirectory(workingDir + @"\SIT.Manager.zip", workingDir, false);
-File.Delete(workingDir + @"\SIT.Manager.zip");
+string releasePath = Path.Combine(tempPath, "Release");
+await Utils.MoveDirectory(releasePath, workingDir);
 
-await Utils.MoveDirectory(workingDir + @"\Release", workingDir);
-Directory.Delete(workingDir + @"\Release", true);
+Directory.Delete(tempPath, true);
 
-Console.WriteLine();
-Console.WriteLine(@"Update done. Backup can be found in the '\Backup' folder. Your settings have been saved.");
+Console.WriteLine("\nUpdate done. Backup can be found in the '\\Backup' folder. Your settings have been saved.");
 Console.WriteLine("Press any key to finish...");
 Console.ReadKey();
 
-Process.Start("SIT.Manager.exe");
+Process.Start(SITMANAGER_PROC_NAME);
 
 Environment.Exit(0);
