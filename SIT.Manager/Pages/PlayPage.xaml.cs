@@ -253,5 +253,24 @@ namespace SIT.Manager.Pages
                 Application.Current.Exit();
             }
         }
+
+        string AddressBoxData;
+        string AddressBoxDefault = "[ censored, click to reveal ]";
+
+        private void AddressBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            AddressBoxData = t.Text;
+            t.Text = AddressBoxDefault;
+        }
+
+        private void AddressBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            if (t.Text.Equals(AddressBoxDefault))
+            {
+                t.Text = AddressBoxData;
+            }
+        }
     }
 }

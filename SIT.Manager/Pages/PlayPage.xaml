@@ -20,7 +20,7 @@
         </Popup>
 
         <StackPanel>
-            <TextBox Name="AddressBox" Margin="10" Width="300" HorizontalAlignment="Left" Text="{Binding LastServer, Mode=TwoWay}" PlaceholderText="Enter Server Address..." TextChanged="ConnectionInfo_TextChanged" Header="Address" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
+            <TextBox Name="AddressBox" Margin="10" Width="300" HorizontalAlignment="Left" Text="{Binding LastServer, Mode=TwoWay}" PlaceholderText="Enter Server Address..." TextChanged="ConnectionInfo_TextChanged" Header="Address" HeaderTemplate="{StaticResource BoxHeaderTemplate}" LostFocus="AddressBox_LostFocus" GotFocus="AddressBox_GotFocus"/>
             <TextBox Name="UsernameBox" Margin="10" Width="150" HorizontalAlignment="Left" Text="{Binding Username, Mode=TwoWay}" PlaceholderText="Enter Username..." TextChanged="ConnectionInfo_TextChanged" Header="Username" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
             <PasswordBox Name="PasswordBox" Margin="10" Width="150" HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" PlaceholderText="Enter Password..." PasswordChanged="ConnectionInfo_TextChanged" Header="Password" HeaderTemplate="{StaticResource BoxHeaderTemplate}"/>
             <CheckBox Name="RememberMeCheck" Content="Remember Me" Margin="10" IsChecked="{Binding RememberLogin, Mode=TwoWay}"/>
