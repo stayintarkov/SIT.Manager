@@ -152,6 +152,28 @@ namespace SIT.Manager.Pages
             ManagerConfig.Save();
         }
 
+        private async void InstallServerButton_ClickAsync(object sender, RoutedEventArgs e)
+        {
+            GithubRelease? selectedVersion;
+
+            SelectSptVersionDialog selectWindow = new()
+            {
+                XamlRoot = Content.XamlRoot
+            };
+
+            ContentDialogResult result = await selectWindow.ShowAsync();
+
+            selectedVersion = selectWindow.version;
+
+            if (selectedVersion == null || result != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            await Task.Run(() => Utils.InstallSIT(selectedVersion));
+            ManagerConfig.Save();
+        }
+
         private void OpenLocationEditorButton_Click(object sender, RoutedEventArgs e)
         {
             MainWindow window = App.m_window as MainWindow;

@@ -575,7 +575,7 @@ namespace SIT.Manager.Classes
                     Loggy.LogToFile("InstallSIT: selectVersion is 'null'");
                     return;
                 }
-                bool patcherResult = true;
+                bool patcherResult = false;
                 if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
                 {
                     patcherResult = await DownloadAndRunPatcher(selectedVersion.body);
@@ -655,6 +655,84 @@ namespace SIT.Manager.Classes
                 return;
             }
         }
+
+
+
+        /// <summary>
+        /// Installs the selected SPT version
+        /// </summary>
+        /// <param name="selectedVersion">The <see cref="GithubRelease"/> to install</param>
+        /// <returns></returns>
+        public async static Task InstallSPT(GithubRelease selectedVersion)
+        {
+            var window = App.m_window as MainWindow;
+            DispatcherQueue mainQueue = window.DispatcherQueue;
+
+            if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
+            {
+                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                return;
+            }
+
+            try
+            {
+/*                if (selectedVersion == null)
+                {
+                    Loggy.LogToFile("InstallSPT: selectVersion is 'null'");
+                    return;
+                }
+                bool patcherResult = true;
+                if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
+                {
+                    patcherResult = await DownloadAndRunPatcher(selectedVersion.body);
+                    CheckEFTVersion(App.ManagerConfig.InstallPath);
+                }
+                if (!patcherResult)
+                {
+                    Loggy.LogToFile("Patching failed or was cancelled. Aborting installation.");
+                    return;
+                }*/
+
+                //We don't use index as they might be different from version to version
+                string releaseZipUrl = selectedVersion.assets.Find(q => q.name == "SPT-AKI-with-SITCoop.zip").browser_download_url;
+                
+                // Navigate one level up from InstallPath
+                string baseDirectory = Directory.GetParent(App.ManagerConfig.InstallPath).FullName;
+                
+                // Define the target directory for SIT-Server within the parent directory
+                string sitServerDirectory = Path.Combine(baseDirectory, "SIT-Server");
+
+                Directory.CreateDirectory(sitServerDirectory);
+
+                // Define the paths for download and extraction based on the SIT-Server directory
+                string downloadLocation = Path.Combine(sitServerDirectory, "SPT-AKI-with-SITCoop.zip");
+                string extractionPath = sitServerDirectory;
+
+                // Download and extract the file in SIT-Server directory
+                await DownloadFile("SPT-AKI-with-SITCoop.zip", sitServerDirectory, releaseZipUrl, true);
+                ExtractArchive(downloadLocation, extractionPath);
+
+                // Remove the downloaded SIT-Server after extraction
+                File.Delete(downloadLocation);
+
+                // Run on UI thread to prevent System.InvalidCastException, WinUI bug yikes
+                mainQueue.TryEnqueue(() =>
+                {
+                    CheckSITVersion(App.ManagerConfig.InstallPath);
+                });
+
+                ShowInfoBar("Install", "Installation of SPT was succesful.", InfoBarSeverity.Success);
+            }
+            catch (Exception ex)
+            {
+                ShowInfoBarWithLogButton("Install Error", "Encountered an error during installation.", InfoBarSeverity.Error, 10);
+
+                Loggy.LogToFile("Install SPT: " + ex.Message + "\n" + ex);
+
+                return;
+            }
+        }
+
 
         /// <summary>
         /// Opens the launcher log

@@ -38,6 +38,7 @@
     <None Remove="Controls\PopupTest.xaml" />
     <None Remove="Controls\SelectEditionDialog.xaml" />
     <None Remove="Controls\SelectSitVersionDialog.xaml" />
+    <None Remove="Controls\SelectSptVersionDialog.xaml" />
     <None Remove="Pages\LocationEditor.xaml" />
     <None Remove="Pages\ModsPage.xaml" />
     <None Remove="Pages\PlayPage.xaml" />
@@ -126,6 +127,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\SelectSptVersionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\LocationEditor.xaml">
