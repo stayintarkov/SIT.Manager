@@ -156,7 +156,7 @@ namespace SIT.Manager.Pages
         {
             GithubRelease? selectedVersion;
 
-            SelectSptVersionDialog selectWindow = new()
+            SelectServerVersionDialog selectWindow = new()
             {
                 XamlRoot = Content.XamlRoot
             };
@@ -170,7 +170,7 @@ namespace SIT.Manager.Pages
                 return;
             }
 
-            await Task.Run(() => Utils.InstallSIT(selectedVersion));
+            await Task.Run(() => Utils.InstallServer(selectedVersion));
             ManagerConfig.Save();
         }
 

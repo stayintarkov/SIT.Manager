@@ -38,7 +38,7 @@
     <None Remove="Controls\PopupTest.xaml" />
     <None Remove="Controls\SelectEditionDialog.xaml" />
     <None Remove="Controls\SelectSitVersionDialog.xaml" />
-    <None Remove="Controls\SelectSptVersionDialog.xaml" />
+    <None Remove="Controls\SelectServerVersionDialog.xaml" />
     <None Remove="Pages\LocationEditor.xaml" />
     <None Remove="Pages\ModsPage.xaml" />
     <None Remove="Pages\PlayPage.xaml" />
@@ -129,7 +129,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Controls\SelectSptVersionDialog.xaml">
+    <Page Update="Controls\SelectServerVersionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

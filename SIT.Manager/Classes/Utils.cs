@@ -238,7 +238,7 @@ namespace SIT.Manager.Classes
                 }
             }
 
-            if (patcherList.Count == 0)
+            if (patcherList.Count == 0 && App.ManagerConfig.SitVersion != sitVersionTarget)
             {
                 Loggy.LogToFile("No applicable patcher found for the specified SIT version.");
                 return false;
@@ -575,7 +575,7 @@ namespace SIT.Manager.Classes
                     Loggy.LogToFile("InstallSIT: selectVersion is 'null'");
                     return;
                 }
-                bool patcherResult = false;
+                bool patcherResult = true;
                 if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
                 {
                     patcherResult = await DownloadAndRunPatcher(selectedVersion.body);
@@ -659,11 +659,11 @@ namespace SIT.Manager.Classes
 
 
         /// <summary>
-        /// Installs the selected SPT version
+        /// Installs the selected SPT Server version
         /// </summary>
         /// <param name="selectedVersion">The <see cref="GithubRelease"/> to install</param>
         /// <returns></returns>
-        public async static Task InstallSPT(GithubRelease selectedVersion)
+        public async static Task InstallServer(GithubRelease selectedVersion)
         {
             var window = App.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
@@ -676,9 +676,9 @@ namespace SIT.Manager.Classes
 
             try
             {
-/*                if (selectedVersion == null)
+                if (selectedVersion == null)
                 {
-                    Loggy.LogToFile("InstallSPT: selectVersion is 'null'");
+                    Loggy.LogToFile("Install Server: selectVersion is 'null'");
                     return;
                 }
                 bool patcherResult = true;
@@ -687,11 +687,6 @@ namespace SIT.Manager.Classes
                     patcherResult = await DownloadAndRunPatcher(selectedVersion.body);
                     CheckEFTVersion(App.ManagerConfig.InstallPath);
                 }
-                if (!patcherResult)
-                {
-                    Loggy.LogToFile("Patching failed or was cancelled. Aborting installation.");
-                    return;
-                }*/
 
                 //We don't use index as they might be different from version to version
                 string releaseZipUrl = selectedVersion.assets.Find(q => q.name == "SPT-AKI-with-SITCoop.zip").browser_download_url;
@@ -721,13 +716,30 @@ namespace SIT.Manager.Classes
                     CheckSITVersion(App.ManagerConfig.InstallPath);
                 });
 
-                ShowInfoBar("Install", "Installation of SPT was succesful.", InfoBarSeverity.Success);
+                // Attempt to automatically set the AKI Server Path after successful installation
+                
+                if (!string.IsNullOrEmpty(sitServerDirectory))
+                {
+                    App.ManagerConfig.AkiServerPath = sitServerDirectory;
+                    ManagerConfig.Save(); // Save changes to the configuration
+                    mainQueue.TryEnqueue(() =>
+                    {
+                        Utils.ShowInfoBar("Config", $"Server installation path automatically set to '{sitServerDirectory}'", InfoBarSeverity.Success);
+                    });
+                }
+                else
+                {
+                    // Optional: Notify user that automatic path detection failed and manual setting is needed
+                    Utils.ShowInfoBar("Notice", "Automatic Server path detection failed. Please set it manually.", InfoBarSeverity.Warning);
+                }
+
+                ShowInfoBar("Install", "Installation of Server was succesful.", InfoBarSeverity.Success);
             }
             catch (Exception ex)
             {
                 ShowInfoBarWithLogButton("Install Error", "Encountered an error during installation.", InfoBarSeverity.Error, 10);
 
-                Loggy.LogToFile("Install SPT: " + ex.Message + "\n" + ex);
+                Loggy.LogToFile("Install Server: " + ex.Message + "\n" + ex);
 
                 return;
             }

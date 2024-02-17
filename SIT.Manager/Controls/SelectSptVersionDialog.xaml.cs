@@ -10,14 +10,14 @@ using System.Text.RegularExpressions;
 
 namespace SIT.Manager.Controls
 {
-    public sealed partial class SelectSptVersionDialog : ContentDialog
+    public sealed partial class SelectServerVersionDialog : ContentDialog
     {
         public GithubRelease? version = null;
         string releasesString;
         List<GithubRelease>? githubReleases;
-        List<GithubRelease> sptReleases = new();
+        List<GithubRelease> serverReleases = new();
 
-        public SelectSptVersionDialog()
+        public SelectServerVersionDialog()
         {
             this.InitializeComponent();
 
@@ -34,7 +34,7 @@ namespace SIT.Manager.Controls
         {
             try
             {
-                releasesString = await Utils.utilsHttpClient.GetStringAsync(@"https://api.github.com/repos/mihaicm93/SIT.Aki-Server-Mod/releases");
+                releasesString = await Utils.utilsHttpClient.GetStringAsync(@"https://api.github.com/repos/stayintarkov/SIT.Aki-Server-Mod/releases");
                 githubReleases = JsonSerializer.Deserialize<List<GithubRelease>>(releasesString);
 
                 if (githubReleases.Count > 0)
@@ -47,7 +47,7 @@ namespace SIT.Manager.Controls
                             string releasePatch = match.Groups[1].Value;
                             release.tag_name = release.name + " - Tarkov Version: " + releasePatch;
                             release.body = releasePatch;
-                            sptReleases.Add(release);
+                            serverReleases.Add(release);
                         }
                         else
                         {
@@ -55,24 +55,24 @@ namespace SIT.Manager.Controls
                         }
                     }
 
-                    if (sptReleases.Count > 0)
+                    if (serverReleases.Count > 0)
                     {
                         VersionBox.Items.RemoveAt(0);
 
-                        VersionBox.DataContext = sptReleases;
-                        VersionBox.ItemsSource = sptReleases;
+                        VersionBox.DataContext = serverReleases;
+                        VersionBox.ItemsSource = serverReleases;
                         VersionBox.SelectedIndex = 0;
                     }
                 }
                 else
                 {
-                    Loggy.LogToFile("InstallSPT: githubReleases was 0 for official branch");
+                    Loggy.LogToFile("Install Server: githubReleases was 0 for official branch");
                     return;
                 }
             }
             catch (HttpRequestException ex)
             {
-                Loggy.LogToFile("InstallSPT: " + ex.Message);
+                Loggy.LogToFile("Install Server: " + ex.Message);
             }
         }
 
