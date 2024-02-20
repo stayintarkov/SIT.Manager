@@ -34,24 +34,28 @@ namespace SIT.Manager.Controls
         {
             try
             {
-                releasesString = await Utils.utilsHttpClient.GetStringAsync(@"https://api.github.com/repos/stayintarkov/SIT.Aki-Server-Mod/releases");
+                releasesString = await Utils.utilsHttpClient.GetStringAsync(@"https://api.github.com/repos/mihaicm93/SIT.Aki-Server-Mod/releases");
                 githubReleases = JsonSerializer.Deserialize<List<GithubRelease>>(releasesString);
 
                 if (githubReleases.Count > 0)
                 {
                     foreach (GithubRelease release in githubReleases)
                     {
-                        Match match = Regex.Match(release.body, @"This server version works with EFT version ([0]{1,}\.[0-9]{1,2}\.[0-9]{1,2})\.[0-9]{1,2}\.[0-9]{1,5}");
-                        if (match.Success)
+                        var zipAsset = release.assets.Find(asset => asset.name.EndsWith(".zip"));
+                        if (zipAsset != null) // There is a .zip asset in this release
                         {
-                            string releasePatch = match.Groups[1].Value;
-                            release.tag_name = release.name + " - Tarkov Version: " + releasePatch;
-                            release.body = releasePatch;
-                            serverReleases.Add(release);
-                        }
-                        else
-                        {
-                            Loggy.LogToFile("FetchReleases: There was a release without a version defined: " + release.html_url);
+                            Match match = Regex.Match(release.body, @"This server version works with EFT version ([0]{1,}\.[0-9]{1,2}\.[0-9]{1,2})\.[0-9]{1,2}\.[0-9]{1,5}");
+                            if (match.Success)
+                            {
+                                string releasePatch = match.Groups[1].Value;
+                                release.tag_name = release.name + " - Tarkov Version: " + releasePatch;
+                                release.body = releasePatch;
+                                serverReleases.Add(release);
+                            }
+                            else
+                            {
+                                Loggy.LogToFile("FetchReleases: There was a release without a version defined: " + release.html_url);
+                            }
                         }
                     }
 

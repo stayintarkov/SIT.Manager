@@ -689,7 +689,7 @@ namespace SIT.Manager.Classes
                 }
 
                 //We don't use index as they might be different from version to version
-                string releaseZipUrl = selectedVersion.assets.Find(q => q.name == "SPT-AKI-with-SITCoop.zip").browser_download_url;
+                string releaseZipUrl = selectedVersion.assets.Find(q => q.name == "Aki-Server-win-with-SITCoop.zip").browser_download_url;
                 
                 // Navigate one level up from InstallPath
                 string baseDirectory = Directory.GetParent(App.ManagerConfig.InstallPath).FullName;
@@ -700,11 +700,11 @@ namespace SIT.Manager.Classes
                 Directory.CreateDirectory(sitServerDirectory);
 
                 // Define the paths for download and extraction based on the SIT-Server directory
-                string downloadLocation = Path.Combine(sitServerDirectory, "SPT-AKI-with-SITCoop.zip");
+                string downloadLocation = Path.Combine(sitServerDirectory, "Aki-Server-win-with-SITCoop.zip");
                 string extractionPath = sitServerDirectory;
 
                 // Download and extract the file in SIT-Server directory
-                await DownloadFile("SPT-AKI-with-SITCoop.zip", sitServerDirectory, releaseZipUrl, true);
+                await DownloadFile("Aki-Server-win-with-SITCoop.zip", sitServerDirectory, releaseZipUrl, true);
                 ExtractArchive(downloadLocation, extractionPath);
 
                 // Remove the downloaded SIT-Server after extraction
