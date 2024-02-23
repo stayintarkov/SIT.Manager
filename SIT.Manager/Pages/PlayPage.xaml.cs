@@ -30,54 +30,19 @@ namespace SIT.Manager.Pages
             ConnectionInfo_TextChanged(null, null);
         }
         string AddressBoxData;
-        string AddressBoxDefault = "[ censored, click to reveal ]";
+        string AddressBoxDefault = "[ 已隐藏，单击以显示 ]";
 
         private void ConnectionInfo_TextChanged(object sender, object args)
         {
             bool missingInfo = AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath);
             ToolTipService.SetToolTip(ConnectButton, new ToolTip()
             {
-                Content = missingInfo ? "Fill in all the fields first." : $"Attempt to connect to {AddressBox.Text} and launch the game."
+                Content = missingInfo ? "请先将上述表单填写完整。" : $"尝试连接到 {AddressBox.Text} 并启动游戏。"
             });
-            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
-            {
-                ToolTipService.SetToolTip(ConnectButton, new ToolTip()
-                {
-                    Content = $"请先将上述表单填写完整。"
-                });
-                ConnectButton.IsEnabled = false;
-            }
-            else if (AddressBox.Text.Length > 0)
-            {
-                ToolTipService.SetToolTip(ConnectButton, new ToolTip()
-                {
-                    Content = $"尝试连接到 {AddressBox.Text} 并启动游戏。"
-                });
-                ConnectButton.IsEnabled = true;
-            }
-        }
 
             if (AddressBox.Text.Length > 9 && AddressBox.Text != AddressBoxDefault)
             {
                 AddressBoxData = AddressBox.Text;
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
-            {
-                ToolTipService.SetToolTip(ConnectButton, new ToolTip()
-                {
-                    Content = $"请先将上述表单填写完整。"
-                });
-                ConnectButton.IsEnabled = false;
-            }
-        }
-            else if (AddressBox.Text.Length > 0)
-            {
-                ToolTipService.SetToolTip(ConnectButton, new ToolTip()
-                {
-                    Content = $"尝试连接到 {AddressBox.Text} 并启动游戏。"
-                });
-                ConnectButton.IsEnabled = true;
             }
         }
 
@@ -144,25 +109,23 @@ namespace SIT.Manager.Pages
                 return "error";
             }
 
-            if (!AddressBox.Text.Contains(@"http://"))
+            try
             {
                 UriBuilder builder = new(AddressBoxData);
                 builder.Port = builder.Port == 80 ? 6969 : builder.Port;
                 AddressBoxData = builder.Uri.ToString().TrimEnd(new[] { '/', '\\' });
             }
-            catch(UriFormatException)
+            catch (UriFormatException)
             {
                 await new ContentDialog()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Input Error",
-                    Content = "Invalid address.",
-                    CloseButtonText = "Ok"
+                    Title = "输入错误",
+                    Content = "无效的服务器地址。",
+                    CloseButtonText = "好"
                 }.ShowAsync(ContentDialogPlacement.InPlace);
 
-            if (!AddressBox.Text.Match(@":\d{2,5}$"))
-            {
-                AddressBox.Text = AddressBox.Text + @":6969";
+                return "error";
             }
 
             string returnData = await LoginToServer();

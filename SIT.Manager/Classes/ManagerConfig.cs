@@ -11,8 +11,8 @@ namespace SIT.Manager.Classes
 {
     public class ManagerConfig : PropertyChangedBase
     {
-        private string _lastServer = "http://127.0.0.1:6969";
-        private string _AddressBoxDefault = "[ censored, click to reveal ]";
+        private string _lastServer = "http://v4.nukedgroup.free.hr:6969";
+        private string _AddressBoxDefault = "[ 已隐藏，单击以显示 ]";
         public string LastServer
         {
             get => _lastServer;

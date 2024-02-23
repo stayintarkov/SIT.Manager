@@ -21,48 +21,48 @@
         </Grid.ColumnDefinitions>
         
         <StackPanel VerticalAlignment="Top" Width="215">
-            <Button Name="InstallSITButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Downgrade EFT if needed, install SIT and mod support." Click="InstallSITButton_ClickAsync">
+            <Button Name="InstallSITButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="按需降级 逃离塔科夫 主游戏，并安装 SIT 与模组支持。" Click="InstallSITButton_ClickAsync">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Add" Margin="0,0,10,0"/>
-                    <TextBlock Text="Install SIT"/>
+                    <TextBlock Text="安装 SIT"/>
                 </StackPanel>
             </Button>
-            <Button Name="OpenEFTFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the EFT installation folder." Click="OpenEFTFolderButton_ClickAsync">
+            <Button Name="OpenEFTFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="打开 逃离塔科夫 主游戏目录。" Click="OpenEFTFolderButton_ClickAsync">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Folder" Margin="0,0,10,0"/>
-                    <TextBlock Text="Open EFT Folder"/>
+                    <TextBlock Text="打开 逃离塔科夫 游戏安装目录"/>
                 </StackPanel>
             </Button>
-            <Button Name="OpenBepInExFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the BepInEx Plugins folder." Click="OpenBepInExFolderButton_ClickAsync">
+            <Button Name="OpenBepInExFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="打开 BepInEx 插件目录。" Click="OpenBepInExFolderButton_ClickAsync">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Folder" Margin="0,0,10,0"/>
-                    <TextBlock Text="Open Plugins Folder"/>
+                    <TextBlock Text="打开 BepinEx 插件目录"/>
                 </StackPanel>
             </Button>
-            <Button Name="OpenSITConfigButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the SIT Config with the default text editor." Click="OpenSITConfigButton_ClickAsync">
+            <Button Name="OpenSITConfigButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="使用默认文本编辑器打开 SIT 配置文件。" Click="OpenSITConfigButton_ClickAsync">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Setting" Margin="0,0,10,0"/>
-                    <TextBlock Text="Open SIT Config"/>
+                    <TextBlock Text="打开 SIT 配置文件"/>
                 </StackPanel>
             </Button>
         </StackPanel>
         <StackPanel Grid.Column="1" VerticalAlignment="Top" Width="215">
-            <Button Name="OpenEFTLogButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the EFT 'Player.log' with the default text editor." Click="OpenEFTLogButton_ClickAsync">
+            <Button Name="OpenEFTLogButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="使用默认文本编辑器打开 逃离塔科夫 的 'Player.log'。" Click="OpenEFTLogButton_ClickAsync">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="OpenFile" Margin="0,0,10,0"/>
-                    <TextBlock Text="Open EFT Log"/>
+                    <TextBlock Text="打开 塔科夫 运行日志"/>
                 </StackPanel>
             </Button>
-            <Button Name="OpenLocationEditorButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Opens the Location Editor GUI." Click="OpenLocationEditorButton_Click">
+            <Button Name="OpenLocationEditorButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="打开地图 AI 波次设置编辑器。" Click="OpenLocationEditorButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Edit" Margin="0,0,10,0"/>
-                    <TextBlock Text="Location Editor"/>
+                    <TextBlock Text="地图 AI 波次设置"/>
                 </StackPanel>
             </Button>
-            <Button Name="ClearCacheButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Clears the local users EFT Cache." Click="ClearCacheButton_Click">
+            <Button Name="ClearCacheButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="清除 逃离塔科夫 本地用户缓存。" Click="ClearCacheButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Delete" Margin="0,0,10,0"/>
-                    <TextBlock Text="Clear Cache"/>
+                    <TextBlock Text="清除缓存"/>
                 </StackPanel>
             </Button>
         </StackPanel>
