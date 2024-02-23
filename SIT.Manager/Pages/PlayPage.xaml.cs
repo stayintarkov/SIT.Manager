@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,14 +27,18 @@ namespace SIT.Manager.Pages
 
             DataContext = App.ManagerConfig;
 
-            if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
-            {
-                ConnectButton.IsEnabled = false;
-            }
+            ConnectionInfo_TextChanged(null, null);
         }
+        string AddressBoxData;
+        string AddressBoxDefault = "[ censored, click to reveal ]";
 
-        private void InputBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void ConnectionInfo_TextChanged(object sender, object args)
         {
+            bool missingInfo = AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath);
+            ToolTipService.SetToolTip(ConnectButton, new ToolTip()
+            {
+                Content = missingInfo ? "Fill in all the fields first." : $"Attempt to connect to {AddressBox.Text} and launch the game."
+            });
             if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
                 ToolTipService.SetToolTip(ConnectButton, new ToolTip()
@@ -51,6 +57,9 @@ namespace SIT.Manager.Pages
             }
         }
 
+            if (AddressBox.Text.Length > 9 && AddressBox.Text != AddressBoxDefault)
+            {
+                AddressBoxData = AddressBox.Text;
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (AddressBox.Text.Length == 0 || UsernameBox.Text.Length == 0 || PasswordBox.Password.Length == 0 || string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
@@ -61,6 +70,7 @@ namespace SIT.Manager.Pages
                 });
                 ConnectButton.IsEnabled = false;
             }
+        }
             else if (AddressBox.Text.Length > 0)
             {
                 ToolTipService.SetToolTip(ConnectButton, new ToolTip()
@@ -134,14 +144,25 @@ namespace SIT.Manager.Pages
                 return "error";
             }
 
-            if (!(AddressBox.Text.Contains(@"http://") || AddressBox.Text.Contains(@"https://")))
+            if (!AddressBox.Text.Contains(@"http://"))
             {
-                AddressBox.Text = @"http://" + AddressBox.Text;
+                UriBuilder builder = new(AddressBoxData);
+                builder.Port = builder.Port == 80 ? 6969 : builder.Port;
+                AddressBoxData = builder.Uri.ToString().TrimEnd(new[] { '/', '\\' });
             }
-
-            if (AddressBox.Text.EndsWith(@"/") || AddressBox.Text.EndsWith(@"\"))
+            catch(UriFormatException)
             {
-                AddressBox.Text = AddressBox.Text.Remove(AddressBox.Text.Length - 1, 1);
+                await new ContentDialog()
+                {
+                    XamlRoot = Content.XamlRoot,
+                    Title = "Input Error",
+                    Content = "Invalid address.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync(ContentDialogPlacement.InPlace);
+
+            if (!AddressBox.Text.Match(@":\d{2,5}$"))
+            {
+                AddressBox.Text = AddressBox.Text + @":6969";
             }
 
             string returnData = await LoginToServer();
@@ -154,7 +175,7 @@ namespace SIT.Manager.Pages
         /// <returns>string</returns>
         private async Task<string> LoginToServer()
         {
-            TarkovRequesting requesting = new TarkovRequesting(null, AddressBox.Text, false);
+            TarkovRequesting requesting = new TarkovRequesting(null, AddressBoxData, false);
 
             Dictionary<string, string> data = new Dictionary<string, string>
             {
@@ -162,7 +183,7 @@ namespace SIT.Manager.Pages
                 { "email", UsernameBox.Text },
                 { "edition", "Edge Of Darkness" },
                 { "password", PasswordBox.Password },
-                { "backendUrl", AddressBox.Text }
+                { "backendUrl", AddressBoxData }
             };
 
             try
@@ -172,6 +193,9 @@ namespace SIT.Manager.Pages
                 // If failed, attempt to register
                 if (returnData == "FAILED")
                 {
+                    string jsonData = requesting.PostJson("/launcher/server/connect", JsonSerializer.Serialize(new object())).ToString();
+                    Newtonsoft.Json.Linq.JObject connectData = Newtonsoft.Json.Linq.JObject.Parse(jsonData);
+                    AkiServer.Editions = connectData["editions"].Values<string>().ToArray();
                     ContentDialog createAccountDialog = new()
                     {
                         XamlRoot = Content.XamlRoot,
@@ -245,6 +269,7 @@ namespace SIT.Manager.Pages
             }
         }
 
+
         /// <summary>
         /// Handling Connect button
         /// </summary>
@@ -263,14 +288,29 @@ namespace SIT.Manager.Pages
                 return;
             }
 
-            Utils.ShowInfoBar("连接", $"已成功连接至 {AddressBox.Text}", InfoBarSeverity.Success);
+            Utils.ShowInfoBar("Connect", $"Successfully connected to {AddressBox.Text}", InfoBarSeverity.Success);
 
-            string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBox.Text}\",\"Version\":\"live\"}}";
+            string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBoxData}\",\"Version\":\"live\"}}";
             Process.Start(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov.exe", arguments);
 
             if (App.ManagerConfig.CloseAfterLaunch)
             {
                 Application.Current.Exit();
+            }
+        }
+
+        private void AddressBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            t.Text = AddressBoxDefault;
+        }
+
+        private void AddressBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            if (t.Text.Equals(AddressBoxDefault))
+            {
+                t.Text = AddressBoxData;
             }
         }
     }

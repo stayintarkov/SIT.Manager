@@ -24,6 +24,8 @@ namespace SIT.Manager.Classes
             STOPPED_UNEXPECTEDLY
         }
 
+        public static string[] Editions;
+
         public static Process? Process;
 
         public static string ExeName

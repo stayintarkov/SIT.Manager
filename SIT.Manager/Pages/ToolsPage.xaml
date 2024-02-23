@@ -13,42 +13,58 @@
         <ImageBrush ImageSource="ms-appx:///Assets/bg3.png"/>
     </Page.Background>
 
-    <StackPanel Margin="10" VerticalAlignment="Center" Width="215" CornerRadius="8" BorderBrush="Gray" BorderThickness="2" Background="Black">
-        <Button Name="InstallSITButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="按需降级 逃离塔科夫 主游戏，安装 SIT 和客户端模组。" Click="InstallSITButton_ClickAsync">
-            <StackPanel Orientation="Horizontal">
-                <SymbolIcon Symbol="Add" Margin="0,0,10,0"/>
-                <TextBlock Text="安装 SIT"/>
-            </StackPanel>
-        </Button>
-        <Button Name="OpenEFTFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="打开 逃离塔科夫 主游戏的安装目录。" Click="OpenEFTFolderButton_ClickAsync">
-            <StackPanel Orientation="Horizontal">
-                <SymbolIcon Symbol="Folder" Margin="0,0,10,0"/>
-                <TextBlock Text="打开塔科夫安装目录"/>
-            </StackPanel>
-        </Button>
-        <Button Name="OpenBepInExFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="打开 BepInEx 插件目录。" Click="OpenBepInExFolderButton_ClickAsync">
-            <StackPanel Orientation="Horizontal">
-                <SymbolIcon Symbol="Folder" Margin="0,0,10,0"/>
-                <TextBlock Text="打开插件目录"/>
-            </StackPanel>
-        </Button>
-        <Button Name="OpenSITConfigButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="使用默认文本编辑器打开 SIT 配置。" Click="OpenSITConfigButton_ClickAsync">
-            <StackPanel Orientation="Horizontal">
-                <SymbolIcon Symbol="Setting" Margin="0,0,10,0"/>
-                <TextBlock Text="打开 SIT 配置"/>
-            </StackPanel>
-        </Button>
-        <Button Name="OpenEFTLogButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="使用默认文本编辑器打开 逃离塔克夫 的 'Player.log' 文件。" Click="OpenEFTLogButton_ClickAsync">
-            <StackPanel Orientation="Horizontal">
-                <SymbolIcon Symbol="OpenFile" Margin="0,0,10,0"/>
-                <TextBlock Text="打开塔科夫运行日志"/>
-            </StackPanel>
-        </Button>
-        <Button Name="OpenLocationEditorButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="打开 地图-AI 编辑器。" Click="OpenLocationEditorButton_Click">
-            <StackPanel Orientation="Horizontal">
-                <SymbolIcon Symbol="Edit" Margin="0,0,10,0"/>
-                <TextBlock Text="编辑地图 AI 设置"/>
-            </StackPanel>
-        </Button>
-    </StackPanel>
+    <Grid Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="8" BorderBrush="Gray" BorderThickness="2" Background="Black">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel VerticalAlignment="Top" Width="215">
+            <Button Name="InstallSITButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Downgrade EFT if needed, install SIT and mod support." Click="InstallSITButton_ClickAsync">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Add" Margin="0,0,10,0"/>
+                    <TextBlock Text="Install SIT"/>
+                </StackPanel>
+            </Button>
+            <Button Name="OpenEFTFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the EFT installation folder." Click="OpenEFTFolderButton_ClickAsync">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Folder" Margin="0,0,10,0"/>
+                    <TextBlock Text="Open EFT Folder"/>
+                </StackPanel>
+            </Button>
+            <Button Name="OpenBepInExFolderButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the BepInEx Plugins folder." Click="OpenBepInExFolderButton_ClickAsync">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Folder" Margin="0,0,10,0"/>
+                    <TextBlock Text="Open Plugins Folder"/>
+                </StackPanel>
+            </Button>
+            <Button Name="OpenSITConfigButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the SIT Config with the default text editor." Click="OpenSITConfigButton_ClickAsync">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Setting" Margin="0,0,10,0"/>
+                    <TextBlock Text="Open SIT Config"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <StackPanel Grid.Column="1" VerticalAlignment="Top" Width="215">
+            <Button Name="OpenEFTLogButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the EFT 'Player.log' with the default text editor." Click="OpenEFTLogButton_ClickAsync">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="OpenFile" Margin="0,0,10,0"/>
+                    <TextBlock Text="Open EFT Log"/>
+                </StackPanel>
+            </Button>
+            <Button Name="OpenLocationEditorButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Opens the Location Editor GUI." Click="OpenLocationEditorButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Edit" Margin="0,0,10,0"/>
+                    <TextBlock Text="Location Editor"/>
+                </StackPanel>
+            </Button>
+            <Button Name="ClearCacheButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Clears the local users EFT Cache." Click="ClearCacheButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Delete" Margin="0,0,10,0"/>
+                    <TextBlock Text="Clear Cache"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
 </Page>

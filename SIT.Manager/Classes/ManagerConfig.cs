@@ -11,11 +11,13 @@ namespace SIT.Manager.Classes
 {
     public class ManagerConfig : PropertyChangedBase
     {
-        private string _lastServer = "http://v4.ulla.gq:6969";
+        private string _lastServer = "http://127.0.0.1:6969";
+        private string _AddressBoxDefault = "[ censored, click to reveal ]";
         public string LastServer
         {
             get => _lastServer;
-            set => SetField(ref _lastServer, value);
+            set { if (value != _AddressBoxDefault) SetField(ref _lastServer, value);
+            }
         }
 
         private string _username;
