@@ -231,7 +231,7 @@ namespace SIT.Manager.Classes
                 var patcherFrom = releaseName.Split(" to ")[0];
                 var patcherTo = releaseName.Split(" to ")[1];
 
-                if (patcherFrom == tarkovVersionToDowngrade)
+                if (patcherFrom == tarkovVersionToDowngrade && patcherTo == sitBuild)
                 {
                     patcherList.Add(release);
                     tarkovVersionToDowngrade = patcherTo;
