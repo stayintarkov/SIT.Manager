@@ -34,7 +34,7 @@ namespace SIT.Manager.Controls
         {
             try
             {
-                releasesString = await Utils.utilsHttpClient.GetStringAsync(@"https://api.github.com/repos/mihaicm93/SIT.Aki-Server-Mod/releases");
+                releasesString = await Utils.utilsHttpClient.GetStringAsync(@"https://api.github.com/repos/stayintarkov/SIT.Aki-Server-Mod/releases");
                 githubReleases = JsonSerializer.Deserialize<List<GithubRelease>>(releasesString);
 
                 if (githubReleases.Count > 0)
