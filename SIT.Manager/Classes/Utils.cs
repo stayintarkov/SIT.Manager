@@ -688,26 +688,32 @@ namespace SIT.Manager.Classes
                     CheckEFTVersion(App.ManagerConfig.InstallPath);
                 }
 
-                //We don't use index as they might be different from version to version
-                string releaseZipUrl = selectedVersion.assets.Find(q => q.name == "Aki-Server-win-with-SITCoop.zip").browser_download_url;
-                
+                // Dynamically find the asset that starts with "SITCoop" and ends with ".zip"
+                var releaseAsset = selectedVersion.assets.FirstOrDefault(a => a.name.StartsWith("SITCoop") && a.name.EndsWith(".zip"));
+                if (releaseAsset == null)
+                {
+                    Loggy.LogToFile("No matching release asset found.");
+                    return;
+                }
+                string releaseZipUrl = releaseAsset.browser_download_url;
+
                 // Navigate one level up from InstallPath
                 string baseDirectory = Directory.GetParent(App.ManagerConfig.InstallPath).FullName;
-                
-                // Define the target directory for SIT-Server within the parent directory
-                string sitServerDirectory = Path.Combine(baseDirectory, "SIT-Server");
+
+                // Define the target directory for Server within the parent directory
+                string sitServerDirectory = Path.Combine(baseDirectory, "Server");
 
                 Directory.CreateDirectory(sitServerDirectory);
 
-                // Define the paths for download and extraction based on the SIT-Server directory
-                string downloadLocation = Path.Combine(sitServerDirectory, "Aki-Server-win-with-SITCoop.zip");
+                // Define the paths for download and extraction based on the Server directory
+                string downloadLocation = Path.Combine(sitServerDirectory, releaseAsset.name);
                 string extractionPath = sitServerDirectory;
 
-                // Download and extract the file in SIT-Server directory
-                await DownloadFile("Aki-Server-win-with-SITCoop.zip", sitServerDirectory, releaseZipUrl, true);
+                // Download and extract the file in Server directory
+                await DownloadFile(releaseAsset.name, sitServerDirectory, releaseZipUrl, true);
                 ExtractArchive(downloadLocation, extractionPath);
 
-                // Remove the downloaded SIT-Server after extraction
+                // Remove the downloaded Server after extraction
                 File.Delete(downloadLocation);
 
                 // Run on UI thread to prevent System.InvalidCastException, WinUI bug yikes
@@ -716,12 +722,11 @@ namespace SIT.Manager.Classes
                     CheckSITVersion(App.ManagerConfig.InstallPath);
                 });
 
-                // Attempt to automatically set the AKI Server Path after successful installation
-                
+                // Attempt to automatically set the AKI Server Path after successful installation and save it to config
                 if (!string.IsNullOrEmpty(sitServerDirectory))
                 {
                     App.ManagerConfig.AkiServerPath = sitServerDirectory;
-                    ManagerConfig.Save(); // Save changes to the configuration
+                    ManagerConfig.Save();
                     mainQueue.TryEnqueue(() =>
                     {
                         Utils.ShowInfoBar("Config", $"Server installation path automatically set to '{sitServerDirectory}'", InfoBarSeverity.Success);
@@ -729,11 +734,11 @@ namespace SIT.Manager.Classes
                 }
                 else
                 {
-                    // Optional: Notify user that automatic path detection failed and manual setting is needed
+                    // Notify user that automatic path detection failed and manual setting is needed
                     Utils.ShowInfoBar("Notice", "Automatic Server path detection failed. Please set it manually.", InfoBarSeverity.Warning);
                 }
 
-                ShowInfoBar("Install", "Installation of Server was succesful.", InfoBarSeverity.Success);
+                ShowInfoBar("Install", "Installation of Server was successful.", InfoBarSeverity.Success);
             }
             catch (Exception ex)
             {
