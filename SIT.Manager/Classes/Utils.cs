@@ -670,7 +670,7 @@ namespace SIT.Manager.Classes
 
             if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
-                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("Error", "Please configure EFT Path and SPT-AKI Path in Settings.", InfoBarSeverity.Error);
                 return;
             }
 
@@ -697,13 +697,22 @@ namespace SIT.Manager.Classes
                 }
                 string releaseZipUrl = releaseAsset.browser_download_url;
 
-                // Navigate one level up from InstallPath
-                string baseDirectory = Directory.GetParent(App.ManagerConfig.InstallPath).FullName;
+                string sitServerDirectory = App.ManagerConfig.AkiServerPath;
 
-                // Define the target directory for Server within the parent directory
-                string sitServerDirectory = Path.Combine(baseDirectory, "Server");
+                // Create the "Server" folder if SPT-Path is not configured.
+                if (string.IsNullOrEmpty(sitServerDirectory))
+                {
+                    // Navigate one level up from InstallPath
+                    string baseDirectory = Directory.GetParent(sitServerDirectory).FullName;
 
-                Directory.CreateDirectory(sitServerDirectory);
+                    // Define the target directory for Server within the parent directory
+                    sitServerDirectory = Path.Combine(baseDirectory, "Server");
+                }
+
+                if(!Directory.Exists(sitServerDirectory))
+                {
+                    Directory.CreateDirectory(sitServerDirectory);
+                }
 
                 // Define the paths for download and extraction based on the Server directory
                 string downloadLocation = Path.Combine(sitServerDirectory, releaseAsset.name);
