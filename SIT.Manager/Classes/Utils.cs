@@ -732,13 +732,13 @@ namespace SIT.Manager.Classes
                 });
 
                 // Attempt to automatically set the AKI Server Path after successful installation and save it to config
-                if (!string.IsNullOrEmpty(sitServerDirectory))
+                if (!string.IsNullOrEmpty(sitServerDirectory) && string.IsNullOrEmpty(App.ManagerConfig.AkiServerPath))
                 {
                     App.ManagerConfig.AkiServerPath = sitServerDirectory;
                     ManagerConfig.Save();
                     mainQueue.TryEnqueue(() =>
                     {
-                        Utils.ShowInfoBar("Config", $"Server installation path automatically set to '{sitServerDirectory}'", InfoBarSeverity.Success);
+                        Utils.ShowInfoBar("Config", $"Server installation path set to '{sitServerDirectory}'", InfoBarSeverity.Success);
                     });
                 }
                 else
