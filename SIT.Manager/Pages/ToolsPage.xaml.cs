@@ -139,16 +139,37 @@ namespace SIT.Manager.Pages
                 XamlRoot = Content.XamlRoot
             };
 
-            ContentDialogResult result = await selectWindow.ShowAsync();
+            ContentDialogResult selectWindowResult = await selectWindow.ShowAsync();
 
             selectedVersion = selectWindow.version;
 
-            if (selectedVersion == null || result != ContentDialogResult.Primary)
+            if (selectedVersion == null || selectWindowResult != ContentDialogResult.Primary)
             {
                 return;
             }
 
+            if(App.ManagerConfig.TarkovVersion != selectedVersion.body)
+            {
+                SelectDowngradePatcherMirrorDialog selectDowngradePatcherWindow = new(selectedVersion.body)
+                {
+                    XamlRoot = Content.XamlRoot
+                };
+
+                ContentDialogResult selectDowngradePatcherWindowResult = await selectDowngradePatcherWindow.ShowAsync();
+
+                string selectedMirrorUrl = selectDowngradePatcherWindow.SelectedMirrorUrl;
+
+                if(string.IsNullOrEmpty(selectedMirrorUrl) || selectDowngradePatcherWindowResult != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                await Task.Run(() => Utils.DownloadAndRunPatcher(selectedMirrorUrl));
+                Utils.CheckEFTVersion(App.ManagerConfig.InstallPath);
+            }
+
             await Task.Run(() => Utils.InstallSIT(selectedVersion));
+            
             ManagerConfig.Save();
         }
 
@@ -168,6 +189,26 @@ namespace SIT.Manager.Pages
             if (selectedVersion == null || result != ContentDialogResult.Primary)
             {
                 return;
+            }
+
+            if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
+            {
+                SelectDowngradePatcherMirrorDialog selectDowngradePatcherWindow = new(selectedVersion.body)
+                {
+                    XamlRoot = Content.XamlRoot
+                };
+
+                ContentDialogResult selectDowngradePatcherWindowResult = await selectDowngradePatcherWindow.ShowAsync();
+
+                string selectedMirrorUrl = selectDowngradePatcherWindow.SelectedMirrorUrl;
+
+                if (string.IsNullOrEmpty(selectedMirrorUrl) || selectDowngradePatcherWindowResult != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                await Task.Run(() => Utils.DownloadAndRunPatcher(selectedMirrorUrl));
+                Utils.CheckEFTVersion(App.ManagerConfig.InstallPath);
             }
 
             await Task.Run(() => Utils.InstallServer(selectedVersion));
