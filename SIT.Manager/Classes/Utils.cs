@@ -94,55 +94,6 @@ namespace SIT.Manager.Classes
         }
 
         /// <summary>
-        /// Cleans up the EFT directory
-        /// </summary>
-        /// <returns></returns>
-        public static async Task CleanUpEFTDirectory()
-        {
-            Loggy.LogToFile("Cleaning up EFT directory...");
-
-            try
-            {
-                string battlEyeDir = App.ManagerConfig.InstallPath + @"\BattlEye";
-                if (Directory.Exists(battlEyeDir))
-                {
-                    Directory.Delete(battlEyeDir, true);
-                }
-                string battlEyeExe = App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_BE.exe";
-                if (File.Exists(battlEyeExe))
-                {
-                    File.Delete(battlEyeExe);
-                }
-                string cacheDir = App.ManagerConfig.InstallPath + @"\cache";
-                if (Directory.Exists(cacheDir))
-                {
-                    Directory.Delete(cacheDir, true);
-                }
-                string consistencyPath = App.ManagerConfig.InstallPath + @"\ConsistencyInfo";
-                if (File.Exists(consistencyPath))
-                {
-                    File.Delete(consistencyPath);
-                }
-                string uninstallPath = App.ManagerConfig.InstallPath + @"\Uninstall.exe";
-                if (File.Exists(uninstallPath))
-                {
-                    File.Delete(uninstallPath);
-                }
-                string logsDirPath = App.ManagerConfig.InstallPath + @"\Logs";
-                if (Directory.Exists(logsDirPath))
-                {
-                    Directory.Delete(logsDirPath);
-                }
-            }
-            catch (Exception ex)
-            {
-                Loggy.LogToFile("Cleanup: " + ex.Message);
-            }
-
-            Loggy.LogToFile("Cleanup done.");
-        }
-
-        /// <summary>
         /// Downloads a file and shows a progress bar if enabled
         /// </summary>
         /// <param name="fileName">The name of the file to be downloaded.</param>
@@ -243,26 +194,24 @@ namespace SIT.Manager.Classes
         /// </summary>
         /// <param name="sitVersionTarget"></param>
         /// <returns></returns>
-        public async static Task DownloadAndRunPatcher(string sitVersionTarget = "")
+        public async static Task<bool> DownloadAndRunPatcher(string sitVersionTarget = "")
         {
             MainWindow window = App.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
 
             Loggy.LogToFile("Downloading Patcher");
-            // todo: proper error message
             if (App.ManagerConfig.TarkovVersion == null)
             {
                 Loggy.LogToFile("DownloadPatcher: TarkovVersion is 'null'");
-                return;
+                return false;
             }
 
-            string releasesString = await utilsHttpClient.GetStringAsync(@"https://dev.sp-tarkov.com/api/v1/repos/SPT-AKI/Downgrade-Patches/releases");
+            string releasesString = await utilsHttpClient.GetStringAsync(@"https://sitcoop.publicvm.com/api/v1/repos/SIT/Downgrade-Patches/releases");
             List<GiteaRelease> giteaReleases = JsonSerializer.Deserialize<List<GiteaRelease>>(releasesString);
-
-            // todo: proper error message
             if (giteaReleases == null)
             {
                 Loggy.LogToFile("DownloadPatcher: giteaReleases is 'null'");
+                return false;
             }
 
             List<GiteaRelease> patcherList = new List<GiteaRelease>();
@@ -270,201 +219,148 @@ namespace SIT.Manager.Classes
             string sitBuild = sitVersionTarget.Split(".").Last();
             string tarkovVersionToDowngrade = tarkovBuild != sitBuild ? tarkovBuild : "";
 
-            // find the patcher automatically based on the target SIT version
             if (string.IsNullOrEmpty(tarkovVersionToDowngrade))
             {
                 Loggy.LogToFile("DownloadPatcher: tarkovVersionToDowngrade is 'null'");
-                return;
+                return false;
             }
-            else
+
+            foreach (var release in giteaReleases)
             {
-                foreach (var release in giteaReleases)
+                var releaseName = release.name;
+                var patcherFrom = releaseName.Split(" to ")[0];
+                var patcherTo = releaseName.Split(" to ")[1];
+
+                if (patcherFrom == tarkovVersionToDowngrade && patcherTo == sitBuild)
                 {
-                    if (tarkovVersionToDowngrade == sitBuild)
-                    {
-                        tarkovVersionToDowngrade = "";
-                        break;
-                    }
-
-                    var releaseName = release.name;
-
-                    var patcherFrom = releaseName.Split(" to ")[0];
-                    var patcherTo = releaseName.Split(" to ")[1];
-
-                    if (patcherFrom == tarkovVersionToDowngrade)
-                    {
-                        patcherList.Add(release);
-                        tarkovVersionToDowngrade = patcherTo;
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(tarkovVersionToDowngrade))
-                {
-                    mainQueue.TryEnqueue(async () =>
-                    {
-                        ContentDialog contentDialog = new()
-                        {
-                            XamlRoot = window.Content.XamlRoot,
-                            Title = "Downgrade Error",
-                            Content = "Escape From Tarkov cannot be downgraded to the version required by the selected SIT version.\nMake sure the Escape from Tarkov path configured is compatible with the selected SIT version or use a different SIT version instead.",
-                            CloseButtonText = "Ok"
-                        };
-
-                        await contentDialog.ShowAsync();
-                    });
-
-                    return;
+                    patcherList.Add(release);
+                    tarkovVersionToDowngrade = patcherTo;
                 }
             }
 
-            if (patcherList.Count == 0)
-                return;
-
-            if (patcherList.Count == 1 && patcherList[0].name.Split(" to ")[0] != App.ManagerConfig.TarkovVersion.Split(".").Last())
+            if (patcherList.Count == 0 && App.ManagerConfig.SitVersion != sitVersionTarget)
             {
-                bool warningResult = false;
-
-                mainQueue.TryEnqueue(async () =>
-                {
-                    ContentDialog contentDialog = new()
-                    {
-                        XamlRoot = window.Content.XamlRoot,
-                        Title = "Warning",
-                        Content = $"Your Tarkov version is incorrect for the selected patcher.\nAre you sure you want to continue?\n\nInstalled: {App.ManagerConfig.TarkovVersion.Split(".").Last()}\nRequired: {patcherList[0].name.Split(" to ")[0]}",
-                        IsPrimaryButtonEnabled = true,
-                        PrimaryButtonText = "Yes",
-                        CloseButtonText = "No"
-                    };
-
-                    ContentDialogResult contentDialogResult = await contentDialog.ShowAsync();
-
-                    if (contentDialogResult == ContentDialogResult.Primary)
-                        warningResult = true;
-                });
-
-                if (warningResult == false)
-                    return;
+                Loggy.LogToFile("No applicable patcher found for the specified SIT version.");
+                return false;
             }
-
-            bool success = true;
-            string result = "";
-
-            int currentPatcher = 0;
-            int currentPatcherCount = patcherList.Count;
 
             foreach (var patcher in patcherList)
             {
                 string mirrorsUrl = patcher.assets.Find(q => q.name == "mirrors.json").browser_download_url;
                 string mirrorsString = await utilsHttpClient.GetStringAsync(mirrorsUrl);
                 List<Mirrors> mirrors = JsonSerializer.Deserialize<List<Mirrors>>(mirrorsString);
-                string link = null;
-
-                foreach (Mirrors mirror in mirrors)
+                if (mirrors == null || mirrors.Count == 0)
                 {
-                    if (mirror.Link.Contains("gofile.io"))
-                    {
-                        link = mirror.Link;
-                        break;
-                    }
-
-                    if (mirror.Link.Contains("mega.nz"))
-                    {
-                        link = mirror.Link;
-                        break;
-                    }
-
-                    if (mirror.Link.Contains("dev.sp-tarkov"))
-                    {
-                        link = mirror.Link;
-                        break;
-                    }
+                    Loggy.LogToFile("No download mirrors found for patcher.");
+                    return false;
                 }
 
-                if (link == null)
+                string selectedMirrorUrl = await ShowMirrorSelectionDialog(mirrors);
+                if (string.IsNullOrEmpty(selectedMirrorUrl))
                 {
-                    Loggy.LogToFile("DownloadPatcher: link is 'null'");
-                    return;
+                    Loggy.LogToFile("Mirror selection was canceled or no mirror was selected.");
+                    return false;
                 }
 
-                success = await DownloadFile("Patcher.zip", App.ManagerConfig.InstallPath, link, true);
-
-                if (success == false)
+                bool downloadSuccess = await DownloadFile("Patcher.zip", App.ManagerConfig.InstallPath, selectedMirrorUrl, true);
+                if (!downloadSuccess)
                 {
-                    //todo: proper error message
-                    break;
+                    Loggy.LogToFile("Failed to download the patcher from the selected mirror.");
+                    return false;
                 }
 
                 ExtractArchive(App.ManagerConfig.InstallPath + @"\Patcher.zip", App.ManagerConfig.InstallPath);
-
-                mainQueue.TryEnqueue(() =>
+                var patcherDir = Directory.GetDirectories(App.ManagerConfig.InstallPath, "Patcher*").FirstOrDefault();
+                if (!string.IsNullOrEmpty(patcherDir))
                 {
-                    window.actionPanel.Visibility = Visibility.Visible;
-                    window.actionProgressRing.Visibility = Visibility.Visible;
-                    window.actionProgressBar.Visibility = Visibility.Collapsed;
-                    window.actionTextBlock.Text = "Copying Patcher files to root directory";
-                });
+                    await CloneDirectory(patcherDir, App.ManagerConfig.InstallPath);
+                    Directory.Delete(patcherDir, true);
+                }
 
-                var patcherDir = Directory.GetDirectories(App.ManagerConfig.InstallPath, "Patcher*").First();
-
-                await CloneDirectory(patcherDir, App.ManagerConfig.InstallPath);
-                Directory.Delete(patcherDir, true);
-
-                mainQueue.TryEnqueue(() =>
+                string patcherResult = await RunPatcher();
+                if (patcherResult != "Patcher was successful.")
                 {
-                    window.actionTextBlock.Text = "Running Patcher";
-                });
-
-                result = await RunPatcher();
-
-                if (result != "Patcher was successful." || result == null)
-                {
-                    break;
+                    Loggy.LogToFile($"Patcher failed: {patcherResult}");
+                    return false;
                 }
             }
 
-            if (result != "Patcher was successful." || result == null)
-            {
-                mainQueue.TryEnqueue(async () =>
-                {
-                    window.actionPanel.Visibility = Visibility.Collapsed;
-                    window.actionProgressRing.Visibility = Visibility.Collapsed;
-                    window.actionProgressBar.Visibility = Visibility.Visible;
-                    window.actionTextBlock.Text = "";
-
-                    ContentDialog contentDialog = new()
-                    {
-                        XamlRoot = window.Content.XamlRoot,
-                        Title = "Patcher Error",
-                        Content = $"Patcher failed to run:\n{result}\n\nMake sure your folder is clean!",
-                        CloseButtonText = "Ok"
-                    };
-
-                    await contentDialog.ShowAsync();
-                });
-                return;
-            }
-            else
-            {
-                mainQueue.TryEnqueue(async () =>
-                {
-                    window.actionPanel.Visibility = Visibility.Collapsed;
-                    window.actionProgressRing.Visibility = Visibility.Collapsed;
-                    window.actionProgressBar.Visibility = Visibility.Visible;
-                    window.actionTextBlock.Text = "";
-
-                    ContentDialog contentDialog = new()
-                    {
-                        XamlRoot = window.Content.XamlRoot,
-                        Title = "Patcher Success",
-                        Content = result,
-                        CloseButtonText = "Ok"
-                    };
-
-                    await contentDialog.ShowAsync();
-                });
-                return;
-            }
+            // If execution reaches this point, it means all necessary patchers succeeded
+            Loggy.LogToFile("Patcher completed successfully.");
+            return true;
         }
+
+
+
+        /// <summary>
+        /// Shows a dialog for the user to select a download mirror.
+        /// </summary>
+        /// <param name="mirrors">List of mirrors to choose from.</param>
+        /// <returns>The URL of the selected mirror or null if canceled.</returns>
+        private async static Task<string> ShowMirrorSelectionDialog(List<Mirrors> mirrors)
+        {
+            MainWindow window = App.m_window as MainWindow;
+            var tcs = new TaskCompletionSource<string>();
+
+            window.DispatcherQueue.TryEnqueue(() =>
+            {
+                Dictionary<string, string> providerLinks = new Dictionary<string, string>();
+
+                foreach (var mirror in mirrors)
+                {
+                    Uri uri = new Uri(mirror.Link);
+                    string host = uri.Host.Replace("www.", "").Split('.')[0];
+                    if (!providerLinks.ContainsKey(host))
+                    {
+                        providerLinks.Add(host, mirror.Link);
+                    }
+                }
+
+                // Wrap the ComboBox in a StackPanel for alignment
+                StackPanel contentPanel = new StackPanel
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                ComboBox mirrorComboBox = new ComboBox
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Width = 300
+                };
+                foreach (var provider in providerLinks.Keys)
+                {
+                    mirrorComboBox.Items.Add(new ComboBoxItem { Content = provider });
+                }
+
+                contentPanel.Children.Add(mirrorComboBox);
+
+                ContentDialog selectionDialog = new ContentDialog
+                {
+                    Title = "Select Download Mirror",
+                    XamlRoot = window.Content.XamlRoot,
+                    PrimaryButtonText = "Download",
+                    CloseButtonText = "Cancel",
+                    Content = contentPanel
+                };
+
+                selectionDialog.ShowAsync().AsTask().ContinueWith(task =>
+                {
+                    if (task.Result == ContentDialogResult.Primary && mirrorComboBox.SelectedItem != null)
+                    {
+                        string selectedProvider = (mirrorComboBox.SelectedItem as ComboBoxItem).Content.ToString();
+                        tcs.SetResult(providerLinks[selectedProvider]);
+                    }
+                    else
+                    {
+                        tcs.SetResult(null); // Operation was cancelled or no selection was made
+                    }
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+            });
+
+            return await tcs.Task;
+        }
+
 
         /// <summary>
         /// Extracts a Zip archive using SharpCompress
@@ -605,6 +501,57 @@ namespace SIT.Manager.Classes
             return patcherResult;
         }
 
+
+        /// <summary>
+        /// Cleans up the EFT directory
+        /// </summary>
+        /// <returns></returns>
+        public static async Task CleanUpEFTDirectory()
+        {
+            Loggy.LogToFile("Cleaning up EFT directory...");
+
+            try
+            {
+                string battlEyeDir = App.ManagerConfig.InstallPath + @"\BattlEye";
+                if (Directory.Exists(battlEyeDir))
+                {
+                    Directory.Delete(battlEyeDir, true);
+                }
+                string battlEyeExe = App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_BE.exe";
+                if (File.Exists(battlEyeExe))
+                {
+                    File.Delete(battlEyeExe);
+                }
+                string cacheDir = App.ManagerConfig.InstallPath + @"\cache";
+                if (Directory.Exists(cacheDir))
+                {
+                    Directory.Delete(cacheDir, true);
+                }
+                string consistencyPath = App.ManagerConfig.InstallPath + @"\ConsistencyInfo";
+                if (File.Exists(consistencyPath))
+                {
+                    File.Delete(consistencyPath);
+                }
+                string uninstallPath = App.ManagerConfig.InstallPath + @"\Uninstall.exe";
+                if (File.Exists(uninstallPath))
+                {
+                    File.Delete(uninstallPath);
+                }
+                string logsDirPath = App.ManagerConfig.InstallPath + @"\Logs";
+                if (Directory.Exists(logsDirPath))
+                {
+                    Directory.Delete(logsDirPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Loggy.LogToFile("Cleanup: " + ex.Message);
+            }
+
+            Loggy.LogToFile("Cleanup done.");
+        }
+
+
         /// <summary>
         /// Installs the selected SIT version
         /// </summary>
@@ -628,8 +575,19 @@ namespace SIT.Manager.Classes
                     Loggy.LogToFile("InstallSIT: selectVersion is 'null'");
                     return;
                 }
+                bool patcherResult = true;
+                if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
+                {
+                    patcherResult = await DownloadAndRunPatcher(selectedVersion.body);
+                    CheckEFTVersion(App.ManagerConfig.InstallPath);
+                }
+                if (!patcherResult)
+                {
+                    Loggy.LogToFile("Patching failed or was cancelled. Aborting installation.");
+                    return;
+                }
 
-                if (File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_BE.exe"))
+                if (File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_BE.exe") && patcherResult == true)
                 {
                     await CleanUpEFTDirectory();
                 }
@@ -638,19 +596,13 @@ namespace SIT.Manager.Classes
                     File.Delete(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles\StayInTarkov-Release.zip");
 
 
-                if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
-                {
-                    await Task.Run(() => DownloadAndRunPatcher(selectedVersion.body));
-                    CheckEFTVersion(App.ManagerConfig.InstallPath);
-                }
-
                 if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles"))
                     Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\CoreFiles");
 
                 if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles"))
                     Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles");
 
-                if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins"))
+                if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins") && patcherResult == true)
                 {
                     await DownloadFile("BepInEx5.zip", App.ManagerConfig.InstallPath + @"\SITLauncher", "https://github.com/BepInEx/BepInEx/releases/download/v5.4.22/BepInEx_x64_5.4.22.0.zip", true);
                     ExtractArchive(App.ManagerConfig.InstallPath + @"\SITLauncher\BepInEx5.zip", App.ManagerConfig.InstallPath);
@@ -704,6 +656,110 @@ namespace SIT.Manager.Classes
             }
         }
 
+
+
+        /// <summary>
+        /// Installs the selected SPT Server version
+        /// </summary>
+        /// <param name="selectedVersion">The <see cref="GithubRelease"/> to install</param>
+        /// <returns></returns>
+        public async static Task InstallServer(GithubRelease selectedVersion)
+        {
+            var window = App.m_window as MainWindow;
+            DispatcherQueue mainQueue = window.DispatcherQueue;
+
+            if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
+            {
+                Utils.ShowInfoBar("Error", "Please configure EFT Path and SPT-AKI Path in Settings.", InfoBarSeverity.Error);
+                return;
+            }
+
+            try
+            {
+                if (selectedVersion == null)
+                {
+                    Loggy.LogToFile("Install Server: selectVersion is 'null'");
+                    return;
+                }
+                bool patcherResult = true;
+                if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
+                {
+                    patcherResult = await DownloadAndRunPatcher(selectedVersion.body);
+                    CheckEFTVersion(App.ManagerConfig.InstallPath);
+                }
+
+                // Dynamically find the asset that starts with "SITCoop" and ends with ".zip"
+                var releaseAsset = selectedVersion.assets.FirstOrDefault(a => a.name.StartsWith("SITCoop") && a.name.EndsWith(".zip"));
+                if (releaseAsset == null)
+                {
+                    Loggy.LogToFile("No matching release asset found.");
+                    return;
+                }
+                string releaseZipUrl = releaseAsset.browser_download_url;
+
+                string sitServerDirectory = App.ManagerConfig.AkiServerPath;
+
+                // Create the "Server" folder if SPT-Path is not configured.
+                if (string.IsNullOrEmpty(sitServerDirectory))
+                {
+                    // Navigate one level up from InstallPath
+                    string baseDirectory = Directory.GetParent(sitServerDirectory).FullName;
+
+                    // Define the target directory for Server within the parent directory
+                    sitServerDirectory = Path.Combine(baseDirectory, "Server");
+                }
+
+                if(!Directory.Exists(sitServerDirectory))
+                {
+                    Directory.CreateDirectory(sitServerDirectory);
+                }
+
+                // Define the paths for download and extraction based on the Server directory
+                string downloadLocation = Path.Combine(sitServerDirectory, releaseAsset.name);
+                string extractionPath = sitServerDirectory;
+
+                // Download and extract the file in Server directory
+                await DownloadFile(releaseAsset.name, sitServerDirectory, releaseZipUrl, true);
+                ExtractArchive(downloadLocation, extractionPath);
+
+                // Remove the downloaded Server after extraction
+                File.Delete(downloadLocation);
+
+                // Run on UI thread to prevent System.InvalidCastException, WinUI bug yikes
+                mainQueue.TryEnqueue(() =>
+                {
+                    CheckSITVersion(App.ManagerConfig.InstallPath);
+                });
+
+                // Attempt to automatically set the AKI Server Path after successful installation and save it to config
+                if (!string.IsNullOrEmpty(sitServerDirectory) && string.IsNullOrEmpty(App.ManagerConfig.AkiServerPath))
+                {
+                    App.ManagerConfig.AkiServerPath = sitServerDirectory;
+                    ManagerConfig.Save();
+                    mainQueue.TryEnqueue(() =>
+                    {
+                        Utils.ShowInfoBar("Config", $"Server installation path set to '{sitServerDirectory}'", InfoBarSeverity.Success);
+                    });
+                }
+                else
+                {
+                    // Notify user that automatic path detection failed and manual setting is needed
+                    Utils.ShowInfoBar("Notice", "Automatic Server path detection failed. Please set it manually.", InfoBarSeverity.Warning);
+                }
+
+                ShowInfoBar("Install", "Installation of Server was successful.", InfoBarSeverity.Success);
+            }
+            catch (Exception ex)
+            {
+                ShowInfoBarWithLogButton("Install Error", "Encountered an error during installation.", InfoBarSeverity.Error, 10);
+
+                Loggy.LogToFile("Install Server: " + ex.Message + "\n" + ex);
+
+                return;
+            }
+        }
+
+
         /// <summary>
         /// Opens the launcher log
         /// </summary>
@@ -754,21 +810,21 @@ namespace SIT.Manager.Classes
             if (window.DispatcherQueue.HasThreadAccess)
             {
                 window.DispatcherQueue.TryEnqueue(async () =>
+                {
+                    InfoBar infoBar = new()
                     {
-                        InfoBar infoBar = new()
-                        {
-                            Title = title,
-                            Message = message,
-                            Severity = severity,
-                            IsOpen = true
-                        };
+                        Title = title,
+                        Message = message,
+                        Severity = severity,
+                        IsOpen = true
+                    };
 
-                        window.InfoBarStackPanel.Children.Add(infoBar);
+                    window.InfoBarStackPanel.Children.Add(infoBar);
 
-                        await Task.Delay(TimeSpan.FromSeconds(delay));
+                    await Task.Delay(TimeSpan.FromSeconds(delay));
 
-                        window.InfoBarStackPanel.Children.Remove(infoBar);
-                    });
+                    window.InfoBarStackPanel.Children.Remove(infoBar);
+                });
             }
         }
 

@@ -19,7 +19,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        
+
         <StackPanel VerticalAlignment="Top" Width="215">
             <Button Name="InstallSITButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Downgrade EFT if needed, install SIT and mod support." Click="InstallSITButton_ClickAsync">
                 <StackPanel Orientation="Horizontal">
@@ -47,6 +47,12 @@
             </Button>
         </StackPanel>
         <StackPanel Grid.Column="1" VerticalAlignment="Top" Width="215">
+            <Button Name="InstallServerButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Download SPT Server + SIT Server Mod." Click="InstallServerButton_ClickAsync">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Download" Margin="0,0,10,0"/>
+                    <TextBlock Text="Install Server + SIT Mod"/>
+                </StackPanel>
+            </Button>
             <Button Name="OpenEFTLogButton" Width="200" Height="50" HorizontalAlignment="Center" Margin="5" ToolTipService.ToolTip="Open the EFT 'Player.log' with the default text editor." Click="OpenEFTLogButton_ClickAsync">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="OpenFile" Margin="0,0,10,0"/>

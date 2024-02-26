@@ -7,7 +7,7 @@
     <Platforms>x64</Platforms>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
-    <EnableMsixTooling>false</EnableMsixTooling>
+    <EnableMsixTooling>true</EnableMsixTooling>
 	<Nullable>disable</Nullable>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
@@ -38,6 +38,7 @@
     <None Remove="Controls\PopupTest.xaml" />
     <None Remove="Controls\SelectEditionDialog.xaml" />
     <None Remove="Controls\SelectSitVersionDialog.xaml" />
+    <None Remove="Controls\SelectServerVersionDialog.xaml" />
     <None Remove="Pages\LocationEditor.xaml" />
     <None Remove="Pages\ModsPage.xaml" />
     <None Remove="Pages\PlayPage.xaml" />
@@ -68,10 +69,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MegaApiClient" Version="1.10.3" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
+    <PackageReference Include="MegaApiClient" Version="1.10.4" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.240211001" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
-    <PackageReference Include="SharpCompress" Version="0.34.2" />
+    <PackageReference Include="SharpCompress" Version="0.36.0" />
     <PackageReference Include="WinUIEx" Version="2.3.3" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -111,7 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="bsg.componentace.compression.libs.zlib">
-      <HintPath>References\bsg.componentace.compression.libs.zlib.dll</HintPath>
+      <HintPath>..\References\bsg.componentace.compression.libs.zlib.dll</HintPath>
     </Reference>
     <Reference Include="bsg.microsoft.extensions.objectpool">
       <HintPath>References\bsg.microsoft.extensions.objectpool.dll</HintPath>
@@ -132,6 +133,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\SelectServerVersionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\LocationEditor.xaml">
