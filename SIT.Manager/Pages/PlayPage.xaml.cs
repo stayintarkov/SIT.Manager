@@ -29,6 +29,8 @@ namespace SIT.Manager.Pages
 
             ConnectionInfo_TextChanged(null, null);
         }
+        string AddressBoxData;
+        string AddressBoxDefault = "[ censored, click to reveal ]";
 
         private void ConnectionInfo_TextChanged(object sender, object args)
         {
@@ -37,6 +39,11 @@ namespace SIT.Manager.Pages
             {
                 Content = missingInfo ? "Fill in all the fields first." : $"Attempt to connect to {AddressBox.Text} and launch the game."
             });
+
+            if (AddressBox.Text.Length > 9 && AddressBox.Text != AddressBoxDefault)
+            {
+                AddressBoxData = AddressBox.Text;
+            }
         }
 
         /// <summary>
@@ -104,9 +111,9 @@ namespace SIT.Manager.Pages
 
             try
             {
-                UriBuilder builder = new(AddressBox.Text);
+                UriBuilder builder = new(AddressBoxData);
                 builder.Port = builder.Port == 80 ? 6969 : builder.Port;
-                AddressBox.Text = builder.Uri.ToString().TrimEnd(new[] { '/', '\\' });
+                AddressBoxData = builder.Uri.ToString().TrimEnd(new[] { '/', '\\' });
             }
             catch(UriFormatException)
             {
@@ -131,7 +138,7 @@ namespace SIT.Manager.Pages
         /// <returns>string</returns>
         private async Task<string> LoginToServer()
         {
-            TarkovRequesting requesting = new TarkovRequesting(null, AddressBox.Text, false);
+            TarkovRequesting requesting = new TarkovRequesting(null, AddressBoxData, false);
 
             Dictionary<string, string> data = new Dictionary<string, string>
             {
@@ -139,7 +146,7 @@ namespace SIT.Manager.Pages
                 { "email", UsernameBox.Text },
                 { "edition", "Edge Of Darkness" },
                 { "password", PasswordBox.Password },
-                { "backendUrl", AddressBox.Text }
+                { "backendUrl", AddressBoxData }
             };
 
             try
@@ -225,6 +232,7 @@ namespace SIT.Manager.Pages
             }
         }
 
+
         /// <summary>
         /// Handling Connect button
         /// </summary>
@@ -243,14 +251,29 @@ namespace SIT.Manager.Pages
                 return;
             }
 
-            Utils.ShowInfoBar("Connect", $"Successfully connected to {AddressBox.Text}", InfoBarSeverity.Success);
+            Utils.ShowInfoBar("Connect", $"Successfully connected to {AddressBoxData}", InfoBarSeverity.Success);
 
-            string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBox.Text}\",\"Version\":\"live\"}}";
+            string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBoxData}\",\"Version\":\"live\"}}";
             Process.Start(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov.exe", arguments);
 
             if (App.ManagerConfig.CloseAfterLaunch)
             {
                 Application.Current.Exit();
+            }
+        }
+
+        private void AddressBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            t.Text = AddressBoxDefault;
+        }
+
+        private void AddressBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox t = sender as TextBox;
+            if (t.Text.Equals(AddressBoxDefault))
+            {
+                t.Text = AddressBoxData;
             }
         }
     }

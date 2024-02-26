@@ -114,6 +114,12 @@
     <Reference Include="bsg.componentace.compression.libs.zlib">
       <HintPath>..\References\bsg.componentace.compression.libs.zlib.dll</HintPath>
     </Reference>
+    <Reference Include="bsg.microsoft.extensions.objectpool">
+      <HintPath>References\bsg.microsoft.extensions.objectpool.dll</HintPath>
+    </Reference>
+    <Reference Include="bsg.system.buffers">
+      <HintPath>References\bsg.system.buffers.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resource.Designer.cs">
