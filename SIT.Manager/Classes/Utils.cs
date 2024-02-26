@@ -534,7 +534,7 @@ namespace SIT.Manager.Classes
                     CheckSITVersion(App.ManagerConfig.InstallPath);
                 });
 
-                ShowInfoBar("Install", "Installation of SIT was succesful.", InfoBarSeverity.Success);
+                ShowInfoBar("Install", "Installation of SIT was successful.", InfoBarSeverity.Success);
             }
             catch (Exception ex)
             {
