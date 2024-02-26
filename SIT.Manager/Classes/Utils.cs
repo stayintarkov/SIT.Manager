@@ -587,7 +587,7 @@ namespace SIT.Manager.Classes
                 if (string.IsNullOrEmpty(sitServerDirectory))
                 {
                     // Navigate one level up from InstallPath
-                    string baseDirectory = Directory.GetParent(App.ManagerConfig.AkiServerPath).FullName;
+                    string baseDirectory = Directory.GetParent(App.ManagerConfig.InstallPath).FullName;
 
                     // Define the target directory for Server within the parent directory
                     sitServerDirectory = Path.Combine(baseDirectory, "Server");
