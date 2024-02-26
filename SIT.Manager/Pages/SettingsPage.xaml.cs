@@ -23,7 +23,6 @@ namespace SIT.Manager.Pages
         {
             this.InitializeComponent();
             DataContext = App.ManagerConfig;
-
             VersionHyperlinkButton.Content = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
         }
 
@@ -130,6 +129,19 @@ namespace SIT.Manager.Pages
 
             dataPackage.SetText(VersionHyperlinkButton.Content.ToString());
             Clipboard.SetContent(dataPackage);
+        }
+
+        /// <summary>
+        /// In order to save the checkboxes inside of settings we need to define two events that will save every single state.
+        /// </summary>
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ManagerConfig.Save(true);
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ManagerConfig.Save(true);
         }
     }
 }

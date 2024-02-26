@@ -6,13 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.Linq;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SIT.Manager.Pages
 {
@@ -26,6 +22,13 @@ namespace SIT.Manager.Pages
             this.InitializeComponent();
 
             DataContext = App.ManagerConfig;
+
+            if (App.ManagerConfig.HideIPAddress)
+            {
+                AddressBoxData = AddressBox.Text;
+                AddressBox.Text = AddressBoxDefault;
+            }
+            else AddressBoxData = AddressBox.Text;
 
             ConnectionInfo_TextChanged(null, null);
         }
@@ -183,6 +186,10 @@ namespace SIT.Manager.Pages
             }
         }
 
+        /// <summary>
+        /// Constructs and returns a dictionary containing login data.
+        /// </summary>
+        /// <returns>A dictionary with login data.</returns>
         private Dictionary<string, string> ConstructLoginData()
         {
             return new Dictionary<string, string>
@@ -195,6 +202,12 @@ namespace SIT.Manager.Pages
             };
         }
 
+        /// <summary>
+        /// Handles the process when a login attempt fails.
+        /// </summary>
+        /// <param name="requesting">An instance of TarkovRequesting used for making requests.</param>
+        /// <param name="data">A dictionary containing login data.</param>
+        /// <returns>A string indicating the result of the login attempt.</returns>
         private async Task<string> HandleFailedLogin(TarkovRequesting requesting, Dictionary<string, string> data)
         {
             string returnData = null;
@@ -255,12 +268,21 @@ namespace SIT.Manager.Pages
             return returnData;
         }
 
+        /// <summary>
+        /// Handles the scenario when an invalid password is encountered.
+        /// </summary>
+        /// <returns>A string indicating an error status.</returns>
         private string HandleInvalidPassword()
         {
-            Utils.ShowInfoBar("Connect", $"Invalid password!", InfoBarSeverity.Error);
+            Utils.ShowInfoBar("Connect", "Invalid password!", InfoBarSeverity.Error);
             return "error";
         }
 
+        /// <summary>
+        /// Handles the scenario when a System.Net.WebException occurs during login.
+        /// </summary>
+        /// <param name="webEx">The WebException encountered.</param>
+        /// <returns>A string indicating an error status.</returns>
         private async Task<string> HandleWebException(System.Net.WebException webEx)
         {
             ContentDialog contentDialog = new()
@@ -277,6 +299,11 @@ namespace SIT.Manager.Pages
             return "error";
         }
 
+        /// <summary>
+        /// Handles the scenario when a generic Exception occurs during login.
+        /// </summary>
+        /// <param name="ex">The Exception encountered.</param>
+        /// <returns>A string indicating an error status.</returns>
         private async Task<string> HandleGenericException(Exception ex)
         {
             ContentDialog contentDialog = new()
@@ -292,8 +319,6 @@ namespace SIT.Manager.Pages
             await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
             return "error";
         }
-
-
 
         /// <summary>
         /// Handling Connect button
@@ -328,16 +353,25 @@ namespace SIT.Manager.Pages
 
         private void AddressBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            TextBox t = sender as TextBox;
-            t.Text = AddressBoxDefault;
+            if (App.ManagerConfig.HideIPAddress)
+            {
+                TextBox t = sender as TextBox;
+                t.Text = AddressBoxDefault;
+            }
         }
 
+        private bool isDummyObjectRemoved = false;
         private void AddressBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox t = sender as TextBox;
             if (t.Text.Equals(AddressBoxDefault))
             {
                 t.Text = AddressBoxData;
+            }
+            if (isDummyObjectRemoved)
+            {
+                isDummyObjectRemoved = true;
+                GridContent.Children.Remove(DummyObjectToRemove);
             }
         }
     }
