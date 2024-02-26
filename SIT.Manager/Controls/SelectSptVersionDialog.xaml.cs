@@ -44,10 +44,10 @@ namespace SIT.Manager.Controls
                         var zipAsset = release.assets.Find(asset => asset.name.EndsWith(".zip"));
                         if (zipAsset != null) // There is a .zip asset in this release
                         {
-                            Match match = Regex.Match(release.body, @"This server version works with EFT version ([0]{1,}\.[0-9]{1,2}\.[0-9]{1,2})\.[0-9]{1,2}\.[0-9]{1,5}");
+                            Match match = Regex.Match(release.body, @"This server version works with version ([0]{1,}\.[0-9]{1,2}\.[0-9]{1,2})\.[0-9]{1,2}\.[0-9]{1,5}");
                             if (match.Success)
                             {
-                                string releasePatch = match.Groups[1].Value;
+                                string releasePatch = match.Value.Replace("This server version works with version ", "");
                                 release.tag_name = release.name + " - Tarkov Version: " + releasePatch;
                                 release.body = releasePatch;
                                 serverReleases.Add(release);

@@ -81,6 +81,7 @@ namespace SIT.Manager
             AppInstance.GetCurrent().Activated += App_Activated;
 
             ManagerConfig.Load();
+            Utils.CheckEFTVersion(App.ManagerConfig.InstallPath);
 
             m_window = new MainWindow();
 

@@ -36,6 +36,7 @@
     <None Remove="Controls\ColorPickerDialog.xaml" />
     <None Remove="Controls\FontFamilyPickerDialog.xaml" />
     <None Remove="Controls\PopupTest.xaml" />
+    <None Remove="Controls\SelectDowngradePatcherMirrorDialog.xaml" />
     <None Remove="Controls\SelectEditionDialog.xaml" />
     <None Remove="Controls\SelectSitVersionDialog.xaml" />
     <None Remove="Controls\SelectServerVersionDialog.xaml" />
@@ -86,6 +87,10 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Controls\SelectDowngradePatcherMirrorDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\SelectSitVersionDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

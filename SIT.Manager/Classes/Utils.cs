@@ -7,6 +7,7 @@ using Microsoft.Windows.AppNotifications.Builder;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
+using SIT.Manager.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -194,7 +196,7 @@ namespace SIT.Manager.Classes
         /// </summary>
         /// <param name="sitVersionTarget"></param>
         /// <returns></returns>
-        public async static Task<bool> DownloadAndRunPatcher(string sitVersionTarget = "")
+        public async static Task<bool> DownloadAndRunPatcher(string url)
         {
             MainWindow window = App.m_window as MainWindow;
             DispatcherQueue mainQueue = window.DispatcherQueue;
@@ -206,161 +208,42 @@ namespace SIT.Manager.Classes
                 return false;
             }
 
-            string releasesString = await utilsHttpClient.GetStringAsync(@"https://sitcoop.publicvm.com/api/v1/repos/SIT/Downgrade-Patches/releases");
-            List<GiteaRelease> giteaReleases = JsonSerializer.Deserialize<List<GiteaRelease>>(releasesString);
-            if (giteaReleases == null)
+            bool downloadSuccess = await DownloadFile("Patcher.zip", App.ManagerConfig.InstallPath, url, true);
+            if (!downloadSuccess)
             {
-                Loggy.LogToFile("DownloadPatcher: giteaReleases is 'null'");
+                Loggy.LogToFile("Failed to download the patcher from the selected mirror.");
                 return false;
             }
 
-            List<GiteaRelease> patcherList = new List<GiteaRelease>();
-            string tarkovBuild = App.ManagerConfig.TarkovVersion.Split(".").Last();
-            string sitBuild = sitVersionTarget.Split(".").Last();
-            string tarkovVersionToDowngrade = tarkovBuild != sitBuild ? tarkovBuild : "";
+            string patcherZipPath = App.ManagerConfig.InstallPath + @"\Patcher.zip";
 
-            if (string.IsNullOrEmpty(tarkovVersionToDowngrade))
+            
+
+            if (File.Exists(patcherZipPath))
             {
-                Loggy.LogToFile("DownloadPatcher: tarkovVersionToDowngrade is 'null'");
+                ExtractArchive(patcherZipPath, App.ManagerConfig.InstallPath);
+                File.Delete(patcherZipPath);
+            }
+
+            var patcherDir = Directory.GetDirectories(App.ManagerConfig.InstallPath, "Patcher*").FirstOrDefault();
+            
+            if (!string.IsNullOrEmpty(patcherDir))
+            {
+                await CloneDirectory(patcherDir, App.ManagerConfig.InstallPath);
+                Directory.Delete(patcherDir, true);
+            }
+
+            string patcherResult = await RunPatcher();
+            if (patcherResult != "Patcher was successful.")
+            {
+                Loggy.LogToFile($"Patcher failed: {patcherResult}");
                 return false;
-            }
-
-            foreach (var release in giteaReleases)
-            {
-                var releaseName = release.name;
-                var patcherFrom = releaseName.Split(" to ")[0];
-                var patcherTo = releaseName.Split(" to ")[1];
-
-                if (patcherFrom == tarkovVersionToDowngrade && patcherTo == sitBuild)
-                {
-                    patcherList.Add(release);
-                    tarkovVersionToDowngrade = patcherTo;
-                }
-            }
-
-            if (patcherList.Count == 0 && App.ManagerConfig.SitVersion != sitVersionTarget)
-            {
-                Loggy.LogToFile("No applicable patcher found for the specified SIT version.");
-                return false;
-            }
-
-            foreach (var patcher in patcherList)
-            {
-                string mirrorsUrl = patcher.assets.Find(q => q.name == "mirrors.json").browser_download_url;
-                string mirrorsString = await utilsHttpClient.GetStringAsync(mirrorsUrl);
-                List<Mirrors> mirrors = JsonSerializer.Deserialize<List<Mirrors>>(mirrorsString);
-                if (mirrors == null || mirrors.Count == 0)
-                {
-                    Loggy.LogToFile("No download mirrors found for patcher.");
-                    return false;
-                }
-
-                string selectedMirrorUrl = await ShowMirrorSelectionDialog(mirrors);
-                if (string.IsNullOrEmpty(selectedMirrorUrl))
-                {
-                    Loggy.LogToFile("Mirror selection was canceled or no mirror was selected.");
-                    return false;
-                }
-
-                bool downloadSuccess = await DownloadFile("Patcher.zip", App.ManagerConfig.InstallPath, selectedMirrorUrl, true);
-                if (!downloadSuccess)
-                {
-                    Loggy.LogToFile("Failed to download the patcher from the selected mirror.");
-                    return false;
-                }
-
-                ExtractArchive(App.ManagerConfig.InstallPath + @"\Patcher.zip", App.ManagerConfig.InstallPath);
-                var patcherDir = Directory.GetDirectories(App.ManagerConfig.InstallPath, "Patcher*").FirstOrDefault();
-                if (!string.IsNullOrEmpty(patcherDir))
-                {
-                    await CloneDirectory(patcherDir, App.ManagerConfig.InstallPath);
-                    Directory.Delete(patcherDir, true);
-                }
-
-                string patcherResult = await RunPatcher();
-                if (patcherResult != "Patcher was successful.")
-                {
-                    Loggy.LogToFile($"Patcher failed: {patcherResult}");
-                    return false;
-                }
             }
 
             // If execution reaches this point, it means all necessary patchers succeeded
             Loggy.LogToFile("Patcher completed successfully.");
             return true;
         }
-
-
-
-        /// <summary>
-        /// Shows a dialog for the user to select a download mirror.
-        /// </summary>
-        /// <param name="mirrors">List of mirrors to choose from.</param>
-        /// <returns>The URL of the selected mirror or null if canceled.</returns>
-        private async static Task<string> ShowMirrorSelectionDialog(List<Mirrors> mirrors)
-        {
-            MainWindow window = App.m_window as MainWindow;
-            var tcs = new TaskCompletionSource<string>();
-
-            window.DispatcherQueue.TryEnqueue(() =>
-            {
-                Dictionary<string, string> providerLinks = new Dictionary<string, string>();
-
-                foreach (var mirror in mirrors)
-                {
-                    Uri uri = new Uri(mirror.Link);
-                    string host = uri.Host.Replace("www.", "").Split('.')[0];
-                    if (!providerLinks.ContainsKey(host))
-                    {
-                        providerLinks.Add(host, mirror.Link);
-                    }
-                }
-
-                // Wrap the ComboBox in a StackPanel for alignment
-                StackPanel contentPanel = new StackPanel
-                {
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-
-                ComboBox mirrorComboBox = new ComboBox
-                {
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    Width = 300
-                };
-                foreach (var provider in providerLinks.Keys)
-                {
-                    mirrorComboBox.Items.Add(new ComboBoxItem { Content = provider });
-                }
-
-                contentPanel.Children.Add(mirrorComboBox);
-
-                ContentDialog selectionDialog = new ContentDialog
-                {
-                    Title = "Select Download Mirror",
-                    XamlRoot = window.Content.XamlRoot,
-                    PrimaryButtonText = "Download",
-                    CloseButtonText = "Cancel",
-                    Content = contentPanel
-                };
-
-                selectionDialog.ShowAsync().AsTask().ContinueWith(task =>
-                {
-                    if (task.Result == ContentDialogResult.Primary && mirrorComboBox.SelectedItem != null)
-                    {
-                        string selectedProvider = (mirrorComboBox.SelectedItem as ComboBoxItem).Content.ToString();
-                        tcs.SetResult(providerLinks[selectedProvider]);
-                    }
-                    else
-                    {
-                        tcs.SetResult(null); // Operation was cancelled or no selection was made
-                    }
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-            });
-
-            return await tcs.Task;
-        }
-
 
         /// <summary>
         /// Extracts a Zip archive using SharpCompress
@@ -425,9 +308,19 @@ namespace SIT.Manager.Classes
         /// <returns>string with result</returns>
         private async static Task<string> RunPatcher()
         {
+            MainWindow window = App.m_window as MainWindow;
+            DispatcherQueue mainQueue = window.DispatcherQueue;
+
             Loggy.LogToFile("Starting Patcher");
             if (!File.Exists(App.ManagerConfig.InstallPath + @"\Patcher.exe"))
                 return null;
+
+            mainQueue.TryEnqueue(() =>
+            {
+                window.actionPanel.Visibility = Visibility.Visible;
+                window.actionProgressRing.Visibility = Visibility.Visible;
+                window.actionTextBlock.Text = $"Running Patcher...";
+            });
 
             Process patcherProcess = new()
             {
@@ -497,6 +390,14 @@ namespace SIT.Manager.Classes
                     }
 
             }
+
+            mainQueue.TryEnqueue(() =>
+            {
+                window.actionPanel.Visibility = Visibility.Collapsed;
+                window.actionProgressRing.Visibility = Visibility.Collapsed;
+                window.actionTextBlock.Text = "";
+            });
+
             Loggy.LogToFile("RunPatcher: " + patcherResult);
             return patcherResult;
         }
@@ -564,7 +465,7 @@ namespace SIT.Manager.Classes
 
             if (string.IsNullOrEmpty(App.ManagerConfig.InstallPath))
             {
-                Utils.ShowInfoBar("Error", "Install Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
+                Utils.ShowInfoBar("Error", "EFT Path is not set. Configure it in Settings.", InfoBarSeverity.Error);
                 return;
             }
 
@@ -575,19 +476,8 @@ namespace SIT.Manager.Classes
                     Loggy.LogToFile("InstallSIT: selectVersion is 'null'");
                     return;
                 }
-                bool patcherResult = true;
-                if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
-                {
-                    patcherResult = await DownloadAndRunPatcher(selectedVersion.body);
-                    CheckEFTVersion(App.ManagerConfig.InstallPath);
-                }
-                if (!patcherResult)
-                {
-                    Loggy.LogToFile("Patching failed or was cancelled. Aborting installation.");
-                    return;
-                }
 
-                if (File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_BE.exe") && patcherResult == true)
+                if (File.Exists(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov_BE.exe"))
                 {
                     await CleanUpEFTDirectory();
                 }
@@ -602,7 +492,7 @@ namespace SIT.Manager.Classes
                 if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles"))
                     Directory.CreateDirectory(App.ManagerConfig.InstallPath + @"\SITLauncher\Backup\CoreFiles");
 
-                if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins") && patcherResult == true)
+                if (!Directory.Exists(App.ManagerConfig.InstallPath + @"\BepInEx\plugins"))
                 {
                     await DownloadFile("BepInEx5.zip", App.ManagerConfig.InstallPath + @"\SITLauncher", "https://github.com/BepInEx/BepInEx/releases/download/v5.4.22/BepInEx_x64_5.4.22.0.zip", true);
                     ExtractArchive(App.ManagerConfig.InstallPath + @"\SITLauncher\BepInEx5.zip", App.ManagerConfig.InstallPath);
@@ -644,7 +534,7 @@ namespace SIT.Manager.Classes
                     CheckSITVersion(App.ManagerConfig.InstallPath);
                 });
 
-                ShowInfoBar("Install", "Installation of SIT was succesful.", InfoBarSeverity.Success);
+                ShowInfoBar("Install", "Installation of SIT was successful.", InfoBarSeverity.Success);
             }
             catch (Exception ex)
             {
@@ -681,12 +571,6 @@ namespace SIT.Manager.Classes
                     Loggy.LogToFile("Install Server: selectVersion is 'null'");
                     return;
                 }
-                bool patcherResult = true;
-                if (App.ManagerConfig.TarkovVersion != selectedVersion.body)
-                {
-                    patcherResult = await DownloadAndRunPatcher(selectedVersion.body);
-                    CheckEFTVersion(App.ManagerConfig.InstallPath);
-                }
 
                 // Dynamically find the asset that starts with "SITCoop" and ends with ".zip"
                 var releaseAsset = selectedVersion.assets.FirstOrDefault(a => a.name.StartsWith("SITCoop") && a.name.EndsWith(".zip"));
@@ -703,12 +587,13 @@ namespace SIT.Manager.Classes
                 if (string.IsNullOrEmpty(sitServerDirectory))
                 {
                     // Navigate one level up from InstallPath
-                    string baseDirectory = Directory.GetParent(sitServerDirectory).FullName;
+                    string baseDirectory = Directory.GetParent(App.ManagerConfig.InstallPath).FullName;
 
                     // Define the target directory for Server within the parent directory
                     sitServerDirectory = Path.Combine(baseDirectory, "Server");
                 }
 
+                // Create SPT-AKI directory (default: Server)
                 if(!Directory.Exists(sitServerDirectory))
                 {
                     Directory.CreateDirectory(sitServerDirectory);
