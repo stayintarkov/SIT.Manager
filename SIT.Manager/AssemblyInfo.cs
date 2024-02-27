@@ -10,9 +10,9 @@ using System.Runtime.Versioning;
 [assembly: AssemblyTitle("SIT.Manager")]
 [assembly: AssemblyDescription("Manager for SIT")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Lacyway")]
+[assembly: AssemblyCompany("Stay In Tarkov")]
 [assembly: AssemblyProduct("SIT.Manager")]
-[assembly: AssemblyCopyright("Copyright © Lacyway 2023")]
+[assembly: AssemblyCopyright("Copyright © Stay In Tarkov 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: SupportedOSPlatform("windows")]
@@ -28,4 +28,4 @@ using System.Runtime.Versioning;
 [assembly: Guid("c666ac40-a446-4b18-a2dc-5bfc7e9433f8")]
 
 
-[assembly: AssemblyVersion("1.1.*")]
+[assembly: AssemblyVersion("1.5.*")]
