@@ -77,9 +77,8 @@ await Utils.MoveDirectory(workingDir, backupPath);
 
 Console.WriteLine("\nBackup complete. Extracting new version...\n");
 
-ZipFile.ExtractToDirectory(zipPath, tempPath, false);
-
 string releasePath = Path.Combine(tempPath, "Release");
+ZipFile.ExtractToDirectory(zipPath, releasePath, false);
 await Utils.MoveDirectory(releasePath, workingDir);
 
 Directory.Delete(tempPath, true);
