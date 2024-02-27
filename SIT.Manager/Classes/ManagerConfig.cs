@@ -83,6 +83,13 @@ namespace SIT.Manager.Classes
             set => SetField(ref _lookForUpdates, value);
         }
 
+        private bool _hideIpAddress = true;
+        public bool HideIPAddress
+        {
+            get => _hideIpAddress;
+            set => SetField(ref _hideIpAddress, value);
+        }
+
         private bool _acceptedModsDisclaimer = false;
         public bool AcceptedModsDisclaimer
         {
@@ -159,7 +166,7 @@ namespace SIT.Manager.Classes
 
     public class PropertyChangedBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

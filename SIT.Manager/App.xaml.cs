@@ -90,7 +90,7 @@ namespace SIT.Manager
             //m_window.Closed += OnWindowClosed;
         }
 
-        private void App_Activated(object? sender, AppActivationArguments e)
+        private void App_Activated(object sender, AppActivationArguments e)
         {
             m_window.DispatcherQueue.TryEnqueue(() => { m_window?.Activate(); });
         }

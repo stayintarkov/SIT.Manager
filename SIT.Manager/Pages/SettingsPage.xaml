@@ -20,10 +20,10 @@
             <StackPanel Margin="10">
                 <TextBlock Text="Launcher Settings" Margin="5" VerticalAlignment="Center"/>
                 <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10">
-                    <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game." IsChecked="{Binding CloseAfterLaunch, Mode=TwoWay}"/>
-                    <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher." IsChecked="{Binding LookForUpdates, Mode=TwoWay}"/>
+                    <CheckBox Content="Close Launcher After Game Launch" ToolTipService.ToolTip="Closes the launcher automatically after opening the game." IsChecked="{Binding CloseAfterLaunch, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+                    <CheckBox Content="Look For Updates" ToolTipService.ToolTip="Automatically look for updates when opening the launcher." IsChecked="{Binding LookForUpdates, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+                    <CheckBox Content="Hide IPAddress" ToolTipService.ToolTip="Whenever you remove focus from IP Address Box, it will hide it to be more private, if you don't care about privacy you can toggle it off." IsChecked="{Binding HideIPAddress, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                 </StackPanel>
-
 
                 <TextBlock Text="EFT Settings" Margin="5" VerticalAlignment="Center"/>
                 <StackPanel CornerRadius="8" BorderBrush="Gray" BorderThickness="1" Padding="10" >

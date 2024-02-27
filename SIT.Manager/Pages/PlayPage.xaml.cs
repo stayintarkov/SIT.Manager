@@ -6,13 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.Linq;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SIT.Manager.Pages
 {
@@ -26,6 +22,13 @@ namespace SIT.Manager.Pages
             this.InitializeComponent();
 
             DataContext = App.ManagerConfig;
+
+            if (App.ManagerConfig.HideIPAddress)
+            {
+                AddressBoxData = AddressBox.Text;
+                AddressBox.Text = AddressBoxDefault;
+            }
+            else AddressBoxData = AddressBox.Text;
 
             ConnectionInfo_TextChanged(null, null);
         }
@@ -140,7 +143,56 @@ namespace SIT.Manager.Pages
         {
             TarkovRequesting requesting = new TarkovRequesting(null, AddressBoxData, false);
 
-            Dictionary<string, string> data = new Dictionary<string, string>
+            Dictionary<string, string> data = ConstructLoginData();
+
+            try
+            {
+                string returnData = string.Empty;
+                Task task = Task.Run(async () =>
+                {
+                    try
+                    {
+                        returnData = requesting.PostJson("/launcher/profile/login", JsonSerializer.Serialize(data));
+                    }
+                    catch (System.Net.WebException webEx)
+                    {
+                        await HandleWebException(webEx);
+                    }
+                    catch (Exception ex)
+                    {
+                        await HandleGenericException(ex);
+                    }
+                });
+                await task.WaitAsync(TimeSpan.FromSeconds(5));
+
+                if (returnData == "FAILED")
+                {
+                    returnData = await HandleFailedLogin(requesting, data);
+                }
+                else if (returnData == "INVALID_PASSWORD")
+                {
+                    returnData = HandleInvalidPassword();
+                }
+
+                return returnData;
+            }
+            catch (System.Net.WebException webEx)
+            {
+                return await HandleWebException(webEx);
+            }
+            catch (Exception ex)
+            {
+                return await HandleGenericException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Constructs and returns a dictionary containing login data.
+        /// </summary>
+        /// <returns>A dictionary with login data.</returns>
+        private Dictionary<string, string> ConstructLoginData()
+        {
+            return new Dictionary<string, string>
             {
                 { "username", UsernameBox.Text },
                 { "email", UsernameBox.Text },
@@ -148,75 +200,58 @@ namespace SIT.Manager.Pages
                 { "password", PasswordBox.Password },
                 { "backendUrl", AddressBoxData }
             };
+        }
 
+        /// <summary>
+        /// Handles the process when a login attempt fails.
+        /// </summary>
+        /// <param name="requesting">An instance of TarkovRequesting used for making requests.</param>
+        /// <param name="data">A dictionary containing login data.</param>
+        /// <returns>A string indicating the result of the login attempt.</returns>
+        private async Task<string> HandleFailedLogin(TarkovRequesting requesting, Dictionary<string, string> data)
+        {
+            string returnData = null;
             try
             {
-                var returnData = requesting.PostJson("/launcher/profile/login", JsonSerializer.Serialize(data));
-
-                // If failed, attempt to register
-                if (returnData == "FAILED")
-                {
-                    string jsonData = requesting.PostJson("/launcher/server/connect", JsonSerializer.Serialize(new object())).ToString();
-                    Newtonsoft.Json.Linq.JObject connectData = Newtonsoft.Json.Linq.JObject.Parse(jsonData);
-                    AkiServer.Editions = connectData["editions"].Values<string>().ToArray();
-                    ContentDialog createAccountDialog = new()
-                    {
-                        XamlRoot = Content.XamlRoot,
-                        Title = "Account Not Found",
-                        Content = "Your account has not been found, would you like to register a new account with these credentials?",
-                        IsPrimaryButtonEnabled = true,
-                        PrimaryButtonText = "Yes",
-                        CloseButtonText = "No"
-                    };
-
-                    ContentDialogResult msgBoxResult = await createAccountDialog.ShowAsync(ContentDialogPlacement.InPlace);
-                    if (msgBoxResult == ContentDialogResult.Primary)
-                    {
-                        SelectEditionDialog selectWindow = new()
-                        {
-                            XamlRoot = Content.XamlRoot
-                        };
-                        await selectWindow.ShowAsync();
-                        string edition = selectWindow.edition;
-
-                        if (edition != null)
-                            data["edition"] = edition;
-                        // Register
-                        returnData = requesting.PostJson("/launcher/profile/register", JsonSerializer.Serialize(data));
-                        // Login attempt after register
-                        returnData = requesting.PostJson("/launcher/profile/login", JsonSerializer.Serialize(data));
-
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else if(returnData == "INVALID_PASSWORD")
-                {
-                    Utils.ShowInfoBar("Connect", $"Invalid password!", InfoBarSeverity.Error);
-                    return "error";
-                }
-
-                return returnData;
-            }
-            catch (System.Net.WebException webEx)
-            {
-                ContentDialog contentDialog = new()
+                string jsonData = requesting.PostJson("/launcher/server/connect", JsonSerializer.Serialize(new object())).ToString();
+                Newtonsoft.Json.Linq.JObject connectData = Newtonsoft.Json.Linq.JObject.Parse(jsonData);
+                AkiServer.Editions = connectData["editions"].Values<string>().ToArray();
+                ContentDialog createAccountDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
-                    Title = "Login Error",
-                    Content = $"Unable to communicate with the Server\n{webEx.Message}",
-                    CloseButtonText = "Ok"
+                    Title = "Account Not Found",
+                    Content = "Your account has not been found, would you like to register a new account with these credentials?",
+                    IsPrimaryButtonEnabled = true,
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "No"
                 };
 
-                Loggy.LogToFile("Login Error: " + webEx);
+                ContentDialogResult msgBoxResult = await createAccountDialog.ShowAsync(ContentDialogPlacement.InPlace);
+                if (msgBoxResult == ContentDialogResult.Primary)
+                {
+                    SelectEditionDialog selectWindow = new()
+                    {
+                        XamlRoot = Content.XamlRoot
+                    };
+                    await selectWindow.ShowAsync();
+                    string edition = selectWindow.edition;
 
-                await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
-                return "error";
+                    if (edition != null)
+                        data["edition"] = edition;
+                    // Register
+                    returnData = requesting.PostJson("/launcher/profile/register", JsonSerializer.Serialize(data));
+                    // Login attempt after register
+                    returnData = requesting.PostJson("/launcher/profile/login", JsonSerializer.Serialize(data));
+
+                }
+                else
+                {
+                    returnData = null;
+                }
             }
             catch (Exception ex)
             {
+                returnData = "error";
                 ContentDialog contentDialog = new()
                 {
                     XamlRoot = Content.XamlRoot,
@@ -228,10 +263,62 @@ namespace SIT.Manager.Pages
                 Loggy.LogToFile("Login Error: " + ex);
 
                 await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
-                return "error";
             }
+
+            return returnData;
         }
 
+        /// <summary>
+        /// Handles the scenario when an invalid password is encountered.
+        /// </summary>
+        /// <returns>A string indicating an error status.</returns>
+        private string HandleInvalidPassword()
+        {
+            Utils.ShowInfoBar("Connect", "Invalid password!", InfoBarSeverity.Error);
+            return "error";
+        }
+
+        /// <summary>
+        /// Handles the scenario when a System.Net.WebException occurs during login.
+        /// </summary>
+        /// <param name="webEx">The WebException encountered.</param>
+        /// <returns>A string indicating an error status.</returns>
+        private async Task<string> HandleWebException(System.Net.WebException webEx)
+        {
+            ContentDialog contentDialog = new()
+            {
+                XamlRoot = Content.XamlRoot,
+                Title = "Login Error",
+                Content = $"Unable to communicate with the Server\n{webEx.Message}",
+                CloseButtonText = "Ok"
+            };
+
+            Loggy.LogToFile("Login Error: " + webEx);
+
+            await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
+            return "error";
+        }
+
+        /// <summary>
+        /// Handles the scenario when a generic Exception occurs during login.
+        /// </summary>
+        /// <param name="ex">The Exception encountered.</param>
+        /// <returns>A string indicating an error status.</returns>
+        private async Task<string> HandleGenericException(Exception ex)
+        {
+            ContentDialog contentDialog = new()
+            {
+                XamlRoot = Content.XamlRoot,
+                Title = "Login Error",
+                Content = $"Unable to communicate with the Server\n{ex.Message}",
+                CloseButtonText = "Ok"
+            };
+
+            Loggy.LogToFile("Login Error: " + ex);
+
+            await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
+            return "error";
+        }
 
         /// <summary>
         /// Handling Connect button
@@ -240,6 +327,8 @@ namespace SIT.Manager.Pages
         /// <param name="e"></param>
         private async void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
+            App.ManagerConfig.LastServer = AddressBoxData; // saving the lastServer was skipped for some reason :////
+            Utils.ShowInfoBar("Connecting to server", $"Trying connect to: {AddressBoxData}", InfoBarSeverity.Informational);
             string returnData = await Connect();
 
             if (returnData == "error")
@@ -251,7 +340,7 @@ namespace SIT.Manager.Pages
                 return;
             }
 
-            Utils.ShowInfoBar("Connect", $"Successfully connected to {AddressBoxData}", InfoBarSeverity.Success);
+            Utils.ShowInfoBar("Connecting to server", $"Successfully connected to {AddressBoxData}", InfoBarSeverity.Success);
 
             string arguments = $"-token={returnData} -config={{\"BackendUrl\":\"{AddressBoxData}\",\"Version\":\"live\"}}";
             Process.Start(App.ManagerConfig.InstallPath + @"\EscapeFromTarkov.exe", arguments);
@@ -264,16 +353,25 @@ namespace SIT.Manager.Pages
 
         private void AddressBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            TextBox t = sender as TextBox;
-            t.Text = AddressBoxDefault;
+            if (App.ManagerConfig.HideIPAddress)
+            {
+                TextBox t = sender as TextBox;
+                t.Text = AddressBoxDefault;
+            }
         }
 
+        private bool isDummyObjectRemoved = false;
         private void AddressBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox t = sender as TextBox;
             if (t.Text.Equals(AddressBoxDefault))
             {
                 t.Text = AddressBoxData;
+            }
+            if (isDummyObjectRemoved)
+            {
+                isDummyObjectRemoved = true;
+                GridContent.Children.Remove(DummyObjectToRemove);
             }
         }
     }

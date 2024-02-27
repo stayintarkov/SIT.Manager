@@ -13,11 +13,13 @@
         <ImageBrush ImageSource="ms-appx:///Assets/bg3.png"/>
     </Page.Background>
 
-    <Grid Margin="10" >
+    <Grid Name="GridContent" Margin="10" >
 
         <Popup x:Name="ParentedPopup" HorizontalOffset="200" VerticalOffset="200" IsOpen="False">
             <controls:PopupTest/>
         </Popup>
+
+        <TextBox Name="DummyObjectToRemove" Opacity="0" Width="1" Height="1"/>
 
         <StackPanel>
             <TextBox Name="AddressBox" Margin="10" Width="300" HorizontalAlignment="Left" Text="{Binding LastServer, Mode=TwoWay}" PlaceholderText="Enter Server Address..." TextChanged="ConnectionInfo_TextChanged" Header="Address" HeaderTemplate="{StaticResource BoxHeaderTemplate}" LostFocus="AddressBox_LostFocus" GotFocus="AddressBox_GotFocus"/>

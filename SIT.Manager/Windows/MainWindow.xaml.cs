@@ -44,15 +44,13 @@ namespace SIT.Manager
 
             WindowManager manager = WindowManager.Get(this);
             manager.MinHeight = 450;
-            manager.MaxHeight = 900;
             manager.MinWidth = 800;
-            manager.MaxWidth = 1500;
 
             this.CenterOnScreen();
 
             // Navigate to Play page by default
             NavView.SelectedItem = NavView.MenuItems.FirstOrDefault();
-            ContentFrame.Navigate(typeof(PlayPage), null, new SuppressNavigationTransitionInfo());            
+            NavigatePage(typeof(PlayPage));
 
             // Set up variables to be accessed outside MainWindow
             actionPanel = ActionPanel;
@@ -138,7 +136,7 @@ namespace SIT.Manager
         {
             if (args.IsSettingsInvoked)
             {
-                ContentFrame.Navigate(typeof(SettingsPage));
+                NavigatePage(typeof(SettingsPage));
 
                 NavigationViewItem settings = (NavigationViewItem)NavView.SettingsItem;
                 if (settings.InfoBadge != null)
@@ -185,17 +183,31 @@ namespace SIT.Manager
             switch (item.Tag)
             {
                 case "Play":
-                    ContentFrame.Navigate(typeof(PlayPage));
+                    NavigatePage(typeof(PlayPage));
                     break;
                 case "Server":
-                    ContentFrame.Navigate(typeof(ServerPage));
+                    NavigatePage(typeof(ServerPage));
                     break;
                 case "Tools":
-                    ContentFrame.Navigate(typeof(ToolsPage));
+                    NavigatePage(typeof(ToolsPage));
                     break;
                 case "Mods":
-                    ContentFrame.Navigate(typeof(ModsPage));
+                    NavigatePage(typeof(ModsPage));
                     break;
+            }
+        }
+
+        private string lastCurrentPage = string.Empty;
+        /// <summary>
+        /// Helpful function that loads pages depending if the current page is a new page.
+        /// </summary>
+        /// <param name="currentPage"></param>
+        private void NavigatePage(Type currentPage)
+        {
+            if (lastCurrentPage != currentPage.Name)
+            {
+                ContentFrame.Navigate(currentPage);
+                lastCurrentPage = currentPage.Name;
             }
         }
 
